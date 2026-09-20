@@ -1,2651 +1,1354 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Steam MP 7000 Tycoon — Dashboard</title>
-
-<!-- ============================================================
-     CSS INLINE — Tema merah putih, mobile-first
-     ============================================================ -->
 <style>
-  :root {
-    --merah: #d32f2f;
-    --merah-tua: #b71c1c;
-    --merah-terang: #ef5350;
-    --putih: #fff;
-    --abu: #f5f5f5;
-    --abu-gelap: #757575;
-    --teks: #212121;
-    --hijau: #2e7d32;
-    --biru: #1976d2;
-    --emas: #ffa000;
-    --shadow: 0 4px 14px rgba(0,0,0,.15);
-    --header-h: 96px;
-  }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-  html, body {
-    margin: 0; padding: 0; height: 100%;
+  /* ===== RESET & DASAR ===== */
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; overflow:hidden; }
+  body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: var(--teks);
-    background: #fff;
-    overflow: hidden;
+    background: linear-gradient(160deg, #7a0000 0%, #c00 50%, #ff4d4d 100%);
+    color:#fff; position:relative; user-select:none;
   }
 
-  /* ============ HEADER ============ */
-  #header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: var(--header-h);
-    background: linear-gradient(180deg, var(--merah), var(--merah-tua));
-    color: #fff;
-    z-index: 100;
-    padding: 8px 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.25);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-top: max(8px, env(safe-area-inset-top));
+  /* ===== BACKGROUND AWAN ===== */
+  .bg-awan { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+  .awan {
+    position:absolute; width:120px; height:40px; background:rgba(255,255,255,.13);
+    border-radius:50px; filter:blur(6px); animation:gerakAwan linear infinite;
   }
-  .hdr-baris1 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-  }
-  .hdr-kiri { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-  .hdr-logo {
-    width: 34px; height: 34px; border-radius: 50%;
-    background: #fff;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    cursor: pointer;
-  }
-  .hdr-logo svg { width: 22px; height: 22px; }
-  .hdr-info { min-width: 0; flex: 1; }
-  .hdr-nama {
-    font-size: 13px; font-weight: 800;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .hdr-id { font-size: 10px; opacity: .85; font-family: monospace; }
+  .awan::before, .awan::after { content:""; position:absolute; background:rgba(255,255,255,.13); border-radius:50%; }
+  .awan::before { width:60px; height:60px; top:-25px; left:15px; }
+  .awan::after  { width:45px; height:45px; top:-18px; left:55px; }
+  .awan.a1 { top:10%; animation-duration:30s; }
+  .awan.a2 { top:35%; animation-duration:42s; animation-delay:-10s; transform:scale(.8); }
+  .awan.a3 { top:70%; animation-duration:50s; animation-delay:-25s; transform:scale(1.2); }
+  @keyframes gerakAwan { from{left:-160px} to{left:110%} }
 
-  .hdr-kanan { display: flex; align-items: center; gap: 6px; }
-  .hdr-btn {
-    background: rgba(255,255,255,.18);
-    border: none; color: #fff;
-    width: 34px; height: 34px; border-radius: 50%;
-    font-size: 16px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .2s;
+  /* ===== HEADER ===== */
+  .header {
+    position:relative; z-index:10;
+    display:flex; align-items:center; gap:8px;
+    padding:8px 10px;
+    background:rgba(0,0,0,.35); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(255,255,255,.15);
+    flex-wrap:wrap;
   }
-  .hdr-btn:active { background: rgba(255,255,255,.35); }
-  .hdr-btn.off { opacity: .5; }
+  .header .nama { font-weight:800; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px; }
+  .stat { display:flex; align-items:center; gap:3px; font-size:12px; font-weight:700; background:rgba(255,255,255,.12); padding:4px 7px; border-radius:8px; }
+  .stat .ikon { font-size:13px; }
+  .header-spacer { flex:1; }
+  .btn-header {
+    background:rgba(255,255,255,.15); border:none; color:#fff; width:34px; height:34px;
+    border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:.2s;
+  }
+  .btn-header:active { transform:scale(.92); background:rgba(255,255,255,.3); }
 
-  .hdr-baris2 {
-    display: flex; justify-content: space-between; align-items: center; gap: 6px;
-    font-size: 11px;
-  }
-  .hdr-saldo {
-    display: flex; gap: 10px; flex-wrap: wrap;
-    font-weight: 700;
-  }
-  .hdr-saldo span {
-    background: rgba(0,0,0,.18);
-    padding: 3px 8px; border-radius: 20px;
-    display: inline-flex; align-items: center; gap: 3px;
-    white-space: nowrap;
-  }
-  .hdr-level {
-    display: flex; align-items: center; gap: 5px;
-    font-weight: 700;
-  }
-  .lvl-bar {
-    width: 60px; height: 8px;
-    background: rgba(0,0,0,.25);
-    border-radius: 6px; overflow: hidden;
-  }
-  .lvl-bar-fill {
-    height: 100%; width: 0%;
-    background: linear-gradient(90deg, #ffe082, #ffb300);
-    transition: width .4s;
-  }
+  /* Level bar di header */
+  .level-bar-wrap { width:100%; display:flex; align-items:center; gap:6px; margin-top:2px; }
+  .level-bar { flex:1; height:6px; background:rgba(0,0,0,.35); border-radius:6px; overflow:hidden; }
+  .level-bar-fill { height:100%; width:0%; background:linear-gradient(90deg,#ffd700,#ff8c00); border-radius:6px; transition:width .4s; }
+  .level-txt { font-size:10px; font-weight:700; opacity:.9; }
 
-  /* ============ AREA GAME (tap) ============ */
-  #game-area {
-    position: fixed;
-    top: var(--header-h);
-    left: 0; right: 0;
-    bottom: 0;
-    overflow: hidden;
-    background: radial-gradient(ellipse at 50% 30%, #e3f2fd 0%, #bbdefb 60%, #90caf9 100%);
+  /* ===== AREA GAME (TAP) ===== */
+  .area-game {
+    position:absolute; inset:0; z-index:1;
+    display:flex; align-items:center; justify-content:center;
+    touch-action:manipulation;
   }
-  #tap-layer {
-    position: absolute; inset: 0;
-    cursor: pointer;
-    z-index: 5;
+  .motor-visual {
+    font-size:110px; filter:drop-shadow(0 8px 20px rgba(0,0,0,.4));
+    animation:goyang 2.5s ease-in-out infinite; pointer-events:none;
   }
-  /* Efek "+1" melayang */
-  .plus-one {
-    position: absolute;
-    font-size: 22px; font-weight: 900;
-    color: #fff;
-    text-shadow: 0 2px 6px rgba(0,0,0,.35), 0 0 12px rgba(255,255,255,.8);
-    pointer-events: none;
-    animation: naikHilang 1s ease-out forwards;
-    z-index: 20;
-    transform: translate(-50%, -50%);
+  @keyframes goyang { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-10px) rotate(2deg)} }
+
+  /* Efek tap "+1" */
+  .efek-tap {
+    position:absolute; font-size:22px; font-weight:900; color:#ffd700;
+    text-shadow:0 2px 6px rgba(0,0,0,.5); pointer-events:none; z-index:50;
+    animation:naikHilang 0.8s ease-out forwards;
   }
   @keyframes naikHilang {
-    0%   { opacity: 1; transform: translate(-50%,-50%) scale(.6); }
-    30%  { opacity: 1; transform: translate(-50%,-90%) scale(1.15); }
-    100% { opacity: 0; transform: translate(-50%,-160%) scale(.9); }
+    0%   { transform:translate(-50%,-50%) scale(.6); opacity:1; }
+    100% { transform:translate(-50%,-160%) scale(1.3); opacity:0; }
   }
-  /* Partikel air/busa */
+  /* Partikel busa */
   .partikel {
-    position: absolute;
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: rgba(255,255,255,.9);
-    box-shadow: 0 0 8px rgba(120,200,255,.9);
-    pointer-events: none;
-    animation: partikelHilang .7s ease-out forwards;
-    z-index: 15;
+    position:absolute; width:10px; height:10px; background:rgba(255,255,255,.85);
+    border-radius:50%; pointer-events:none; z-index:49;
+    animation:pecah 0.7s ease-out forwards;
   }
-  @keyframes partikelHilang {
-    0%   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
-    100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.2); }
+  @keyframes pecah {
+    0%   { transform:translate(-50%,-50%) scale(.3); opacity:1; }
+    100% { transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.4); opacity:0; }
   }
 
-  /* Motor di tengah */
-  #motor {
-    position: absolute;
-    left: 50%; top: 45%;
-    transform: translate(-50%,-50%);
-    width: 180px; height: 180px;
-    z-index: 8;
-    filter: drop-shadow(0 8px 12px rgba(0,0,0,.25));
-    transition: filter .5s;
-    animation: motorIdle 3s ease-in-out infinite;
+  /* ===== MENU SLIDE DARI KIRI ===== */
+  .overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:100;
+    opacity:0; pointer-events:none; transition:.3s;
   }
-  @keyframes motorIdle {
-    0%,100% { transform: translate(-50%,-50%) rotate(-1deg); }
-    50%     { transform: translate(-50%,-52%) rotate(1deg); }
+  .overlay.aktif { opacity:1; pointer-events:auto; }
+  .menu-slide {
+    position:fixed; top:0; left:0; bottom:0; width:78%; max-width:320px;
+    background:linear-gradient(180deg,#a30000,#7a0000); z-index:101;
+    transform:translateX(-105%); transition:.3s cubic-bezier(.4,0,.2,1);
+    display:flex; flex-direction:column; box-shadow:6px 0 24px rgba(0,0,0,.5);
   }
-  #motor.kotor { filter: drop-shadow(0 8px 12px rgba(0,0,0,.35)) sepia(.5) saturate(.7) brightness(.85); }
-  #motor.bersih { filter: drop-shadow(0 8px 16px rgba(80,180,255,.6)) brightness(1.1); }
+  .menu-slide.aktif { transform:translateX(0); }
+  .menu-header { padding:16px; border-bottom:1px solid rgba(255,255,255,.15); display:flex; justify-content:space-between; align-items:center; }
+  .menu-header h2 { font-size:16px; font-weight:800; }
+  .menu-list { flex:1; overflow-y:auto; padding:8px; }
+  .menu-item {
+    display:flex; align-items:center; gap:12px; padding:13px 14px; border-radius:12px;
+    background:rgba(255,255,255,.08); margin-bottom:6px; cursor:pointer; transition:.2s;
+    font-weight:600; font-size:14px;
+  }
+  .menu-item:active, .menu-item.aktif { background:rgba(255,255,255,.25); transform:translateX(4px); }
+  .menu-item .ikon { font-size:20px; width:26px; text-align:center; }
 
-  /* Background awan + motor lewat */
-  .bg-awan {
-    position: absolute;
-    width: 90px; height: 30px;
-    background: rgba(255,255,255,.8);
-    border-radius: 30px;
-    filter: blur(.5px);
-    animation: awanJalan linear infinite;
-    z-index: 1;
-  }
-  .bg-awan::before, .bg-awan::after {
-    content: ""; position: absolute; background: inherit; border-radius: 50%;
-  }
-  .bg-awan::before { width: 45px; height: 45px; top: -22px; left: 14px; }
-  .bg-awan::after  { width: 34px; height: 34px; top: -14px; left: 46px; }
-  @keyframes awanJalan {
-    from { transform: translateX(-120px); }
-    to   { transform: translateX(calc(100vw + 120px)); }
-  }
-
-  /* Info produksi di bawah motor */
-  #info-produksi {
-    position: absolute;
-    left: 50%; bottom: 22px;
-    transform: translateX(-50%);
-    background: rgba(255,255,255,.85);
-    backdrop-filter: blur(6px);
-    padding: 6px 14px; border-radius: 20px;
-    font-size: 12px; font-weight: 700;
-    color: var(--merah-tua);
-    box-shadow: var(--shadow);
-    z-index: 10;
-    white-space: nowrap;
-  }
-
-  /* ============ SIDE MENU (slide dari kiri) ============ */
-  #overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.5);
-    z-index: 200;
-    opacity: 0; pointer-events: none;
-    transition: opacity .25s;
-  }
-  #overlay.show { opacity: 1; pointer-events: auto; }
-
-  #sidemenu {
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    width: 280px; max-width: 82vw;
-    background: #fff;
-    z-index: 210;
-    transform: translateX(-100%);
-    transition: transform .3s cubic-bezier(.2,.8,.3,1);
-    display: flex; flex-direction: column;
-    box-shadow: 4px 0 20px rgba(0,0,0,.3);
-    padding-top: env(safe-area-inset-top);
-  }
-  #sidemenu.show { transform: translateX(0); }
-
-  .sm-head {
-    background: linear-gradient(135deg, var(--merah), var(--merah-tua));
-    color: #fff;
-    padding: 18px 16px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .sm-avatar {
-    width: 48px; height: 48px; border-radius: 50%;
-    background: #fff; color: var(--merah-tua);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 20px;
-    flex-shrink: 0;
-  }
-  .sm-head-nama { font-weight: 800; font-size: 15px; }
-  .sm-head-id { font-size: 11px; opacity: .85; font-family: monospace; }
-
-  .sm-list {
-    flex: 1; overflow-y: auto;
-    padding: 8px 0;
-  }
-  .sm-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 13px 18px;
-    cursor: pointer;
-    font-size: 15px; font-weight: 600;
-    color: var(--teks);
-    transition: background .15s;
-    border: none; background: transparent; width: 100%; text-align: left;
-    font-family: inherit;
-  }
-  .sm-item:active { background: #f5f5f5; }
-  .sm-item.aktif { background: #ffebee; color: var(--merah-tua); border-left: 4px solid var(--merah); padding-left: 14px; }
-  .sm-item .ikon {
-    width: 30px; text-align: center; font-size: 19px;
-  }
-  .sm-item .badge-notif {
-    margin-left: auto;
-    background: var(--merah); color: #fff;
-    font-size: 10px; padding: 2px 7px; border-radius: 10px;
-    font-weight: 800;
-  }
-  .sm-divider {
-    height: 1px; background: #eee; margin: 6px 16px;
-  }
-
-  /* ============ PANEL KONTEN (tiap tab) ============ */
+  /* ===== PANEL KONTEN (tab) ===== */
   .panel {
-    position: fixed;
-    top: var(--header-h);
-    left: 0; right: 0; bottom: 0;
-    background: #fafafa;
-    z-index: 150;
-    display: none;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 30px;
+    position:fixed; inset:0; top:0; z-index:90;
+    background:linear-gradient(160deg,#8a0000,#c00 50%,#ff4d4d);
+    transform:translateY(100%); transition:.32s cubic-bezier(.4,0,.2,1);
+    display:flex; flex-direction:column; padding-top:0;
   }
-  .panel.show { display: block; }
-
-  .panel-header {
-    position: sticky; top: 0;
-    background: var(--merah);
-    color: #fff;
-    padding: 12px 16px;
-    font-weight: 800;
-    font-size: 16px;
-    display: flex; align-items: center; gap: 10px;
-    z-index: 10;
-    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  .panel.aktif { transform:translateY(0); }
+  .panel-head {
+    display:flex; align-items:center; gap:10px; padding:12px 14px;
+    background:rgba(0,0,0,.3); border-bottom:1px solid rgba(255,255,255,.15);
   }
-  .panel-header .tutup {
-    margin-left: auto;
-    background: rgba(255,255,255,.2);
-    border: none; color: #fff;
-    width: 30px; height: 30px; border-radius: 50%;
-    font-size: 16px; cursor: pointer;
-  }
-
-  .panel-body { padding: 14px; }
+  .panel-head h3 { font-size:16px; font-weight:800; flex:1; }
+  .panel-body { flex:1; overflow-y:auto; padding:14px; -webkit-overflow-scrolling:touch; }
 
   /* Kartu umum */
-  .card {
-    background: #fff;
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  .kartu {
+    background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18);
+    border-radius:14px; padding:12px 14px; margin-bottom:10px;
   }
-  .card-judul {
-    font-weight: 800; font-size: 14px;
-    color: var(--merah-tua);
-    margin-bottom: 10px;
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  /* Baris item upgrade/manajer */
-  .item-baris {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px dashed #eee;
-  }
-  .item-baris:last-child { border-bottom: none; }
-  .item-ikon {
-    width: 42px; height: 42px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #ffebee, #ffcdd2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-  }
-  .item-info { flex: 1; min-width: 0; }
-  .item-nama { font-weight: 800; font-size: 14px; }
-  .item-sub { font-size: 11px; color: var(--abu-gelap); margin-top: 2px; }
-  .item-sub b { color: var(--merah); }
-  .item-aksi { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-
+  .kartu h4 { font-size:14px; margin-bottom:4px; }
+  .kartu .sub { font-size:11px; opacity:.8; }
+  .row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .row + .row { margin-top:6px; }
   .btn {
-    padding: 8px 14px;
-    border: none; border-radius: 9px;
-    font-weight: 800; font-size: 12px;
-    cursor: pointer;
-    transition: transform .1s, opacity .2s;
-    font-family: inherit;
-    white-space: nowrap;
+    padding:8px 14px; border:none; border-radius:9px; font-weight:700; font-size:12px;
+    cursor:pointer; transition:.2s;
   }
-  .btn:active { transform: scale(.95); }
-  .btn-merah { background: var(--merah); color: #fff; }
-  .btn-hijau { background: var(--hijau); color: #fff; }
-  .btn-biru { background: var(--biru); color: #fff; }
-  .btn-emas { background: var(--emas); color: #fff; }
-  .btn-abu { background: #e0e0e0; color: #555; }
-  .btn-outline { background: transparent; border: 2px solid var(--merah); color: var(--merah); }
-  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn:active { transform:scale(.95); }
+  .btn:disabled { opacity:.45; cursor:not-allowed; }
+  .btn-merah { background:linear-gradient(135deg,#fff,#ffe0e0); color:#c00; }
+  .btn-hijau { background:linear-gradient(135deg,#4caf50,#2e7d32); color:#fff; }
+  .btn-biru  { background:linear-gradient(135deg,#2196f3,#1565c0); color:#fff; }
+  .btn-abu   { background:rgba(255,255,255,.15); color:#fff; }
+  .btn-kuning{ background:linear-gradient(135deg,#ffd700,#ff8c00); color:#5a3000; }
 
-  .badge {
-    display: inline-block;
-    padding: 2px 8px; border-radius: 20px;
-    font-size: 10px; font-weight: 800;
-    background: var(--hijau); color: #fff;
+  .input-biasa {
+    width:100%; padding:11px 13px; border-radius:10px; border:1px solid rgba(255,255,255,.3);
+    background:rgba(255,255,255,.12); color:#fff; font-size:14px; outline:none;
   }
-  .badge.off { background: #bdbdbd; }
-  .badge.emas { background: var(--emas); }
-  .badge.merah { background: var(--merah); }
+  .input-biasa::placeholder { color:rgba(255,255,255,.5); }
 
-  /* Form input */
-  .inp {
-    width: 100%;
-    padding: 11px 13px;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 14px; font-family: inherit;
-    outline: none; background: #fafafa;
-    color: var(--teks);
-  }
-  .inp:focus { border-color: var(--merah-terang); background: #fff; }
-  .lbl {
-    display: block;
-    font-size: 12px; font-weight: 800;
-    color: var(--abu-gelap);
-    margin: 10px 0 5px;
-    text-transform: uppercase;
-    letter-spacing: .3px;
-  }
+  .badge { display:inline-block; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:700; }
+  .badge-aktif { background:#4caf50; }
+  .badge-lock  { background:rgba(0,0,0,.4); }
 
-  /* Tab internal (misal topup: koin/rupiah/kristal) */
-  .tab-internal {
-    display: flex; gap: 6px;
-    margin-bottom: 12px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-  .tab-internal button {
-    flex: 1; min-width: 90px;
-    padding: 9px 12px;
-    background: #fff;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-weight: 800; font-size: 13px;
-    color: var(--abu-gelap);
-    cursor: pointer; font-family: inherit;
-    transition: all .2s;
-  }
-  .tab-internal button.aktif {
-    background: var(--merah); color: #fff; border-color: var(--merah);
-  }
-
-  /* Paket topup */
-  .paket {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 14px;
-    background: #fff; border: 2px solid #eee;
-    border-radius: 12px; margin-bottom: 8px;
-    cursor: pointer; transition: all .2s;
-  }
-  .paket:active, .paket.pilih { border-color: var(--merah); background: #ffebee; }
-  .paket-harga { font-weight: 800; color: var(--merah-tua); font-size: 14px; }
-  .paket-isi { font-weight: 800; font-size: 15px; color: var(--teks); }
-
-  /* QRIS box */
-  .qris-box {
-    background: #fff; border-radius: 14px;
-    padding: 16px; text-align: center;
-    box-shadow: var(--shadow);
-    margin-bottom: 14px;
-  }
-  .qris-box .nmid {
-    font-family: monospace; font-size: 13px;
-    color: var(--merah-tua); font-weight: 800;
-    background: #ffebee; padding: 6px 12px; border-radius: 8px;
-    display: inline-block; margin: 8px 0;
-  }
-
-  /* Toast notifikasi */
-  #toast-wrap {
-    position: fixed;
-    top: calc(var(--header-h) + 12px);
-    left: 50%; transform: translateX(-50%);
-    z-index: 500;
-    display: flex; flex-direction: column; gap: 8px;
-    pointer-events: none;
-    width: 90%; max-width: 340px;
-  }
+  /* ===== TOAST ===== */
   .toast {
-    background: rgba(33,33,33,.95);
-    color: #fff;
-    padding: 11px 15px;
-    border-radius: 11px;
-    font-size: 13px; font-weight: 700;
-    box-shadow: 0 4px 14px rgba(0,0,0,.3);
-    animation: toastMasuk .3s ease-out;
-    text-align: center;
-    word-break: break-word;
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(120%);
+    background:rgba(0,0,0,.85); color:#fff; padding:11px 20px; border-radius:30px;
+    font-size:13px; font-weight:600; z-index:999; transition:.3s; max-width:88%; text-align:center;
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
   }
-  .toast.sukses { background: rgba(46,125,50,.95); }
-  .toast.error  { background: rgba(198,40,40,.95); }
-  .toast.info   { background: rgba(25,118,210,.95); }
-  @keyframes toastMasuk {
-    from { opacity: 0; transform: translateY(-14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  .toast.tampil { transform:translateX(-50%) translateY(0); }
+  .toast.sukses { background:rgba(46,125,50,.95); }
+  .toast.error  { background:rgba(183,28,28,.95); }
 
-  /* Loading overlay */
-  #loading {
-    position: fixed; inset: 0;
-    background: rgba(255,255,255,.72);
-    display: none; align-items: center; justify-content: center;
-    flex-direction: column; z-index: 900;
-    backdrop-filter: blur(2px);
+  /* ===== LOADING ===== */
+  .loading-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:900;
+    display:none; align-items:center; justify-content:center;
   }
-  #loading.show { display: flex; }
+  .loading-overlay.aktif { display:flex; }
   .spinner {
-    width: 42px; height: 42px;
-    border: 4px solid #ffcdd2;
-    border-top-color: var(--merah);
-    border-radius: 50%;
-    animation: spin .8s linear infinite;
+    width:44px; height:44px; border:4px solid rgba(255,255,255,.25);
+    border-top-color:#fff; border-radius:50%; animation:spin .8s linear infinite;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  #loading p { margin-top: 12px; font-size: 13px; color: var(--merah-tua); font-weight: 700; }
+  @keyframes spin { to { transform:rotate(360deg); } }
 
-  /* Modal */
-  .modal {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.6);
-    display: none; align-items: center; justify-content: center;
-    z-index: 700; padding: 16px;
+  /* ===== PANEL ADMIN ===== */
+  .admin-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:950;
+    display:none; align-items:center; justify-content:center; padding:20px;
   }
-  .modal.show { display: flex; }
-  .modal-box {
-    background: #fff; border-radius: 16px;
-    padding: 18px; width: 100%; max-width: 380px;
-    max-height: 85vh; overflow-y: auto;
-    animation: masukCard .25s ease-out;
+  .admin-overlay.aktif { display:flex; }
+  .admin-login-card {
+    width:100%; max-width:340px; background:#1a1a1a; border:1px solid #333;
+    border-radius:16px; padding:20px; color:#fff;
   }
-  @keyframes masukCard {
-    from { opacity: 0; transform: scale(.95); }
-    to   { opacity: 1; transform: scale(1); }
+  .admin-login-card h3 { text-align:center; margin-bottom:14px; color:#ff5252; }
+  .admin-panel {
+    position:fixed; inset:0; background:#111; z-index:960; display:none;
+    flex-direction:column; color:#eee;
   }
-  .modal-judul {
-    font-weight: 800; font-size: 16px;
-    color: var(--merah-tua);
-    margin-bottom: 12px;
+  .admin-panel.aktif { display:flex; }
+  .admin-head { background:#1a1a1a; padding:10px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #333; }
+  .admin-head h3 { flex:1; font-size:15px; color:#ff5252; }
+  .admin-tabs { display:flex; overflow-x:auto; background:#1a1a1a; border-bottom:1px solid #333; padding:6px; gap:4px; }
+  .admin-tabs button {
+    padding:7px 12px; border:none; background:#222; color:#aaa; border-radius:8px;
+    font-size:11px; font-weight:700; white-space:nowrap; cursor:pointer;
   }
+  .admin-tabs button.aktif { background:#ff5252; color:#fff; }
+  .admin-body { flex:1; overflow-y:auto; padding:12px; }
+  .admin-body .kartu { background:#1a1a1a; border-color:#333; }
+  .admin-body h4 { color:#ff5252; }
+  .admin-input {
+    width:100%; padding:9px 11px; border-radius:8px; border:1px solid #333;
+    background:#222; color:#fff; font-size:13px; outline:none; margin-bottom:6px;
+  }
+  .tabel-admin { width:100%; border-collapse:collapse; font-size:11px; }
+  .tabel-admin th, .tabel-admin td { padding:6px 4px; border-bottom:1px solid #2a2a2a; text-align:left; }
+  .tabel-admin th { color:#ff5252; }
 
-  /* Admin panel */
-  #admin-panel {
-    position: fixed; inset: 0;
-    background: #eceff1;
-    z-index: 800;
-    display: none;
-    flex-direction: column;
-  }
-  #admin-panel.show { display: flex; }
-  .adm-head {
-    background: linear-gradient(90deg, #212121, #37474f);
-    color: #fff; padding: 14px 16px;
-    display: flex; align-items: center; gap: 10px;
-    padding-top: max(14px, env(safe-area-inset-top));
-  }
-  .adm-head h2 { margin: 0; font-size: 16px; }
-  .adm-head .tutup {
-    margin-left: auto;
-    background: rgba(255,255,255,.15);
-    border: none; color: #fff;
-    width: 32px; height: 32px; border-radius: 50%;
-    font-size: 16px; cursor: pointer;
-  }
-  .adm-tabs {
-    display: flex; overflow-x: auto;
-    background: #263238; padding: 0 6px;
-    gap: 2px;
-    flex-shrink: 0;
-  }
-  .adm-tabs button {
-    padding: 10px 14px;
-    background: transparent; border: none;
-    color: #b0bec5; font-weight: 700; font-size: 12px;
-    cursor: pointer; font-family: inherit;
-    white-space: nowrap;
-    border-bottom: 3px solid transparent;
-    transition: all .2s;
-  }
-  .adm-tabs button.aktif {
-    color: #fff; border-bottom-color: var(--merah-terang);
-  }
-  .adm-body {
-    flex: 1; overflow-y: auto; padding: 12px;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Tabel admin sederhana */
-  .adm-tbl {
-    width: 100%; border-collapse: collapse;
-    background: #fff; border-radius: 8px; overflow: hidden;
-    font-size: 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.08);
-  }
-  .adm-tbl th, .adm-tbl td {
-    padding: 8px 10px; text-align: left;
-    border-bottom: 1px solid #eee;
-  }
-  .adm-tbl th {
-    background: #37474f; color: #fff;
-    font-weight: 800; font-size: 11px;
-    position: sticky; top: 0;
-  }
-  .adm-tbl tr:active { background: #f5f5f5; cursor: pointer; }
-
-  .stat-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr);
-    gap: 10px; margin-bottom: 14px;
-  }
-  .stat-box {
-    background: #fff; border-radius: 12px;
-    padding: 14px; text-align: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,.06);
-  }
-  .stat-angka {
-    font-size: 22px; font-weight: 900;
-    color: var(--merah-tua);
-  }
-  .stat-label {
-    font-size: 11px; color: var(--abu-gelap);
-    text-transform: uppercase; font-weight: 700;
-    margin-top: 3px;
+  /* Slot iklan */
+  .slot-iklan {
+    background:rgba(0,0,0,.3); border:1px dashed rgba(255,255,255,.3);
+    border-radius:10px; padding:14px; text-align:center; font-size:11px;
+    opacity:.7; margin-bottom:10px;
   }
 
   /* Scrollbar halus */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.2); border-radius: 4px; }
-
-  /* Responsif */
-  @media (min-width: 600px) {
-    #sidemenu { width: 320px; }
-    .modal-box { max-width: 480px; }
-  }
-
-  /* Animasi tap cepat */
-  .tap-cepat { animation: tapFlash .15s ease-out; }
-  @keyframes tapFlash {
-    0% { background: rgba(255,255,255,.5); }
-    100% { background: transparent; }
-  }
-
-  /* Utility */
-  .hidden { display: none !important; }
-  .text-center { text-align: center; }
-  .mt10 { margin-top: 10px; }
-  .mb10 { margin-bottom: 10px; }
-  .row { display: flex; gap: 8px; align-items: center; }
-  .row-wrap { display: flex; gap: 8px; flex-wrap: wrap; }
-  .flex1 { flex: 1; }
+  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.3); border-radius:5px; }
 </style>
 </head>
 <body>
 
-<!-- ============ HEADER ============ -->
-<header id="header">
-  <div class="hdr-baris1">
-    <div class="hdr-kiri">
-      <!-- Logo — tap 5x untuk admin -->
-      <div class="hdr-logo" id="logo-admin">
-        <svg viewBox="0 0 64 64" fill="none">
-          <circle cx="20" cy="46" r="8" stroke="#d32f2f" stroke-width="4"/>
-          <circle cx="46" cy="46" r="8" stroke="#d32f2f" stroke-width="4"/>
-          <path d="M20 46 L28 32 L42 32 L46 46" stroke="#d32f2f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="hdr-info">
-        <div class="hdr-nama" id="hdr-nama">Memuat...</div>
-        <div class="hdr-id" id="hdr-id">-</div>
-      </div>
-    </div>
-    <div class="hdr-kanan">
-      <button class="hdr-btn" id="btn-musik" title="Musik">🔊</button>
-      <button class="hdr-btn" id="btn-menu" title="Menu">☰</button>
-    </div>
-  </div>
-  <div class="hdr-baris2">
-    <div class="hdr-saldo">
-      <span>🪙 <b id="hdr-koin">0</b></span>
-      <span>💵 <b id="hdr-rupiah">0</b></span>
-      <span>💎 <b id="hdr-kristal">0</b></span>
-    </div>
-    <div class="hdr-level">
-      <span>Lv <b id="hdr-lv">1</b></span>
-      <div class="lvl-bar"><div class="lvl-bar-fill" id="hdr-lvl-fill"></div></div>
-    </div>
-  </div>
-</header>
-
-<!-- ============ AREA GAME (tap) ============ -->
-<div id="game-area">
-  <div id="tap-layer"></div>
-
-  <!-- Motor SVG -->
-  <svg id="motor" class="kotor" viewBox="0 0 200 200">
-    <!-- Body motor -->
-    <ellipse cx="100" cy="150" rx="60" ry="8" fill="rgba(0,0,0,.15)"/>
-    <path d="M55 145 Q50 100 90 95 L110 95 Q150 100 145 145 Z" fill="#37474f" stroke="#212121" stroke-width="3"/>
-    <path d="M80 95 L85 65 L115 65 L120 95 Z" fill="#546e7a" stroke="#212121" stroke-width="3"/>
-    <path d="M85 65 Q100 55 115 65" fill="#90a4ae" stroke="#212121" stroke-width="3"/>
-    <!-- Setang -->
-    <path d="M115 65 L145 55 M145 55 L155 60 M145 55 L155 50" stroke="#212121" stroke-width="4" stroke-linecap="round"/>
-    <!-- Roda depan -->
-    <circle cx="145" cy="150" r="22" fill="#212121"/>
-    <circle cx="145" cy="150" r="14" fill="#546e7a"/>
-    <circle cx="145" cy="150" r="4" fill="#90a4ae"/>
-    <!-- Roda belakang -->
-    <circle cx="55" cy="150" r="22" fill="#212121"/>
-    <circle cx="55" cy="150" r="14" fill="#546e7a"/>
-    <circle cx="55" cy="150" r="4" fill="#90a4ae"/>
-    <!-- Knalpot -->
-    <rect x="30" y="120" width="30" height="8" rx="4" fill="#bdbdbd" stroke="#757575" stroke-width="2"/>
-    <!-- Lampu -->
-    <circle cx="140" cy="80" r="7" fill="#ffee58" stroke="#f9a825" stroke-width="2"/>
-    <!-- Logo MP -->
-    <text x="100" y="125" text-anchor="middle" font-size="14" font-weight="900" fill="#ef5350" font-family="sans-serif">MP</text>
-    <text x="100" y="140" text-anchor="middle" font-size="10" font-weight="900" fill="#ef5350" font-family="sans-serif">7000</text>
-    <!-- Noda kotor (akan hilang saat bersih) -->
-    <circle cx="70" cy="110" r="4" fill="#5d4037" opacity=".7" class="noda"/>
-    <circle cx="130" cy="115" r="3" fill="#5d4037" opacity=".7" class="noda"/>
-    <circle cx="100" cy="105" r="3.5" fill="#5d4037" opacity=".7" class="noda"/>
-    <!-- Semprotan air saat dicuci -->
-    <g id="semprotan" opacity="0">
-      <circle cx="100" cy="70" r="2" fill="#4fc3f7"/>
-      <circle cx="90" cy="75" r="2" fill="#4fc3f7"/>
-      <circle cx="110" cy="75" r="2" fill="#4fc3f7"/>
-      <circle cx="95" cy="65" r="1.5" fill="#4fc3f7"/>
-      <circle cx="105" cy="65" r="1.5" fill="#4fc3f7"/>
-    </g>
-  </svg>
-
-  <!-- Info produksi -->
-  <div id="info-produksi">👆 Tap layar untuk cuci motor!</div>
+<!-- Background awan -->
+<div class="bg-awan">
+  <div class="awan a1"></div>
+  <div class="awan a2"></div>
+  <div class="awan a3"></div>
 </div>
 
-<!-- ============ OVERLAY & SIDE MENU ============ -->
-<div id="overlay"></div>
-<aside id="sidemenu">
-  <div class="sm-head">
-    <div class="sm-avatar" id="sm-avatar">A</div>
-    <div>
-      <div class="sm-head-nama" id="sm-nama">Pemain</div>
-      <div class="sm-head-id" id="sm-id">-</div>
-    </div>
-  </div>
-  <div class="sm-list">
-    <button class="sm-item aktif" data-tab="game"><span class="ikon">🎮</span>Game</button>
-    <button class="sm-item" data-tab="manajer"><span class="ikon">👷</span>Manajer</button>
-    <button class="sm-item" data-tab="cabang"><span class="ikon">🏢</span>Cabang</button>
-    <button class="sm-item" data-tab="toko"><span class="ikon">🛒</span>Toko</button>
-    <button class="sm-item" data-tab="convert"><span class="ikon">💱</span>Convert</button>
-    <button class="sm-item" data-tab="topup"><span class="ikon">💳</span>Topup</button>
-    <button class="sm-item" data-tab="voucher"><span class="ikon">🎟️</span>Voucher</button>
-    <button class="sm-item" data-tab="cerita"><span class="ikon">📖</span>Cerita</button>
-    <button class="sm-item" data-tab="profil"><span class="ikon">👤</span>Profil</button>
-  </div>
-  <div class="sm-divider"></div>
-  <button class="sm-item" id="sm-logout" style="color:#c62828"><span class="ikon">🚪</span>Logout</button>
-  <div style="height: env(safe-area-inset-bottom);"></div>
-</aside>
+<!-- ===== AREA GAME (tap) ===== -->
+<div class="area-game" id="areaGame">
+  <div class="motor-visual" id="motorVisual">🏍️</div>
+</div>
 
-<!-- ============ PANEL: GAME ============ -->
-<div class="panel" id="panel-game">
-  <div class="panel-header">
-    🎮 Upgrade Unit
-    <button class="tutup" data-tutup="game">✕</button>
-  </div>
-  <div class="panel-body">
-    <div class="card">
-      <div class="card-judul">🔧 Unit Steam</div>
-      <div id="daftar-unit"></div>
-    </div>
-    <div class="card">
-      <div class="card-judul">⚡ Boost Aktif</div>
-      <div id="info-boost" style="font-size:13px;color:#757575">Tidak ada boost aktif.</div>
-      <button class="btn btn-emas mt10" id="btn-tonton-boost" style="width:100%">📺 Tonton Iklan → Boost 5 Menit</button>
-    </div>
+<!-- ===== HEADER ===== -->
+<div class="header" style="position:fixed;top:0;left:0;right:0;">
+  <div class="nama" id="hdrNama" onclick="tapLogo()">🏍️ Pak Aldi</div>
+  <div class="stat"><span class="ikon">🪙</span><span id="hdrKoin">0</span></div>
+  <div class="stat"><span class="ikon">💵</span><span id="hdrRupiah">0</span></div>
+  <div class="stat"><span class="ikon">💎</span><span id="hdrKristal">0</span></div>
+  <div class="header-spacer"></div>
+  <button class="btn-header" id="btnMusik" onclick="toggleMusik()">🔊</button>
+  <button class="btn-header" onclick="bukaMenu()">☰</button>
+  <div class="level-bar-wrap">
+    <span class="level-txt">Lv <span id="hdrLevel">1</span></span>
+    <div class="level-bar"><div class="level-bar-fill" id="hdrLevelFill"></div></div>
   </div>
 </div>
 
-<!-- ============ PANEL: MANAJER ============ -->
-<div class="panel" id="panel-manajer">
-  <div class="panel-header">
-    👷 Manajer
-    <button class="tutup" data-tutup="manajer">✕</button>
+<!-- ===== MENU SLIDE ===== -->
+<div class="overlay" id="overlayMenu" onclick="tutupMenu()"></div>
+<div class="menu-slide" id="menuSlide">
+  <div class="menu-header">
+    <h2>🏍️ Menu</h2>
+    <button class="btn-header" onclick="tutupMenu()">✕</button>
   </div>
-  <div class="panel-body">
-    <div id="daftar-manajer"></div>
+  <div class="menu-list" id="menuList"></div>
+</div>
+
+<!-- ===== PANEL KONTEN ===== -->
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <button class="btn-header" onclick="tutupPanel()">←</button>
+    <h3 id="panelJudul">Game</h3>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</div>
+
+<!-- ===== TOAST & LOADING ===== -->
+<div class="toast" id="toast"></div>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+
+<!-- ===== ADMIN LOGIN OVERLAY ===== -->
+<div class="admin-overlay" id="adminLoginOverlay">
+  <div class="admin-login-card">
+    <h3>🔐 Admin Login</h3>
+    <input class="admin-input" type="text" id="adminId" placeholder="Admin ID" value="1001">
+    <input class="admin-input" type="password" id="adminPass" placeholder="Password" value="123456">
+    <button class="btn btn-merah" style="width:100%;padding:11px;margin-top:6px" onclick="adminLogin()">Masuk</button>
+    <button class="btn btn-abu" style="width:100%;padding:9px;margin-top:6px" onclick="tutupAdminLogin()">Batal</button>
   </div>
 </div>
 
-<!-- ============ PANEL: CABANG ============ -->
-<div class="panel" id="panel-cabang">
-  <div class="panel-header">
-    🏢 Cabang
-    <button class="tutup" data-tutup="cabang">✕</button>
+<!-- ===== ADMIN PANEL ===== -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-head">
+    <h3>⚙️ Admin Panel</h3>
+    <button class="btn-header" onclick="tutupAdminPanel()">✕</button>
   </div>
-  <div class="panel-body">
-    <div id="daftar-cabang"></div>
-    <button class="btn btn-hijau mt10" id="btn-buka-cabang" style="width:100%">➕ Buka Cabang Baru</button>
-  </div>
+  <div class="admin-tabs" id="adminTabs"></div>
+  <div class="admin-body" id="adminBody"></div>
 </div>
 
-<!-- ============ PANEL: TOKO ============ -->
-<div class="panel" id="panel-toko">
-  <div class="panel-header">
-    🛒 Toko
-    <button class="tutup" data-tutup="toko">✕</button>
-  </div>
-  <div class="panel-body">
-    <div id="daftar-toko"></div>
-  </div>
-</div>
+<!-- ===== AUDIO MUSIK ===== -->
+<audio id="musikLatar" loop preload="none">
+  <source src="assets/musik-latar.mp3" type="audio/mpeg">
+</audio>
 
-<!-- ============ PANEL: CONVERT ============ -->
-<div class="panel" id="panel-convert">
-  <div class="panel-header">
-    💱 Convert Koin → Rupiah
-    <button class="tutup" data-tutup="convert">✕</button>
-  </div>
-  <div class="panel-body">
-    <div class="card">
-      <div class="card-judul">💰 Saldo Kamu</div>
-      <div style="font-size:14px;line-height:1.8">
-        🪙 Koin: <b id="cv-koin">0</b><br>
-        💵 Rupiah: <b id="cv-rupiah">0</b>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-judul">💱 Konversi</div>
-      <label class="lbl">Jumlah koin yang mau di-convert</label>
-      <input type="number" class="inp" id="cv-input" placeholder="Minimal 10.000" min="10000" />
-      <div style="font-size:12px;color:#757575;margin-top:6px">Rate: 1000 koin = Rp 1</div>
-
-      <label class="lbl">Pilih metode</label>
-      <div class="row-wrap">
-        <label style="flex:1;display:flex;align-items:center;gap:6px;padding:10px;background:#fff;border:2px solid #eee;border-radius:10px;cursor:pointer">
-          <input type="radio" name="cv-metode" value="potong" checked /> Potong 10%
-        </label>
-        <label style="flex:1;display:flex;align-items:center;gap:6px;padding:10px;background:#fff;border:2px solid #eee;border-radius:10px;cursor:pointer">
-          <input type="radio" name="cv-metode" value="iklan" /> Tonton Iklan
-        </label>
-      </div>
-
-      <div id="cv-preview" style="margin-top:14px;padding:12px;background:#fff8e1;border-radius:10px;font-size:13px;display:none">
-        <div>Koin dipotong: <b id="cv-potong">0</b></div>
-        <div>Biaya convert: <b id="cv-biaya">0</b></div>
-        <div>Rupiah diterima: <b id="cv-terima" style="color:#2e7d32;font-size:15px">Rp 0</b></div>
-      </div>
-
-      <button class="btn btn-merah mt10" id="btn-convert" style="width:100%;padding:14px;font-size:15px">💱 Konversi Sekarang</button>
-      <div style="font-size:11px;color:#c62828;margin-top:8px;text-align:center">
-        ⚠️ Setelah convert, tidak bisa dikembalikan!
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ============ PANEL: TOPUP ============ -->
-<div class="panel" id="panel-topup">
-  <div class="panel-header">
-    💳 Topup
-    <button class="tutup" data-tutup="topup">✕</button>
-  </div>
-  <div class="panel-body">
-    <div class="tab-internal" id="topup-tabs">
-      <button data-jenis="koin" class="aktif">🪙 Koin</button>
-      <button data-jenis="rupiah">💵 Rupiah</button>
-      <button data-jenis="kristal">💎 Kristal</button>
-    </div>
-    <div id="daftar-paket"></div>
-
-    <div id="qris-area" class="hidden">
-      <div class="qris-box">
-        <div style="font-weight:800;color:#b71c1c">Scan QRIS untuk bayar</div>
-        <div class="nmid">NMID: ID1024361914749</div>
-        <!-- >>> GANTI dengan gambar QRIS asli kalau ada <<< -->
-        <div style="width:200px;height:200px;margin:10px auto;background:#fff;border:2px dashed #bbb;display:flex;align-items:center;justify-content:center;font-size:12px;color:#999;text-align:center;padding:10px">
-          [Tempel gambar QRIS di sini]<br>atau upload bukti transfer di bawah
-        </div>
-        <div style="font-size:13px;color:#555">Total: <b id="qris-total" style="color:#b71c1c;font-size:17px">Rp 0</b></div>
-      </div>
-
-      <label class="lbl">Upload Bukti Transfer</label>
-      <input type="file" class="inp" id="qris-file" accept="image/*" />
-      <button class="btn btn-hijau mt10" id="btn-ajukan-topup" style="width:100%;padding:13px">📤 Kirim Pengajuan</button>
-    </div>
-
-    <div class="card mt10">
-      <div class="card-judul">📋 Riwayat Pengajuan</div>
-      <div id="riwayat-topup" style="font-size:12px;color:#757575">Belum ada pengajuan.</div>
-    </div>
-  </div>
-</div>
-
-<!-- ============ PANEL: VOUCHER ============ -->
-<div class="panel" id="panel-voucher">
-  <div class="panel-header">
-    🎟️ Voucher
-    <button class="tutup" data-tutup="voucher">✕</button>
-  </div>
-  <div class="panel-body">
-    <div class="card">
-      <div class="card-judul">💰 Saldo</div>
-      <div style="font-size:14px;line-height:1.8">
-        🪙 Koin: <b id="vc-koin">0</b><br>
-        💵 Rupiah: <b id="vc-rupiah">0</b>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-judul">🎟️ Tukar Voucher Cuci</div>
-      <div style="font-size:13px;color:#757575;line-height:1.6;margin-bottom:10px">
-        Tukar 1 voucher dengan <b>70.000 koin</b> atau <b>Rp 7.000</b>.<br>
-        Maksimal 1 voucher per minggu. Wajib konfirmasi nomor HP.
-      </div>
-      <label class="lbl">Nomor HP Konfirmasi</label>
-      <input type="tel" class="inp" id="vc-hp" placeholder="08xxxxxxxxxx" maxlength="13" inputmode="numeric" />
-      <button class="btn btn-emas mt10" id="btn-tukar-voucher-koin" style="width:100%;padding:12px">🪙 Tukar dengan 70.000 Koin</button>
-      <button class="btn btn-biru mt10" id="btn-tukar-voucher-rupiah" style="width:100%;padding:12px">💵 Tukar dengan Rp 7.000</button>
-    </div>
-    <div class="card">
-      <div class="card-judul">📋 Voucher Saya</div>
-      <div id="daftar-voucher-saya" style="font-size:13px;color:#757575">Belum ada voucher.</div>
-    </div>
-  </div>
-</div>
-
-<!-- ============ PANEL: CERITA ============ -->
-<div class="panel" id="panel-cerita">
-  <div class="panel-header">
-    📖 Cerita Pak Aldi
-    <button class="tutup" data-tutup="cerita">✕</button>
-  </div>
-  <div class="panel-body">
-    <div id="daftar-cerita"></div>
-  </div>
-</div>
-
-<!-- ============ PANEL: PROFIL ============ -->
-<div class="panel" id="panel-profil">
-  <div class="panel-header">
-    👤 Profil
-    <button class="tutup" data-tutup="profil">✕</button>
-  </div>
-  <div class="panel-body">
-    <div class="card">
-      <div class="card-judul">📊 Data Pemain</div>
-      <div id="profil-data" style="font-size:14px;line-height:2"></div>
-    </div>
-    <div class="card">
-      <div class="card-judul">💎 Kristal</div>
-      <div style="font-size:13px;color:#757575;margin-bottom:8px">Kristal bisa didapat dari menonton iklan.</div>
-      <button class="btn btn-emas" id="btn-tonton-kristal" style="width:100%;padding:12px">📺 Tonton Iklan → +5 Kristal</button>
-    </div>
-    <button class="btn btn-merah" id="btn-logout2" style="width:100%;padding:13px">🚪 Logout</button>
-  </div>
-</div>
-
-<!-- ============ PANEL ADMIN ============ -->
-<div id="admin-panel">
-  <div class="adm-head">
-    <h2>🛡️ Admin Panel</h2>
-    <button class="tutup" id="adm-tutup">✕</button>
-  </div>
-  <div class="adm-tabs" id="adm-tabs">
-    <button data-atab="dash" class="aktif">Dashboard</button>
-    <button data-atab="pemain">Pemain</button>
-    <button data-atab="kasih-item">Kasih Item</button>
-    <button data-atab="kasih-manajer">Kasih Manajer</button>
-    <button data-atab="kasih-voucher">Kasih Voucher</button>
-    <button data-atab="topup">Topup</button>
-    <button data-atab="voucher">Voucher</button>
-    <button data-atab="toko">Toko</button>
-    <button data-atab="manajer">Manajer</button>
-    <button data-atab="cabang">Cabang</button>
-    <button data-atab="cerita">Cerita</button>
-    <button data-atab="config">Config</button>
-    <button data-atab="pesan">Pesan</button>
-    <button data-atab="log">Log</button>
-    <button data-atab="export">Export</button>
-  </div>
-  <div class="adm-body" id="adm-body">
-    <div style="text-align:center;color:#999;padding:30px">Pilih tab di atas</div>
-  </div>
-</div>
-
-<!-- ============ MODAL GENERIK ============ -->
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <div class="modal-judul" id="modal-judul">Info</div>
-    <div id="modal-isi"></div>
-  </div>
-</div>
-
-<!-- ============ TOAST & LOADING ============ -->
-<div id="toast-wrap"></div>
-<div id="loading">
-  <div class="spinner"></div>
-  <p id="loading-text">Memuat...</p>
-</div>
-
-<!-- ============ MUSIK LATAR ============ -->
-<!-- >>> Pastikan file assets/musik-latar.mp3 ada <<< -->
-<audio id="musik" src="assets/musik-latar.mp3" loop preload="auto"></audio>
-
-<!-- ============ SLOT IKLAN (isi tag nanti) ============ -->
-<div id="slot-iklan-rewarded" style="display:none"></div>
-<div id="slot-iklan-popunder" style="display:none"></div>
 <script>
-/* ============================================================
-   KONFIGURASI BACKEND
-   >>> GANTI DI SINI KALAU URL BERUBAH <<<
-   ============================================================ */
-const API_URL = "https://script.google.com/macros/s/AKfycbygMaU_I70oOmIqWt2zuM-FzN_6pGm1DehfAx-atlQ3OsExVbQpbBTyQk_wsYlWOLaoLQ/exec";
+/* =========================================================
+   KONFIGURASI — SAMA PERSIS DENGAN index.html
+   ========================================================= */
+const API_URL = "https://script.google.com/macros/s/AKfycbyp04EZaT8vhi5gDmTeSw1ovDVDVh-cF-EkdcQohxu2ys3MwGrJm8yZg6A02qrPHujO6g/exec";
+const API_KEY = "smp7k_ganti_ini_nanti";
 
-/* ============================================================
-   DATA STATIS GAME (client-side, dipakai buat hitung & tampil)
-   Catatan: server tetap validasi saat sync & transaksi krusial.
-   ============================================================ */
+/* =========================================================
+   CEK TOKEN — kalau tidak ada, tendang ke index
+   ========================================================= */
+let TOKEN = localStorage.getItem("smp7k_token");
+if (!TOKEN) { window.location.href = "index.html"; }
 
-// Unit upgrade (6 unit)
-const UNIT_BASE = [
-  { id: "semprot",  nama: "Tukang Semprot", ikon: "🚿", hargaAwal: 100,   prodAwal: 1   },
-  { id: "sabun",    nama: "Tukang Sabun",   ikon: "🧼", hargaAwal: 1200,  prodAwal: 6   },
-  { id: "bilas",    nama: "Tukang Bilas",   ikon: "💦", hargaAwal: 15000, prodAwal: 30  },
-  { id: "kering",   nama: "Tukang Kering",  ikon: "🌬️", hargaAwal: 180000,prodAwal: 150 },
-  { id: "poles",    nama: "Tukang Poles",   ikon: "✨", hargaAwal: 2200000,prodAwal: 800},
-  { id: "kompresor",nama: "Kompresor",      ikon: "🔧", hargaAwal: 25000000,prodAwal: 4000}
-];
-
-// Manajer (6 orang) — data statis client
-const MANAJER_BASE = [
-  { id:"mgr_semprot", bagian:"Semprot",  nama:"Pak Budi",      ikon:"👨‍🔧", harga:500,      prod:1,    skill:"Semprot Cepat: +10% tap" },
-  { id:"mgr_sabun",   bagian:"Sabun",    nama:"Bu Siti",       ikon:"👩‍🔧", harga:5000,     prod:5,    skill:"Busa Lembut: +15% koin" },
-  { id:"mgr_bilas",   bagian:"Bilas",    nama:"Pak Andi",      ikon:"👨‍🔧", harga:50000,    prod:25,   skill:"Bilas Kilat: -20% gaji" },
-  { id:"mgr_kering",  bagian:"Kering",   nama:"Bu Rina",       ikon:"👩‍🔧", harga:500000,   prod:100,  skill:"Angin Kencang: +25% prod" },
-  { id:"mgr_poles",   bagian:"Poles",    nama:"Pak Joko",      ikon:"👨‍🔧", harga:5000000,  prod:500,  skill:"Poles Mengkilap: +30% harga jual" },
-  { id:"mgr_kompresor",bagian:"Kompresor",nama:"Teknisi Umar", ikon:"👨‍🔧", harga:50000000, prod:2500, skill:"Teknisi Ahli: auto-cuci tiap 10s" }
-];
-
-// Cabang (data statis)
-const CABANG_BASE = [
-  { id:"cb_1", nama:"Steam Pusat",     syarat:0,          biaya:0,           bonus:1.0  },
-  { id:"cb_2", nama:"Steam Cabang 2",  syarat:500000,     biaya:1000000,     bonus:1.2  },
-  { id:"cb_3", nama:"Steam Cabang 3",  syarat:5000000,    biaya:10000000,    bonus:1.5  },
-  { id:"cb_4", nama:"Steam Cabang 4",  syarat:50000000,   biaya:100000000,   bonus:2.0  },
-  { id:"cb_5", nama:"Steam MP 7000",   syarat:500000000,  biaya:1000000000,  bonus:3.0  }
-];
-
-// Toko item
-const TOKO_BASE = [
-  { id:"skin_motor",   nama:"Skin Motor",        ikon:"🏍️", hargaKoin:50000,   hargaRp:4000  },
-  { id:"tema_steam",   nama:"Tema Steam",        ikon:"🎨", hargaKoin:100000,  hargaRp:8000  },
-  { id:"badge",        nama:"Badge",             ikon:"🏅", hargaKoin:20000,   hargaRp:1500  },
-  { id:"boost_1jam",   nama:"Boost 1 Jam",       ikon:"⚡", hargaKoin:200000,  hargaRp:15000 },
-  { id:"unlock_mgr",   nama:"Unlock Manajer Cepat",ikon:"🔓",hargaKoin:500000, hargaRp:40000 },
-  { id:"voc_cuci",     nama:"Voucher Cuci",      ikon:"🎟️", hargaKoin:70000,   hargaRp:7000  }
-];
-
-// Paket topup
-const PAKET_TOPUP = {
-  koin: [
-    { rp:5000,   isi:"100.000 koin" },
-    { rp:10000,  isi:"250.000 koin" },
-    { rp:25000,  isi:"700.000 koin" },
-    { rp:50000,  isi:"1.500.000 koin" },
-    { rp:100000, isi:"3.500.000 koin" }
-  ],
-  rupiah: [
-    { rp:5000,   isi:"Rp 5.500" },
-    { rp:10000,  isi:"Rp 12.000" },
-    { rp:25000,  isi:"Rp 32.500" },
-    { rp:50000,  isi:"Rp 70.000" },
-    { rp:100000, isi:"Rp 150.000" }
-  ],
-  kristal: [
-    { rp:5000,   isi:"10 kristal" },
-    { rp:10000,  isi:"25 kristal" },
-    { rp:25000,  isi:"70 kristal" },
-    { rp:50000,  isi:"160 kristal" },
-    { rp:100000, isi:"350 kristal" }
-  ]
+/* =========================================================
+   STATE LOKAL
+   ========================================================= */
+let state = {
+  profil: null,          // data dari getProfile
+  koin: 0,
+  rupiah: 0,
+  kristal: 0,
+  level: 1,
+  produksiPerDetik: 0,
+  totalKoin: 0,
+  upgrade: {},           // bagian -> level
+  manajer: {},           // bagian -> {level, stamina, ...}
+  cabang: [],
+  cabangAktif: 1,
+  toko: [],
+  itemDimiliki: {},
+  ceritaTerbuka: [],
+  logTerakhirSync: 0,
+  deviceId: localStorage.getItem("smp7k_device_id") || (() => {
+    const id = "dev_" + Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-6);
+    localStorage.setItem("smp7k_device_id", id); return id;
+  })(),
+  adminToken: localStorage.getItem("smp7k_admin_token") || null,
+  adminTabAktif: "dashboard"
 };
 
-// Cerita (7 bab)
-const CERITA_BASE = [
-  { id:"bab1", no:1, judul:"Motor Pertama",    unlockLevel:1,  teks:"Pak Aldi baru beli motor bekas. \"Ini modal awal, semoga berkah,\" ujarnya sambil mengelap tangki." },
-  { id:"bab2", no:2, judul:"Pelanggan Setia",  unlockLevel:3,  teks:"Bu Tini rutin cuci motor tiap minggu. \"Pak Aldi nih yang paling telaten,\" pujinya." },
-  { id:"bab3", no:3, judul:"Steam Pertama",    unlockLevel:5,  teks:"Tenda kecil berdiri. \"Sekarang punya tempat sendiri,\" Pak Aldi tersenyum bangga." },
-  { id:"bab4", no:4, judul:"Karyawan Pertama", unlockLevel:10, teks:"Pak Budi bergabung. \"Ayo kita garap bareng, Bud!\" ajak Pak Aldi." },
-  { id:"bab5", no:5, judul:"Cabang Kedua",     unlockLevel:15, teks:"Papan nama cabang 2 terpasang. Pak Aldi membuka pintu dengan semangat." },
-  { id:"bab6", no:6, judul:"Ekspansi",         unlockLevel:25, teks:"Motor lewat silih berganti. Steam MP 7000 jadi langganan sejuta umat." },
-  { id:"bab7", no:7, judul:"MP 7000",          unlockLevel:50, teks:"Logo MP 7000 berkilau. \"Dari motor bekas, jadi legenda,\" kata Pak Aldi haru." }
-];
+/* =========================================================
+   FUNGSI API TERPUSAT
+   ========================================================= */
+async function panggilApi(action, data = null, token = null) {
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        api_key: API_KEY,
+        action: action,
+        token: token,
+        data: data
+      })
+    });
 
-/* ============================================================
-   STATE PEMAIN (di-load dari server, disimpan sementara di client)
-   ============================================================ */
-const state = {
-  token: "",
-  pemain: {},          // { id_pemain, nama, no_hp, level, koin, rupiah, kristal, ... }
-  unit: {},            // { semprot: {level, prod}, ... }
-  manajer: {},         // { mgr_semprot: {sewa:true, level, stamina}, ... }
-  cabang: { aktif:"cb_1", dibuka:["cb_1"] },
-  inventori: [],       // item ids yang dimiliki
-  boost: { sampai:0, multiplier:1 },
-  koinPending: 0,      // koin hasil tap belum disync
-  lastSync: 0
-};
+    if (!res.ok) return { ok:false, message:"Server tidak merespons dengan benar ("+res.status+")" };
 
-/* ============================================================
-   UTIL
-   ============================================================ */
-const $  = (id) => document.getElementById(id);
-const $$ = (q) => document.querySelectorAll(q);
+    let json;
+    try { json = await res.json(); }
+    catch { return { ok:false, message:"Server tidak merespons dengan benar" }; }
 
+    // Sesi habis → tendang
+    if (json.ok === false && json.message && json.message.toLowerCase().includes("sesi")) {
+      localStorage.removeItem("smp7k_token");
+      window.location.href = "index.html";
+      return json;
+    }
+    return json;
+  } catch (err) {
+    return { ok:false, message:"Koneksi bermasalah. Cek internet." };
+  }
+}
+
+/* =========================================================
+   UI HELPER
+   ========================================================= */
+function toast(msg, tipe = "") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast tampil " + tipe;
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => { t.className = "toast " + tipe; }, 2200);
+}
+function loading(aktif) {
+  document.getElementById("loadingOverlay").classList.toggle("aktif", aktif);
+}
 function formatAngka(n) {
   n = Math.floor(n || 0);
-  if (n >= 1e12) return (n/1e12).toFixed(2) + "T";
-  if (n >= 1e9)  return (n/1e9).toFixed(2)  + "B";
-  if (n >= 1e6)  return (n/1e6).toFixed(2)  + "M";
-  if (n >= 1e3)  return (n/1e3).toFixed(1)  + "K";
-  return n.toLocaleString("id-ID");
+  if (n >= 1e12) return (n/1e12).toFixed(1) + "T";
+  if (n >= 1e9)  return (n/1e9).toFixed(1) + "M";
+  if (n >= 1e6)  return (n/1e6).toFixed(1) + "jt";
+  if (n >= 1e3)  return (n/1e3).toFixed(1) + "rb";
+  return n.toString();
 }
-function formatRupiah(n) { return "Rp " + Math.floor(n||0).toLocaleString("id-ID"); }
-
-function toast(teks, tipe, durasi) {
-  const wrap = $("toast-wrap");
-  const el = document.createElement("div");
-  el.className = "toast " + (tipe || "info");
-  el.textContent = teks;
-  wrap.appendChild(el);
-  setTimeout(() => {
-    el.style.opacity = "0";
-    el.style.transition = "opacity .3s";
-    setTimeout(() => el.remove(), 320);
-  }, durasi || 2500);
+function sensorNomor(nomor) {
+  if (!nomor || nomor.length < 6) return nomor || "-";
+  return nomor.slice(0,4) + "****" + nomor.slice(-2);
 }
 
-function setLoading(aktif, teks) {
-  $("loading-text").textContent = teks || "Memuat...";
-  $("loading").classList.toggle("show", !!aktif);
+/* =========================================================
+   EFEK SUARA (Web Audio API)
+   ========================================================= */
+let audioCtx = null;
+function ctxAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
 }
-
-function bukaModal(judul, isiHtml) {
-  $("modal-judul").textContent = judul;
-  $("modal-isi").innerHTML = isiHtml;
-  $("modal").classList.add("show");
+function suaraTap() {
+  try {
+    const c = ctxAudio(), o = c.createOscillator(), g = c.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(900, c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(400, c.currentTime + 0.08);
+    g.gain.setValueAtTime(0.06, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.1);
+    o.connect(g); g.connect(c.destination);
+    o.start(); o.stop(c.currentTime + 0.1);
+  } catch(e){}
 }
-function tutupModal() { $("modal").classList.remove("show"); }
-$("modal").addEventListener("click", (e) => { if (e.target.id === "modal") tutupModal(); });
-
-/* ============================================================
-   FETCH ke server — semua request pakai {action, token, data}
-   ============================================================ */
-async function api(action, data, opsi) {
-  opsi = opsi || {};
-  const body = {
-    action: action,
-    token: state.token || "",
-    data: data || {}
-  };
-  const resp = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-  if (!resp.ok) throw new Error("HTTP " + resp.status);
-  const json = await resp.json();
-  if (!json.ok && !opsi.abaikanError) {
-    // lempar biar bisa di-catch & tampilkan pesan
-    const err = new Error(json.message || "Terjadi kesalahan di server");
-    err.data = json.data;
-    throw err;
-  }
-  return json;
+function suaraKoin() {
+  try {
+    const c = ctxAudio(), o = c.createOscillator(), g = c.createGain();
+    o.type = "triangle"; o.frequency.setValueAtTime(1200, c.currentTime);
+    o.frequency.setValueAtTime(1600, c.currentTime + 0.04);
+    g.gain.setValueAtTime(0.07, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.18);
+    o.connect(g); g.connect(c.destination);
+    o.start(); o.stop(c.currentTime + 0.18);
+  } catch(e){}
 }
-
-/* ============================================================
-   AUDIO: MUSIK LATAR + EFEK SUARA (Web Audio API)
-   ============================================================ */
-const Musik = {
-  el: $("musik"),
-  aktif: localStorage.getItem("mp7000_musik") !== "off",
-  ctx: null,
-
-  init() {
-    this.el.volume = 0.35;
-    this.el.addEventListener("play", () => this.updateTombol());
-    this.el.addEventListener("pause", () => this.updateTombol());
-    // Coba autoplay; kalau diblokir, tombol play muncul
-    this.play();
-  },
-
-  play() {
-    if (!this.aktif) return;
-    const p = this.el.play();
-    if (p && p.catch) {
-      p.catch(() => {
-        // autoplay diblokir browser — user harus tap
-        this.updateTombol(true);
-      });
-    }
-  },
-
-  toggle() {
-    this.aktif = !this.aktif;
-    if (this.aktif) {
-      this.el.play().catch(()=>{});
-      localStorage.setItem("mp7000_musik", "on");
-    } else {
-      this.el.pause();
-      localStorage.setItem("mp7000_musik", "off");
-    }
-    this.updateTombol();
-  },
-
-  updateTombol(perluTap) {
-    const btn = $("btn-musik");
-    if (!this.aktif) { btn.textContent = "🔇"; btn.classList.add("off"); return; }
-    btn.textContent = perluTap ? "▶️" : (this.el.paused ? "🔇" : "🔊");
-    btn.classList.toggle("off", this.el.paused);
-  }
-};
-
-/* ============================================================
-   SFX dengan Web Audio API (tanpa file)
-   ============================================================ */
-const SFX = {
-  ctx: null,
-  aktif: localStorage.getItem("mp7000_sfx") !== "off",
-
-  ctx_() {
-    if (!this.ctx) {
-      try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
-      catch (e) { this.ctx = null; }
-    }
-    if (this.ctx && this.ctx.state === "suspended") this.ctx.resume().catch(()=>{});
-    return this.ctx;
-  },
-
-  // Suara "syuush" air — noise pendek
-  air() {
-    if (!this.aktif) return;
-    const ctx = this.ctx_(); if (!ctx) return;
-    const dur = 0.22;
-    const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) {
-      const t = i / d.length;
-      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 2.2);
-    }
-    const src = ctx.createBufferSource(); src.buffer = buf;
-    const flt = ctx.createBiquadFilter();
-    flt.type = "highpass"; flt.frequency.value = 800;
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.18, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-    src.connect(flt); flt.connect(gain); gain.connect(ctx.destination);
-    src.start();
-  },
-
-  // "ting" koin
-  koin() {
-    if (!this.aktif) return;
-    const ctx = this.ctx_(); if (!ctx) return;
-    const o = ctx.createOscillator(); o.type = "sine";
-    const g = ctx.createGain();
-    o.frequency.setValueAtTime(880, ctx.currentTime);
-    o.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.08);
-    g.gain.setValueAtTime(0.14, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
-    o.connect(g); g.connect(ctx.destination);
-    o.start(); o.stop(ctx.currentTime + 0.2);
-  },
-
-  // "chime" level up
-  chime() {
-    if (!this.aktif) return;
-    const ctx = this.ctx_(); if (!ctx) return;
-    const notes = [523, 659, 784, 1047];
-    notes.forEach((f, i) => {
-      const o = ctx.createOscillator(); o.type = "triangle";
-      const g = ctx.createGain();
-      const t = ctx.currentTime + i * 0.08;
-      o.frequency.value = f;
-      g.gain.setValueAtTime(0.001, t);
-      g.gain.linearRampToValueAtTime(0.14, t + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
-      o.connect(g); g.connect(ctx.destination);
-      o.start(t); o.stop(t + 0.3);
+function suaraLevel() {
+  try {
+    const c = ctxAudio();
+    [523,659,784,1047].forEach((f,i) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(0.001, c.currentTime + i*0.09);
+      g.gain.exponentialRampToValueAtTime(0.08, c.currentTime + i*0.09 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + i*0.09 + 0.2);
+      o.connect(g); g.connect(c.destination);
+      o.start(c.currentTime + i*0.09); o.stop(c.currentTime + i*0.09 + 0.22);
     });
-  },
+  } catch(e){}
+}
+function suaraError() {
+  try {
+    const c = ctxAudio(), o = c.createOscillator(), g = c.createGain();
+    o.type = "sawtooth"; o.frequency.setValueAtTime(160, c.currentTime);
+    g.gain.setValueAtTime(0.07, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.25);
+    o.connect(g); g.connect(c.destination);
+    o.start(); o.stop(c.currentTime + 0.25);
+  } catch(e){}
+}
 
-  // "buzz" error
-  buzz() {
-    if (!this.aktif) return;
-    const ctx = this.ctx_(); if (!ctx) return;
-    const o = ctx.createOscillator(); o.type = "sawtooth";
-    const g = ctx.createGain();
-    o.frequency.setValueAtTime(140, ctx.currentTime);
-    g.gain.setValueAtTime(0.12, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
-    o.connect(g); g.connect(ctx.destination);
-    o.start(); o.stop(ctx.currentTime + 0.27);
-  }
-};
-  /* ============================================================
-   GAMEPLAY: TAP CUCI MOTOR
-   ============================================================ */
-const Game = {
-  tapAktif: false,
-  tapCount: 0,
-  resetTimer: null,
-  koinPending: 0,
-
-  init() {
-    const layer = $("tap-layer");
-    // Pakai pointerdown biar responsif di HP
-    layer.addEventListener("pointerdown", (e) => this.tap(e));
-  },
-
-  tap(e) {
-    if (!state.pemain.id_pemain) return;
-
-    // Hitung koin per tap
-    const koinPerTap = this.hitungKoinPerTap();
-    state.koinPending += koinPerTap;
-    state.pemain.koin = (state.pemain.koin || 0) + koinPerTap;
-
-    // Update UI
-    this.updateHeaderSaldo();
-
-    // Efek "+1"
-    const plus = document.createElement("div");
-    plus.className = "plus-one";
-    plus.textContent = "+" + formatAngka(koinPerTap);
-    plus.style.left = e.clientX + "px";
-    plus.style.top  = e.clientY + "px";
-    document.body.appendChild(plus);
-    setTimeout(() => plus.remove(), 1000);
-
-    // Partikel air/busa
-    for (let i = 0; i < 5; i++) {
-      const p = document.createElement("div");
-      p.className = "partikel";
-      p.style.left = e.clientX + "px";
-      p.style.top  = e.clientY + "px";
-      p.style.setProperty("--dx", (Math.random() * 60 - 30) + "px");
-      p.style.setProperty("--dy", (Math.random() * -50 - 10) + "px");
-      document.body.appendChild(p);
-      setTimeout(() => p.remove(), 700);
-    }
-
-    // Suara air
-    SFX.air();
-
-    // Visual motor: kotor → bersih
-    const motor = $("motor");
-    motor.classList.remove("kotor");
-    motor.classList.add("bersih");
-    clearTimeout(this.__bersihTimer);
-    this.__bersihTimer = setTimeout(() => {
-      motor.classList.remove("bersih");
-      motor.classList.add("kotor");
-    }, 1200);
-
-    // Efek visual tambahan kalau tap cepat
-    this.tapCount++;
-    clearTimeout(this.resetTimer);
-    this.resetTimer = setTimeout(() => { this.tapCount = 0; }, 1000);
-    if (this.tapCount >= 5) {
-      this.efekMeriah(e.clientX, e.clientY);
-    }
-  },
-
-  hitungKoinPerTap() {
-    let dasar = 1;
-    // Bonus dari manajer "semprot" kalau disewa
-    const mgr = state.manajer["mgr_semprot"];
-    if (mgr && mgr.sewa) dasar = Math.floor(dasar * (1 + 0.1 * (mgr.level || 1)));
-    // Boost
-    if (state.boost.sampai > Date.now()) dasar = Math.floor(dasar * state.boost.multiplier);
-    return Math.max(1, dasar);
-  },
-
-  efekMeriah(x, y) {
-    // Ledakan partikel lebih banyak
-    for (let i = 0; i < 18; i++) {
-      const p = document.createElement("div");
-      p.className = "partikel";
-      p.style.left = x + "px";
-      p.style.top  = y + "px";
-      p.style.background = i % 3 === 0 ? "rgba(255,235,59,.95)" : "rgba(255,255,255,.95)";
-      p.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
-      p.style.setProperty("--dy", (Math.random() * -120 - 20) + "px");
-      document.body.appendChild(p);
-      setTimeout(() => p.remove(), 700);
-    }
-    SFX.koin();
-  },
-
-  updateHeaderSaldo() {
-    $("hdr-koin").textContent    = formatAngka(state.pemain.koin || 0);
-    $("hdr-rupiah").textContent  = formatAngka(state.pemain.rupiah || 0);
-    $("hdr-kristal").textContent = formatAngka(state.pemain.kristal || 0);
-    // Update juga panel yang sedang terbuka
-    $("cv-koin").textContent = formatAngka(state.pemain.koin || 0);
-    $("cv-rupiah").textContent = formatRupiah(state.pemain.rupiah || 0);
-    $("vc-koin").textContent = formatAngka(state.pemain.koin || 0);
-    $("vc-rupiah").textContent = formatRupiah(state.pemain.rupiah || 0);
-  }
-};
-
-/* ============================================================
-   PRODUKSI OTOMATIS (client-side) — dihitung tiap 1 detik
-   ============================================================ */
-const Produksi = {
-  totalPerDetik: 0,
-  tickTimer: null,
-  syncTimer: null,
-
-  hitungTotal() {
-    let total = 0;
-    // Dari unit
-    UNIT_BASE.forEach(u => {
-      const s = state.unit[u.id];
-      if (s && s.level > 0) total += s.prod || 0;
+/* =========================================================
+   MUSIK LATAR
+   ========================================================= */
+const elMusik = document.getElementById("musikLatar");
+let musikAktif = localStorage.getItem("smp7k_musik") !== "off";
+elMusik.volume = 0.35;
+function terapkanMusik() {
+  document.getElementById("btnMusik").textContent = musikAktif ? "🔊" : "🔇";
+  if (musikAktif) {
+    elMusik.play().catch(() => {
+      // Autoplay diblokir → tunggu interaksi pertama
+      const mulai = () => { elMusik.play().catch(()=>{}); document.removeEventListener("touchstart", mulai); document.removeEventListener("click", mulai); };
+      document.addEventListener("touchstart", mulai);
+      document.addEventListener("click", mulai);
     });
-    // Dari manajer yang disewa
-    MANAJER_BASE.forEach(m => {
-      const s = state.manajer[m.id];
-      if (s && s.sewa) total += m.prod * (s.level || 1);
-    });
-    // Bonus cabang aktif
-    const cab = CABANG_BASE.find(c => c.id === state.cabang.aktif);
-    if (cab) total *= cab.bonus;
-    // Boost
-    if (state.boost.sampai > Date.now()) total *= state.boost.multiplier;
-    this.totalPerDetik = Math.floor(total);
-    return this.totalPerDetik;
-  },
-
-  mulai() {
-    clearInterval(this.tickTimer);
-    this.tickTimer = setInterval(() => this.tick(), 1000);
-    clearInterval(this.syncTimer);
-    this.syncTimer = setInterval(() => this.sync(), 10000);
-  },
-
-  tick() {
-    const t = this.hitungTotal();
-    if (t > 0) {
-      state.koinPending += t;
-      state.pemain.koin = (state.pemain.koin || 0) + t;
-      Game.updateHeaderSaldo();
-    }
-    // Update info produksi
-    $("info-produksi").textContent = t > 0
-      ? "⚙️ Produksi: " + formatAngka(t) + " koin/detik"
-      : "👆 Tap layar untuk cuci motor!";
-
-    // Update boost info kalau panel game terbuka
-    if (state.boost.sampai > Date.now()) {
-      const sisa = Math.ceil((state.boost.sampai - Date.now()) / 1000);
-      $("info-boost").innerHTML = "⚡ Boost x" + state.boost.multiplier + " aktif! Sisa " + sisa + "s";
-    } else if ($("info-boost").innerHTML.indexOf("aktif") !== -1) {
-      $("info-boost").textContent = "Tidak ada boost aktif.";
-    }
-
-    // Cek level up
-    this.cekLevelUp();
-  },
-
-  cekLevelUp() {
-    const koin = state.pemain.koin || 0;
-    const lvBaru = Math.floor(Math.pow(koin / 1000, 0.5)) + 1;
-    if (lvBaru > (state.pemain.level || 1)) {
-      state.pemain.level = lvBaru;
-      SFX.chime();
-      toast("🎉 Naik ke Level " + lvBaru + "!", "sukses", 3000);
-      Game.updateHeaderSaldo();
-      this.updateHeaderLevel();
-    }
-  },
-
-  updateHeaderLevel() {
-    const lv = state.pemain.level || 1;
-    $("hdr-lv").textContent = lv;
-    // Progress bar: koin relatif ke level berikutnya
-    const nextKoin = Math.pow(lv, 2) * 1000;
-    const prevKoin = Math.pow(lv - 1, 2) * 1000;
-    const cur = state.pemain.koin || 0;
-    const pct = Math.max(0, Math.min(100, ((cur - prevKoin) / (nextKoin - prevKoin)) * 100));
-    $("hdr-lvl-fill").style.width = pct + "%";
-  },
-
-  /* ===== SINKRONISASI ke server tiap 10 detik & saat keluar ===== */
-  async sync(saatKeluar) {
-    if (!state.token) return;
-    const koinLapor = Math.floor(state.koinPending);
-    if (koinLapor <= 0 && !saatKeluar) return;
-
-    try {
-      const resp = await api("syncProgress", {
-        koin_lapor: koinLapor,
-        level: state.pemain.level || 1,
-        unit: state.unit,
-        manajer: state.manajer,
-        cabang: state.cabang,
-        boost_sampai: state.boost.sampai,
-        device_id: localStorage.getItem("mp7000_device_id") || ""
-      }, { abaikanError: true });
-
-      if (resp && resp.ok) {
-        state.koinPending = 0;
-        // Sinkronkan saldo dari server (biar konsisten)
-        if (resp.data && resp.data.pemain) {
-          const p = resp.data.pemain;
-          state.pemain.koin    = p.koin;
-          state.pemain.rupiah  = p.rupiah;
-          state.pemain.kristal = p.kristal;
-          state.pemain.level   = p.level;
-          Game.updateHeaderSaldo();
-          Produksi.updateHeaderLevel();
-        }
-      }
-    } catch (e) {
-      // diamkan, akan retry di tick berikutnya
-      console.warn("Sync gagal:", e.message);
-    }
+  } else {
+    elMusik.pause();
   }
-};
+}
+function toggleMusik() {
+  musikAktif = !musikAktif;
+  localStorage.setItem("smp7k_musik", musikAktif ? "on" : "off");
+  terapkanMusik();
+  toast(musikAktif ? "Musik dinyalakan" : "Musik dimatikan");
+}
+terapkanMusik();
 
-/* Sync saat keluar */
+/* =========================================================
+   TAP GAME
+   ========================================================= */
+const areaGame = document.getElementById("areaGame");
+areaGame.addEventListener("touchstart", (e) => {
+  // Cegah multitouch berlebihan
+  if (e.touches.length > 3) return;
+  for (let i = 0; i < e.touches.length; i++) {
+    prosesTap(e.touches[i].clientX, e.touches[i].clientY);
+  }
+}, { passive: true });
+areaGame.addEventListener("mousedown", (e) => prosesTap(e.clientX, e.clientY));
+
+function prosesTap(x, y) {
+  state.koin += 1;
+  state.totalKoin += 1;
+  perbaruiHeader();
+  suaraTap();
+  buatEfekTap(x, y);
+}
+
+function buatEfekTap(x, y) {
+  // +1
+  const plus = document.createElement("div");
+  plus.className = "efek-tap";
+  plus.textContent = "+1";
+  plus.style.left = x + "px";
+  plus.style.top  = y + "px";
+  document.body.appendChild(plus);
+  setTimeout(() => plus.remove(), 800);
+
+  // partikel busa
+  for (let i = 0; i < 5; i++) {
+    const p = document.createElement("div");
+    p.className = "partikel";
+    const sudut = Math.random() * Math.PI * 2;
+    const jarak = 20 + Math.random() * 35;
+    p.style.setProperty("--dx", Math.cos(sudut) * jarak + "px");
+    p.style.setProperty("--dy", Math.sin(sudut) * jarak + "px");
+    p.style.left = x + "px";
+    p.style.top  = y + "px";
+    p.style.width = p.style.height = (5 + Math.random() * 8) + "px";
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 700);
+  }
+}
+
+/* =========================================================
+   HEADER UPDATE
+   ========================================================= */
+function perbaruiHeader() {
+  document.getElementById("hdrKoin").textContent   = formatAngka(state.koin);
+  document.getElementById("hdrRupiah").textContent = formatAngka(state.rupiah);
+  document.getElementById("hdrKristal").textContent= formatAngka(state.kristal);
+  document.getElementById("hdrLevel").textContent  = state.level;
+  document.getElementById("hdrNama").textContent   = "🏍️ " + (state.profil?.nama || localStorage.getItem("smp7k_nama") || "Pak Aldi");
+  const perlu = state.level * 10000;
+  const persen = Math.min(100, (state.totalKoin % perlu) / perlu * 100);
+  document.getElementById("hdrLevelFill").style.width = persen + "%";
+}
+
+/* =========================================================
+   PRODUKSI OTOMATIS (client-side)
+   ========================================================= */
+setInterval(() => {
+  if (state.produksiPerDetik > 0) {
+    state.koin += state.produksiPerDetik;
+    state.totalKoin += state.produksiPerDetik;
+    perbaruiHeader();
+  }
+}, 1000);
+
+/* =========================================================
+   SYNC PROGRESS KE SERVER tiap 10 detik
+   ========================================================= */
+async function syncProgress() {
+  if (!state.profil) return;
+  const tambahan = Math.floor(state.koin - (state.koinTersimpan || 0));
+  if (tambahan <= 0 && state.produksiPerDetik <= 0) return;
+
+  const resp = await panggilApi("syncProgress", {
+    koin_tambahan: tambahan,
+    produksi_per_detik: state.produksiPerDetik,
+    total_koin_pernah: Math.floor(state.totalKoin),
+    device_id: state.deviceId
+  }, TOKEN);
+
+  if (resp.ok && resp.data) {
+    state.koinTersimpan = Math.floor(state.koin);
+    // Server bisa mengoreksi
+    if (typeof resp.data.koin === "number") state.koin = resp.data.koin;
+    if (typeof resp.data.rupiah === "number") state.rupiah = resp.data.rupiah;
+    if (typeof resp.data.kristal === "number") state.kristal = resp.data.kristal;
+    if (typeof resp.data.level === "number") state.level = resp.data.level;
+    perbaruiHeader();
+  }
+}
+setInterval(syncProgress, 10000);
+
+/* Sync terakhir saat keluar */
 window.addEventListener("beforeunload", () => {
-  Produksi.sync(true);
-});
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") Produksi.sync(true);
-});
-  /* ============================================================
-   RENDER: TAB GAME (daftar unit upgrade)
-   ============================================================ */
-function renderUnit() {
-  const wrap = $("daftar-unit");
-  wrap.innerHTML = "";
-  UNIT_BASE.forEach(u => {
-    const s = state.unit[u.id] || { level: 0, prod: 0 };
-    const lv = s.level || 0;
-    const prodNow = s.prod || 0;
-    const hargaNext = Math.floor(u.hargaAwal * Math.pow(2.5, lv));
-    const prodNext  = Math.floor(u.prodAwal  * Math.pow(2, lv));
-    const bisa = (state.pemain.koin || 0) >= hargaNext;
-
-    const div = document.createElement("div");
-    div.className = "item-baris";
-    div.innerHTML = `
-      <div class="item-ikon">${u.ikon}</div>
-      <div class="item-info">
-        <div class="item-nama">${u.nama} <span class="badge">Lv ${lv}</span></div>
-        <div class="item-sub">Produksi: <b>${formatAngka(prodNow)}/dtk</b> → ${formatAngka(prodNext)}/dtk</div>
-        <div class="item-sub">Harga: <b>${formatAngka(hargaNext)}</b> koin</div>
-      </div>
-      <div class="item-aksi">
-        <button class="btn btn-merah" ${bisa ? "" : "disabled"} data-unit="${u.id}">
-          ${lv === 0 ? "Beli" : "Upgrade"}
-        </button>
-      </div>
-    `;
-    div.querySelector("button").addEventListener("click", () => beliUnit(u.id));
-    wrap.appendChild(div);
+  if (!state.profil) return;
+  const tambahan = Math.floor(state.koin - (state.koinTersimpan || 0));
+  if (tambahan <= 0 && state.produksiPerDetik <= 0) return;
+  // Pakai sendBeacon kalau ada, fallback fetch keepalive
+  const payload = JSON.stringify({
+    api_key: API_KEY, action: "syncProgress", token: TOKEN,
+    data: {
+      koin_tambahan: tambahan,
+      produksi_per_detik: state.produksiPerDetik,
+      total_koin_pernah: Math.floor(state.totalKoin),
+      device_id: state.deviceId
+    }
   });
-}
-
-async function beliUnit(unitId) {
-  const u = UNIT_BASE.find(x => x.id === unitId);
-  const s = state.unit[unitId] || { level: 0, prod: 0 };
-  const lv = s.level || 0;
-  const harga = Math.floor(u.hargaAwal * Math.pow(2.5, lv));
-  if ((state.pemain.koin || 0) < harga) {
-    toast("Koin kamu kurang, bro!", "error"); SFX.buzz(); return;
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(API_URL, new Blob([payload], { type: "application/json" }));
+  } else {
+    fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: payload, keepalive:true }).catch(()=>{});
   }
-  setLoading(true, "Beli unit...");
-  try {
-    const resp = await api("beliUnit", { unit_id: unitId });
-    if (!resp.ok) throw new Error(resp.message);
-    // Update lokal
-    state.pemain.koin = resp.data.koin;
-    state.unit[unitId] = resp.data.unit;
-    Game.updateHeaderSaldo();
-    renderUnit();
-    Produksi.hitungTotal();
-    toast("✅ " + u.nama + " naik level!", "sukses");
-    SFX.koin();
-  } catch (e) {
-    toast("Gagal: " + e.message, "error"); SFX.buzz();
-  } finally {
-    setLoading(false);
+});
+
+/* =========================================================
+   MENU SLIDE
+   ========================================================= */
+const DAFTAR_MENU = [
+  { id:"game",    ikon:"🎮", nama:"Game" },
+  { id:"manajer", ikon:"👷", nama:"Manajer" },
+  { id:"cabang",  ikon:"🏪", nama:"Cabang" },
+  { id:"toko",    ikon:"🛒", nama:"Toko" },
+  { id:"convert", ikon:"💱", nama:"Convert" },
+  { id:"topup",   ikon:"📱", nama:"Topup" },
+  { id:"voucher", ikon:"🎟️", nama:"Voucher" },
+  { id:"cerita",  ikon:"📖", nama:"Cerita" },
+  { id:"profil",  ikon:"👤", nama:"Profil" }
+];
+function bangunMenu() {
+  const wadah = document.getElementById("menuList");
+  wadah.innerHTML = "";
+  DAFTAR_MENU.forEach(m => {
+    const d = document.createElement("div");
+    d.className = "menu-item";
+    d.innerHTML = `<span class="ikon">${m.ikon}</span><span>${m.nama}</span>`;
+    d.onclick = () => { tutupMenu(); bukaPanel(m.id); };
+    wadah.appendChild(d);
+  });
+}
+bangunMenu();
+
+function bukaMenu() {
+  document.getElementById("menuSlide").classList.add("aktif");
+  document.getElementById("overlayMenu").classList.add("aktif");
+}
+function tutupMenu() {
+  document.getElementById("menuSlide").classList.remove("aktif");
+  document.getElementById("overlayMenu").classList.remove("aktif");
+}
+
+/* =========================================================
+   PANEL KONTEN
+   ========================================================= */
+function bukaPanel(id) {
+  document.getElementById("panel").classList.add("aktif");
+  const m = DAFTAR_MENU.find(x => x.id === id);
+  document.getElementById("panelJudul").textContent = (m ? m.ikon + " " + m.nama : id);
+  renderPanel(id);
+}
+function tutupPanel() {
+  document.getElementById("panel").classList.remove("aktif");
+}
+
+function renderPanel(id) {
+  const body = document.getElementById("panelBody");
+  body.innerHTML = "";
+  switch(id) {
+    case "game":    renderGame(body); break;
+    case "manajer": renderManajer(body); break;
+    case "cabang":  renderCabang(body); break;
+    case "toko":    renderToko(body); break;
+    case "convert": renderConvert(body); break;
+    case "topup":   renderTopup(body); break;
+    case "voucher": renderVoucher(body); break;
+    case "cerita":  renderCerita(body); break;
+    case "profil":  renderProfil(body); break;
   }
 }
 
-/* ============================================================
-   RENDER: TAB MANAJER
-   ============================================================ */
-function renderManajer() {
-  const wrap = $("daftar-manajer");
-  wrap.innerHTML = "";
-  MANAJER_BASE.forEach(m => {
-    const s = state.manajer[m.id] || { sewa: false, level: 1, stamina: 100 };
-    const disewa = s.sewa;
-    const hargaSewa = m.harga;
-    const bisa = (state.pemain.koin || 0) >= hargaSewa;
+/* =========================================================
+   TAB GAME
+   ========================================================= */
+const DAFTAR_UPGRADE = [
+  { bagian:"semprot", nama:"Tukang Semprot", produksi:1,  harga:100 },
+  { bagian:"sabun",   nama:"Tukang Sabun",   produksi:5,  harga:1000 },
+  { bagian:"bilas",   nama:"Tukang Bilas",   produksi:25, harga:10000 },
+  { bagian:"kering",  nama:"Tukang Kering",  produksi:100,harga:100000 },
+  { bagian:"poles",   nama:"Tukang Poles",   produksi:500,harga:1000000 },
+  { bagian:"kompresor",nama:"Kompresor",     produksi:2500,harga:10000000 }
+];
+function renderGame(body) {
+  const info = document.createElement("div");
+  info.className = "kartu";
+  info.innerHTML = `<h4>🎮 Area Tap</h4><div class="sub">Tap di mana saja buat dapet koin. Produksi otomatis: <b>${formatAngka(state.produksiPerDetik)} koin/detik</b></div>`;
+  body.appendChild(info);
 
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <div style="display:flex;gap:10px;align-items:center">
-        <div class="item-ikon" style="width:52px;height:52px;font-size:26px">${m.ikon}</div>
-        <div style="flex:1;min-width:0">
-          <div class="item-nama">${m.nama} <span class="badge ${disewa ? "" : "off"}">${disewa ? "Aktif" : "Belum disewa"}</span></div>
-          <div class="item-sub">Bagian: <b>${m.bagian}</b></div>
-          <div class="item-sub">Produksi: <b>${formatAngka(m.prod * (s.level||1))}/dtk</b></div>
-        </div>
-      </div>
-      <div style="margin-top:10px;padding:10px;background:#fff8e1;border-radius:8px;font-size:12px;color:#8d6e00">
-        ✨ Skill: ${m.skill}
-      </div>
-      ${disewa ? `
-        <div style="margin-top:8px;font-size:12px;color:#757575">
-          Level: <b>${s.level||1}</b> · Stamina: <b>${s.stamina||100}%</b>
-        </div>
-        <button class="btn btn-biru" style="width:100%;margin-top:8px" data-upgrade="${m.id}">
-          Upgrade (${formatAngka(m.harga * (s.level||1))} koin)
-        </button>
-      ` : `
-        <button class="btn btn-merah" style="width:100%;margin-top:8px" ${bisa ? "" : "disabled"} data-sewa="${m.id}">
-          Sewa — ${formatAngka(hargaSewa)} koin
-        </button>
-      `}
-    `;
-    wrap.appendChild(div);
-  });
-
-  // Event
-  wrap.querySelectorAll("[data-sewa]").forEach(btn => {
-    btn.addEventListener("click", () => sewaManajer(btn.dataset.sewa));
-  });
-  wrap.querySelectorAll("[data-upgrade]").forEach(btn => {
-    btn.addEventListener("click", () => upgradeManajer(btn.dataset.upgrade));
+  DAFTAR_UPGRADE.forEach(u => {
+    const lv = state.upgrade[u.bagian] || 0;
+    const hargaUpgrade = Math.floor(u.harga * Math.pow(1.6, lv));
+    const produksiTotal = u.produksi * (lv + 1);
+    const k = document.createElement("div");
+    k.className = "kartu";
+    k.innerHTML = `
+      <div class="row"><h4>${u.nama}</h4><span class="badge badge-aktif">Lv ${lv}</span></div>
+      <div class="sub">Produksi: ${formatAngka(produksiTotal)} koin/detik</div>
+      <div class="row" style="margin-top:8px">
+        <span class="sub">Upgrade: 🪙 ${formatAngka(hargaUpgrade)}</span>
+        <button class="btn btn-merah" ${state.koin < hargaUpgrade ? "disabled" : ""}>Upgrade</button>
+      </div>`;
+    k.querySelector("button").onclick = () => upgradeBagian(u.bagian);
+    body.appendChild(k);
   });
 }
 
-async function sewaManajer(mgrId) {
-  const m = MANAJER_BASE.find(x => x.id === mgrId);
-  if ((state.pemain.koin || 0) < m.harga) { toast("Koin kurang!", "error"); SFX.buzz(); return; }
-  setLoading(true, "Menyewa " + m.nama + "...");
-  try {
-    const resp = await api("sewaManajer", { manajer_id: mgrId });
-    if (!resp.ok) throw new Error(resp.message);
-    state.pemain.koin = resp.data.koin;
-    state.manajer[mgrId] = resp.data.manajer;
-    Game.updateHeaderSaldo();
-    renderManajer();
-    Produksi.hitungTotal();
-    toast("✅ " + m.nama + " resmi bergabung!", "sukses");
-    SFX.chime();
-  } catch (e) {
-    toast("Gagal: " + e.message, "error"); SFX.buzz();
-  } finally { setLoading(false); }
+async function upgradeBagian(bagian) {
+  loading(true);
+  const resp = await panggilApi("upgradeBagian", { bagian }, TOKEN);
+  loading(false);
+  if (resp.ok) {
+    suaraKoin();
+    toast("Upgrade sukses!", "sukses");
+    if (resp.data) terapkanDataProfil(resp.data);
+    renderPanel("game");
+  } else {
+    suaraError(); toast(resp.message || "Gagal upgrade", "error");
+  }
 }
 
-async function upgradeManajer(mgrId) {
-  const m = MANAJER_BASE.find(x => x.id === mgrId);
-  const s = state.manajer[mgrId];
-  const harga = m.harga * (s.level || 1);
-  if ((state.pemain.koin || 0) < harga) { toast("Koin kurang!", "error"); SFX.buzz(); return; }
-  setLoading(true, "Upgrade...");
-  try {
-    const resp = await api("upgradeManajer", { manajer_id: mgrId });
-    if (!resp.ok) throw new Error(resp.message);
-    state.pemain.koin = resp.data.koin;
-    state.manajer[mgrId] = resp.data.manajer;
-    Game.updateHeaderSaldo();
-    renderManajer();
-    Produksi.hitungTotal();
-    toast("✅ " + m.nama + " naik level!", "sukses");
-    SFX.koin();
-  } catch (e) {
-    toast("Gagal: " + e.message, "error"); SFX.buzz();
-  } finally { setLoading(false); }
-}
-
-/* ============================================================
-   RENDER: TAB CABANG
-   ============================================================ */
-function renderCabang() {
-  const wrap = $("daftar-cabang");
-  wrap.innerHTML = "";
-  CABANG_BASE.forEach(c => {
-    const dibuka = state.cabang.dibuka.indexOf(c.id) !== -1;
-    const aktif = state.cabang.aktif === c.id;
-    const totalKoinPernah = state.pemain.total_koin_pernah || state.pemain.koin || 0;
-    const bisaBuka = totalKoinPernah >= c.syarat;
-
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div class="item-nama">${c.nama} ${aktif ? '<span class="badge">Aktif</span>' : ""}</div>
-          <div class="item-sub">Bonus produksi: <b>x${c.bonus}</b></div>
-          <div class="item-sub">Syarat: <b>${formatAngka(c.syarat)}</b> koin total</div>
-        </div>
-      </div>
-      ${dibuka
-        ? (aktif ? "" : `<button class="btn btn-hijau" style="width:100%;margin-top:8px" data-pindah="${c.id}">Pindah ke Cabang Ini</button>`)
-        : `<button class="btn btn-merah" style="width:100%;margin-top:8px" ${bisaBuka ? "" : "disabled"} data-buka="${c.id}">Buka (${formatAngka(c.biaya)} koin)</button>`}
-    `;
-    wrap.appendChild(div);
+/* =========================================================
+   TAB MANAJER
+   ========================================================= */
+const DAFTAR_MANAJER = [
+  { bagian:"semprot", nama:"Pak Budi",  skill:"Semprot Cepat",  harga:500,     produksi:1 },
+  { bagian:"sabun",   nama:"Bu Siti",   skill:"Busa Lebat",     harga:5000,    produksi:5 },
+  { bagian:"bilas",   nama:"Pak Andi",  skill:"Bilas Bersih",   harga:50000,   produksi:25 },
+  { bagian:"kering",  nama:"Bu Rina",   skill:"Kering Kilat",   harga:500000,  produksi:100 },
+  { bagian:"poles",   nama:"Pak Joko",  skill:"Poles Mengkilap",harga:5000000, produksi:500 },
+  { bagian:"kompresor",nama:"Teknisi Umar", skill:"Angin Kencang", harga:50000000, produksi:2500 }
+];
+function renderManajer(body) {
+  DAFTAR_MANAJER.forEach(m => {
+    const dimiliki = state.manajer[m.bagian];
+    const k = document.createElement("div");
+    k.className = "kartu";
+    k.innerHTML = `
+      <div class="row"><h4>${m.nama}</h4><span class="badge ${dimiliki ? "badge-aktif" : "badge-lock"}">${dimiliki ? "Aktif" : "Belum disewa"}</span></div>
+      <div class="sub">Bagian: ${m.bagian} • Skill: ${m.skill}</div>
+      <div class="sub">Produksi: ${formatAngka(m.produksi)} koin/detik</div>
+      ${dimiliki ? `<div class="sub">Level ${dimiliki.level || 1} • Stamina ${dimiliki.stamina || 100}%</div>` : ""}
+      <div class="row" style="margin-top:8px">
+        <span class="sub">Sewa: 🪙 ${formatAngka(m.harga)}</span>
+        ${dimiliki ? `<button class="btn btn-abu" disabled>Sudah disewa</button>` :
+          `<button class="btn btn-hijau" ${state.koin < m.harga ? "disabled" : ""}>Sewa</button>`}
+      </div>`;
+    if (!dimiliki) k.querySelector("button").onclick = () => sewaManajer(m.bagian);
+    body.appendChild(k);
   });
-  wrap.querySelectorAll("[data-pindah]").forEach(b => b.addEventListener("click", () => pindahCabang(b.dataset.pindah)));
-  wrap.querySelectorAll("[data-buka]").forEach(b => b.addEventListener("click", () => bukaCabang(b.dataset.buka)));
+}
+async function sewaManajer(bagian) {
+  loading(true);
+  const resp = await panggilApi("sewaManajer", { bagian }, TOKEN);
+  loading(false);
+  if (resp.ok) { suaraLevel(); toast("Manajer disewa!", "sukses"); if (resp.data) terapkanDataProfil(resp.data); renderPanel("manajer"); }
+  else { suaraError(); toast(resp.message || "Gagal sewa", "error"); }
 }
 
-async function pindahCabang(cabangId) {
-  setLoading(true, "Pindah cabang...");
-  try {
-    const resp = await api("pindahCabang", { cabang_id: cabangId });
-    if (!resp.ok) throw new Error(resp.message);
-    state.cabang = resp.data.cabang;
-    renderCabang(); Produksi.hitungTotal();
-    toast("🏢 Pindah ke " + cabangId, "sukses");
-  } catch (e) { toast("Gagal: " + e.message, "error"); SFX.buzz(); }
-  finally { setLoading(false); }
-}
+/* =========================================================
+   TAB CABANG
+   ========================================================= */
+function renderCabang(body) {
+  const k = document.createElement("div");
+  k.className = "kartu";
+  k.innerHTML = `<h4>🏪 Cabang Aktif: ${state.cabangAktif}</h4>`;
+  body.appendChild(k);
 
-async function bukaCabang(cabangId) {
-  setLoading(true, "Membuka cabang...");
-  try {
-    const resp = await api("bukaCabang", { cabang_id: cabangId });
-    if (!resp.ok) throw new Error(resp.message);
-    state.pemain.koin = resp.data.koin;
-    state.cabang = resp.data.cabang;
-    Game.updateHeaderSaldo();
-    renderCabang(); Produksi.hitungTotal();
-    toast("🎉 Cabang baru dibuka!", "sukses");
-    SFX.chime();
-  } catch (e) { toast("Gagal: " + e.message, "error"); SFX.buzz(); }
-  finally { setLoading(false); }
-}
-
-/* ============================================================
-   RENDER: TAB TOKO
-   ============================================================ */
-function renderToko() {
-  const wrap = $("daftar-toko");
-  wrap.innerHTML = "";
-  TOKO_BASE.forEach(t => {
-    const dimiliki = state.inventori.indexOf(t.id) !== -1;
-    const bisaKoin = (state.pemain.koin || 0) >= t.hargaKoin;
-    const bisaRp   = (state.pemain.rupiah || 0) >= t.hargaRp;
-
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <div style="display:flex;gap:10px;align-items:center">
-        <div class="item-ikon" style="width:52px;height:52px;font-size:26px">${t.ikon}</div>
-        <div style="flex:1">
-          <div class="item-nama">${t.nama} ${dimiliki ? '<span class="badge emas">Dimiliki</span>' : ""}</div>
-          <div class="item-sub">🪙 ${formatAngka(t.hargaKoin)} koin · 💵 ${formatRupiah(t.hargaRp)}</div>
-        </div>
-      </div>
-      ${dimiliki ? "" : `
-        <div class="row mt10">
-          <button class="btn btn-merah flex1" ${bisaKoin ? "" : "disabled"} data-beli-koin="${t.id}">🪙 Beli Koin</button>
-          <button class="btn btn-biru flex1" ${bisaRp ? "" : "disabled"} data-beli-rp="${t.id}">💵 Beli Rp</button>
-        </div>
-      `}
-    `;
-    wrap.appendChild(div);
+  (state.cabang.length ? state.cabang : [1]).forEach(c => {
+    const nomor = c.nomor || c;
+    const aktif = nomor == state.cabangAktif;
+    const d = document.createElement("div");
+    d.className = "kartu";
+    d.innerHTML = `
+      <div class="row"><h4>Cabang ${nomor}</h4>${aktif ? '<span class="badge badge-aktif">Aktif</span>' : ""}</div>
+      ${!aktif ? `<button class="btn btn-biru" style="margin-top:6px;width:100%">Pindah ke Cabang Ini</button>` : ""}`;
+    if (!aktif) d.querySelector("button").onclick = () => pindahCabang(nomor);
+    body.appendChild(d);
   });
-  wrap.querySelectorAll("[data-beli-koin]").forEach(b => b.addEventListener("click", () => beliItem(b.dataset.beliKoin, "koin")));
-  wrap.querySelectorAll("[data-beli-rp]").forEach(b => b.addEventListener("click", () => beliItem(b.dataset.beliRp, "rupiah")));
+
+  const buka = document.createElement("div");
+  buka.className = "kartu";
+  const cabangBerikut = (state.cabang.length ? Math.max(...state.cabang.map(c => c.nomor || c)) : 1) + 1;
+  buka.innerHTML = `<h4>Buka Cabang Baru (Cabang ${cabangBerikut})</h4><div class="sub">Syarat: level 5+ dan 🪙 1.000.000</div>
+    <button class="btn btn-kuning" style="margin-top:6px;width:100%" ${state.level < 5 || state.koin < 1000000 ? "disabled" : ""}>Buka Cabang ${cabangBerikut}</button>`;
+  buka.querySelector("button").onclick = () => bukaCabang(cabangBerikut);
+  body.appendChild(buka);
+}
+async function pindahCabang(nomor) {
+  loading(true);
+  const resp = await panggilApi("pindahCabang", { nomor_cabang: nomor }, TOKEN);
+  loading(false);
+  if (resp.ok) { toast("Pindah cabang sukses", "sukses"); state.cabangAktif = nomor; if (resp.data) terapkanDataProfil(resp.data); renderPanel("cabang"); }
+  else { suaraError(); toast(resp.message || "Gagal pindah", "error"); }
+}
+async function bukaCabang(nomor) {
+  loading(true);
+  const resp = await panggilApi("bukaCabang", { nomor_cabang: nomor }, TOKEN);
+  loading(false);
+  if (resp.ok) { suaraLevel(); toast("Cabang baru dibuka!", "sukses"); if (resp.data) terapkanDataProfil(resp.data); renderPanel("cabang"); }
+  else { suaraError(); toast(resp.message || "Gagal buka cabang", "error"); }
 }
 
-async function beliItem(itemId, mata) {
-  const t = TOKO_BASE.find(x => x.id === itemId);
-  setLoading(true, "Membeli...");
-  try {
-    const resp = await api("beliItem", { item_id: itemId, mata_uang: mata });
-    if (!resp.ok) throw new Error(resp.message);
-    state.pemain.koin = resp.data.koin;
-    state.pemain.rupiah = resp.data.rupiah;
-    state.inventori = resp.data.inventori || state.inventori;
-    if (state.inventori.indexOf(itemId) === -1) state.inventori.push(itemId);
-    Game.updateHeaderSaldo();
-    renderToko();
-    toast("✅ " + t.nama + " berhasil dibeli!", "sukses");
-    SFX.koin();
-  } catch (e) { toast("Gagal: " + e.message, "error"); SFX.buzz(); }
-  finally { setLoading(false); }
+/* =========================================================
+   TAB TOKO
+   ========================================================= */
+const DAFTAR_TOKO = [
+  { id:"skin",    nama:"Skin motor",          koin:50000,  rupiah:4000 },
+  { id:"tema",    nama:"Tema steam",          koin:100000, rupiah:8000 },
+  { id:"badge",   nama:"Badge",               koin:20000,  rupiah:1500 },
+  { id:"boost",   nama:"Boost 1 jam",         koin:200000, rupiah:15000 },
+  { id:"unlock",  nama:"Unlock manajer cepat",koin:500000, rupiah:40000 },
+  { id:"voucher", nama:"Voucher cuci",        koin:70000,  rupiah:7000 }
+];
+function renderToko(body) {
+  const daftar = state.toko.length ? state.toko : DAFTAR_TOKO;
+  daftar.forEach(it => {
+    const k = document.createElement("div");
+    k.className = "kartu";
+    k.innerHTML = `
+      <h4>${it.nama}</h4>
+      <div class="sub">🪙 ${formatAngka(it.koin)} &nbsp;|&nbsp; 💵 Rp ${formatAngka(it.rupiah)}</div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn btn-merah" ${state.koin < it.koin ? "disabled" : ""}>Beli dengan Koin</button>
+        <button class="btn btn-biru">Beli dengan Rupiah</button>
+      </div>`;
+    k.querySelectorAll("button")[0].onclick = () => beliItem(it.id, "koin");
+    k.querySelectorAll("button")[1].onclick = () => beliItem(it.id, "rupiah");
+    body.appendChild(k);
+  });
 }
-  /* ============================================================
+async function beliItem(item_id, metode_bayar) {
+  loading(true);
+  const resp = await panggilApi("beliItem", { item_id, metode_bayar }, TOKEN);
+  loading(false);
+  if (resp.ok) { suaraKoin(); toast("Pembelian sukses!", "sukses"); if (resp.data) terapkanDataProfil(resp.data); renderPanel("toko"); }
+  else { suaraError(); toast(resp.message || "Gagal beli", "error"); }
+}
+
+/* =========================================================
    TAB CONVERT
-   ============================================================ */
-function updateConvertPreview() {
-  const input = $("cv-input");
-  const val = parseInt(input.value) || 0;
-  const prev = $("cv-preview");
-  if (val < 10000) { prev.style.display = "none"; return; }
-  const metode = document.querySelector('input[name="cv-metode"]:checked').value;
-  const biaya = metode === "potong" ? Math.floor(val * 0.1) : 0;
-  const netto = val - biaya;
-  const rupiah = Math.floor(netto / 1000);
-  $("cv-potong").textContent = formatAngka(biaya);
-  $("cv-biaya").textContent = metode === "potong" ? "10%" : "Nonton iklan";
-  $("cv-terima").textContent = formatRupiah(rupiah);
-  prev.style.display = "block";
+   ========================================================= */
+function renderConvert(body) {
+  const k = document.createElement("div");
+  k.className = "kartu";
+  k.innerHTML = `
+    <h4>💱 Convert Koin → Rupiah</h4>
+    <div class="sub">Minimal 10.000 koin. Setelah convert tidak bisa dibatalkan.</div>
+    <input class="input-biasa" id="convertJumlah" type="number" placeholder="Jumlah koin" style="margin-top:8px">
+    <div class="sub" id="convertPreview" style="margin-top:6px">Preview: -</div>
+    <div class="row" style="margin-top:8px">
+      <label class="sub"><input type="radio" name="metode" value="potong" checked> Potong 10%</label>
+      <label class="sub"><input type="radio" name="metode" value="iklan"> Nonton Iklan</label>
+    </div>
+    <button class="btn btn-kuning" id="btnConvert" style="width:100%;margin-top:10px">Konversi Sekarang</button>`;
+  body.appendChild(k);
+
+  const input = k.querySelector("#convertJumlah");
+  const preview = k.querySelector("#convertPreview");
+  input.oninput = () => {
+    const j = parseInt(input.value) || 0;
+    if (j < 10000) { preview.textContent = "Minimal 10.000 koin"; return; }
+    const metode = k.querySelector('input[name="metode"]:checked').value;
+    const bersih = metode === "potong" ? j * 0.9 : j;
+    preview.textContent = `Dapat: 💵 ${formatAngka(bersih)} (${metode === "potong" ? "potong 10%" : "tanpa potong"})`;
+  };
+  k.querySelectorAll('input[name="metode"]').forEach(r => r.onchange = () => input.oninput());
+  k.querySelector("#btnConvert").onclick = () => convertKoin(parseInt(input.value) || 0, k.querySelector('input[name="metode"]:checked').value);
 }
-$("cv-input").addEventListener("input", updateConvertPreview);
-document.querySelectorAll('input[name="cv-metode"]').forEach(r => r.addEventListener("change", updateConvertPreview));
+async function convertKoin(jumlah, metode_biaya) {
+  if (jumlah < 10000) { suaraError(); toast("Minimal 10.000 koin", "error"); return; }
+  loading(true);
+  const resp = await panggilApi("convertKoin", { jumlah_koin: jumlah, metode_biaya }, TOKEN);
+  loading(false);
+  if (resp.ok) { suaraKoin(); toast("Convert sukses!", "sukses"); if (resp.data) terapkanDataProfil(resp.data); renderPanel("convert"); }
+  else { suaraError(); toast(resp.message || "Gagal convert", "error"); }
+}
 
-$("btn-convert").addEventListener("click", async () => {
-  const val = parseInt($("cv-input").value) || 0;
-  if (val < 10000) { toast("Minimal convert 10.000 koin!", "error"); SFX.buzz(); return; }
-  if (val > (state.pemain.koin || 0)) { toast("Koin kamu tidak cukup!", "error"); SFX.buzz(); return; }
-  const metode = document.querySelector('input[name="cv-metode"]:checked').value;
-
-  if (metode === "iklan") {
-    // Wajib tonton iklan dulu (dipanggil via slot rewarded)
-    const sukses = await tontonIklanRewarded();
-    if (!sukses) { toast("Iklan tidak selesai ditonton.", "error"); return; }
-  }
-
-  setLoading(true, "Konversi...");
-  try {
-    const resp = await api("convert", { jumlah: val, metode: metode });
-    if (!resp.ok) throw new Error(resp.message);
-    state.pemain.koin = resp.data.koin;
-    state.pemain.rupiah = resp.data.rupiah;
-    Game.updateHeaderSaldo();
-    updateConvertPreview();
-    toast("💱 Berhasil! +" + formatRupiah(resp.data.diterima), "sukses", 3500);
-    SFX.chime();
-  } catch (e) { toast("Gagal: " + e.message, "error"); SFX.buzz(); }
-  finally { setLoading(false); }
-});
-
-/* ============================================================
+/* =========================================================
    TAB TOPUP
-   ============================================================ */
-let topupJenis = "koin";
-let topupPilihan = null;
+   ========================================================= */
+const PAKET_TOPUP = {
+  koin:   [{ rp:5000, isi:100000 },{ rp:10000, isi:250000 },{ rp:25000, isi:700000 },{ rp:50000, isi:1500000 },{ rp:100000, isi:3500000 }],
+  rupiah: [{ rp:5000, isi:5500 },{ rp:10000, isi:12000 },{ rp:25000, isi:32500 },{ rp:50000, isi:70000 },{ rp:100000, isi:150000 }],
+  kristal:[{ rp:5000, isi:10 },{ rp:10000, isi:25 },{ rp:25000, isi:70 },{ rp:50000, isi:160 },{ rp:100000, isi:350 }]
+};
+function renderTopup(body) {
+  const jenis = ["koin","rupiah","kristal"];
+  const judul = document.createElement("div");
+  judul.className = "kartu";
+  judul.innerHTML = `<h4>📱 Topup</h4><div class="sub">Pilih paket, scan QRIS, upload bukti.</div>`;
+  body.appendChild(judul);
 
-function renderPaketTopup() {
-  const wrap = $("daftar-paket");
-  wrap.innerHTML = "";
-  PAKET_TOPUP[topupJenis].forEach(p => {
-    const div = document.createElement("div");
-    div.className = "paket" + (topupPilihan === p ? " pilih" : "");
-    div.innerHTML = `
-      <div class="paket-isi">${p.isi}</div>
-      <div class="paket-harga">${formatRupiah(p.rp)}</div>
-    `;
-    div.addEventListener("click", () => {
-      topupPilihan = p;
-      $("qris-total").textContent = formatRupiah(p.rp);
-      $("qris-area").classList.remove("hidden");
-      renderPaketTopup();
-      // scroll ke QRIS
-      setTimeout(() => $("qris-area").scrollIntoView({behavior:"smooth"}), 100);
+  jenis.forEach(j => {
+    const k = document.createElement("div");
+    k.className = "kartu";
+    k.innerHTML = `<h4 style="text-transform:capitalize">Paket ${j}</h4>`;
+    PAKET_TOPUP[j].forEach(p => {
+      const b = document.createElement("div");
+      b.className = "row";
+      b.style.marginTop = "6px";
+      b.innerHTML = `<span class="sub">Rp ${formatAngka(p.rp)} → ${formatAngka(p.isi)} ${j === "koin" ? "koin" : j === "rupiah" ? "rupiah" : "kristal"}</span>
+        <button class="btn btn-biru">Pilih</button>`;
+      b.querySelector("button").onclick = () => pilihPaketTopup(j, p);
+      k.appendChild(b);
     });
-    wrap.appendChild(div);
+    body.appendChild(k);
   });
 }
-
-$$("#topup-tabs button").forEach(b => {
-  b.addEventListener("click", () => {
-    $$("#topup-tabs button").forEach(x => x.classList.remove("aktif"));
-    b.classList.add("aktif");
-    topupJenis = b.dataset.jenis;
-    topupPilihan = null;
-    $("qris-area").classList.add("hidden");
-    renderPaketTopup();
-  });
-});
-
-$("btn-ajukan-topup").addEventListener("click", async () => {
-  if (!topupPilihan) { toast("Pilih paket dulu!", "error"); return; }
-  const fileInput = $("qris-file");
-  if (!fileInput.files || !fileInput.files[0]) { toast("Upload bukti transfer dulu!", "error"); return; }
-
-  const file = fileInput.files[0];
-  if (file.size > 2 * 1024 * 1024) { toast("File maksimal 2MB", "error"); return; }
-
-  setLoading(true, "Upload bukti...");
-  try {
-    // Baca file jadi base64
-    const b64 = await new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result.split(",")[1]);
-      r.onerror = reject;
-      r.readAsDataURL(file);
-    });
-
-    const resp = await api("ajukanTopup", {
-      jenis: topupJenis,
-      nominal: topupPilihan.rp,
-      isi: topupPilihan.isi,
-      bukti_base64: b64,
-      bukti_nama: file.name
-    });
-    if (!resp.ok) throw new Error(resp.message);
-    toast("📤 Pengajuan terkirim! Tunggu verifikasi admin.", "sukses", 4000);
-    $("qris-area").classList.add("hidden");
-    topupPilihan = null;
-    fileInput.value = "";
-    muatRiwayatTopup();
-  } catch (e) { toast("Gagal: " + e.message, "error"); SFX.buzz(); }
-  finally { setLoading(false); }
-});
-
-async function muatRiwayatTopup() {
-  try {
-    const resp = await api("riwayatTopup", {}, { abaikanError: true });
-    if (!resp.ok) return;
-    const wrap = $("riwayat-topup");
-    if (!resp.data || !resp.data.length) { wrap.textContent = "Belum ada pengajuan."; return; }
-    wrap.innerHTML = resp.data.map(r => `
-      <div style="padding:8px 0;border-bottom:1px dashed #eee">
-        <b>${r.jenis}</b> — ${formatRupiah(r.nominal)}<br>
-        <small>${r.tanggal} · <span class="badge ${r.status==='approved'?'':r.status==='rejected'?'merah':'emas'}">${r.status}</span></small>
-      </div>
-    `).join("");
-  } catch (e) {}
+function pilihPaketTopup(jenis, paket) {
+  const body = document.getElementById("panelBody");
+  body.innerHTML = "";
+  const k = document.createElement("div");
+  k.className = "kartu";
+  k.innerHTML = `
+    <h4>📱 Paket ${jenis} — Rp ${formatAngka(paket.rp)}</h4>
+    <div class="sub">Isi: ${formatAngka(paket.isi)} ${jenis}</div>
+    <div class="slot-iklan">[Slot QRIS — assets/qris.png]</div>
+    <img src="assets/qris.png" alt="QRIS" style="width:100%;border-radius:12px;margin-bottom:10px" onerror="this.style.display='none'">
+    <input type="file" accept="image/*" id="buktiTopup" class="input-biasa">
+    <button class="btn btn-kuning" id="btnKirimTopup" style="width:100%;margin-top:10px">Upload & Kirim Bukti</button>
+    <button class="btn btn-abu" style="width:100%;margin-top:6px" onclick="renderPanel('topup')">Kembali</button>`;
+  body.appendChild(k);
+  k.querySelector("#btnKirimTopup").onclick = () => kirimTopup(jenis, paket);
 }
-
-/* ============================================================
-   TAB VOUCHER
-   ============================================================ */
-$("btn-tukar-voucher-koin").addEventListener("click", () => tukarVoucher("koin"));
-$("btn-tukar-voucher-rupiah").addEventListener("click", () => tukarVoucher("rupiah"));
-
-async function tukarVoucher(mata) {
-  const hp = $("vc-hp").value.trim();
-  if (!hp) { toast("Isi nomor HP konfirmasi dulu!", "error"); return; }
-  if (!/^08\d{8,11}$/.test(hp)) { toast("Format HP: 08xxx (10-13 digit)", "error"); return; }
-
-  if (mata === "koin" && (state.pemain.koin || 0) < 70000) { toast("Koin kurang (butuh 70.000)", "error"); SFX.buzz(); return; }
-  if (mata === "rupiah" && (state.pemain.rupiah || 0) < 7000) { toast("Rupiah kurang (butuh Rp 7.000)", "error"); SFX.buzz(); return; }
-
-  setLoading(true, "Menukar voucher...");
-  try {
-    const resp = await api("tukarVoucher", { mata_uang: mata, no_hp: hp });
-    if (!resp.ok) throw new Error(resp.message);
-    state.pemain.koin = resp.data.koin;
-    state.pemain.rupiah = resp.data.rupiah;
-    Game.updateHeaderSaldo();
-    bukaModal("🎟️ Voucher Berhasil!", `
-      <div style="text-align:center;padding:10px 0">
-        <div style="font-size:12px;color:#757575">Kode Voucher</div>
-        <div style="font-size:26px;font-weight:900;color:#b71c1c;font-family:monospace;letter-spacing:2px;margin:8px 0">${resp.data.kode}</div>
-        <div style="font-size:12px;color:#757575">Berlaku sampai: <b>${resp.data.berlaku}</b></div>
-        <div style="font-size:11px;color:#c62828;margin-top:10px">Tunjukkan kode ini ke kasir steam.</div>
-      </div>
-      <button class="btn btn-merah" style="width:100%" onclick="tutupModal()">Tutup</button>
-    `);
-    SFX.chime();
-    muatVoucherSaya();
-  } catch (e) { toast("Gagal: " + e.message, "error"); SFX.buzz(); }
-  finally { setLoading(false); }
+async function kirimTopup(jenis, paket) {
+  const file = document.getElementById("buktiTopup").files[0];
+  if (!file) { suaraError(); toast("Pilih gambar bukti dulu", "error"); return; }
+  loading(true);
+  const base64 = await kompresGambar(file);
+  const resp = await panggilApi("ajukanTopup", {
+    jenis: jenis,
+    paket: paket.rp,
+    jumlah_bayar: paket.rp,
+    bukti_base64: base64
+  }, TOKEN);
+  loading(false);
+  if (resp.ok) { toast("Pengajuan topup terkirim!", "sukses"); renderPanel("topup"); }
+  else { suaraError(); toast(resp.message || "Gagal kirim topup", "error"); }
 }
-
-async function muatVoucherSaya() {
-  try {
-    const resp = await api("voucherSaya", {}, { abaikanError: true });
-    if (!resp.ok) return;
-    const wrap = $("daftar-voucher-saya");
-    if (!resp.data || !resp.data.length) { wrap.textContent = "Belum ada voucher."; return; }
-    wrap.innerHTML = resp.data.map(v => `
-      <div style="padding:8px 0;border-bottom:1px dashed #eee">
-        <b style="font-family:monospace;color:#b71c1c">${v.kode}</b><br>
-        <small>${v.tanggal} · berlaku s/d ${v.berlaku} · <span class="badge ${v.terpakai?'off':''}">${v.terpakai?'Terpakai':'Aktif'}</span></small>
-      </div>
-    `).join("");
-  } catch (e) {}
-}
-
-/* ============================================================
-   TAB CERITA
-   ============================================================ */
-function renderCerita() {
-  const wrap = $("daftar-cerita");
-  wrap.innerHTML = "";
-  const lv = state.pemain.level || 1;
-  CERITA_BASE.forEach(c => {
-    const unlock = lv >= c.unlockLevel;
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <div style="display:flex;gap:10px;align-items:center">
-        <div class="item-ikon" style="background:${unlock?'linear-gradient(135deg,#fff8e1,#ffe082)':'#eee'}">${unlock ? "📖" : "🔒"}</div>
-        <div style="flex:1">
-          <div class="item-nama">Bab ${c.no}: ${c.judul}</div>
-          <div class="item-sub">${unlock ? "Sudah terbuka" : "Butuh Level " + c.unlockLevel}</div>
-        </div>
-      </div>
-    `;
-    if (unlock) {
-      div.style.cursor = "pointer";
-      div.addEventListener("click", () => {
-        bukaModal("📖 Bab " + c.no + " — " + c.judul, `
-          <div style="font-size:14px;line-height:1.7;color:#333;padding:8px 0">"${c.teks}"</div>
-          <div style="text-align:right;font-size:12px;color:#757575;margin-top:8px">— Pak Aldi</div>
-          <button class="btn btn-merah" style="width:100%;margin-top:12px" onclick="tutupModal()">Tutup</button>
-        `);
-      });
-    }
-    wrap.appendChild(div);
-  });
-}
-
-/* ============================================================
-   TAB PROFIL
-   ============================================================ */
-function renderProfil() {
-  const p = state.pemain;
-  const hp = (p.no_hp || "").replace(/(\d{4})\d+(\d{3})/, "$1****$2");
-  $("profil-data").innerHTML = `
-    <div>👤 Nama: <b>${p.nama || "-"}</b></div>
-    <div>🆔 ID: <b>${p.id_pemain || "-"}</b></div>
-    <div>📱 HP: <b>${hp || "-"}</b></div>
-    <div>⭐ Level: <b>${p.level || 1}</b></div>
-    <div>🪙 Koin: <b>${formatAngka(p.koin)}</b></div>
-    <div>💵 Rupiah: <b>${formatRupiah(p.rupiah)}</b></div>
-    <div>💎 Kristal: <b>${formatAngka(p.kristal)}</b></div>
-    <div>📅 Daftar: <b>${p.tanggal_daftar || "-"}</b></div>
-    <div>🕒 Login terakhir: <b>${p.terakhir_login || "-"}</b></div>
-    <div style="font-size:11px;color:#999;margin-top:6px">Device ID: ${localStorage.getItem("mp7000_device_id") || "-"}</div>
-  `;
-}
-
-/* Tombol logout */
-function logout() {
-  if (!confirm("Yakin mau keluar?")) return;
-  Produksi.sync(true).then(() => {
-    localStorage.removeItem("mp7000_token");
-    localStorage.removeItem("mp7000_pemain");
-    window.location.href = "index.html";
-  });
-}
-$("sm-logout").addEventListener("click", logout);
-$("btn-logout2").addEventListener("click", logout);
-  /* ============================================================
-   IKLAN — SLOT KOSONG UNTUK DIISI TAG NANTI
-   ------------------------------------------------------------
-   Cara pakai:
-   - Setelah kamu punya tag Monetag rewarded, isi di #slot-iklan-rewarded
-     dan atur window.__rewardedCallback untuk dipanggil saat iklan selesai.
-   - Profitableratecpm popunder bisa di-inject di #slot-iklan-popunder.
-   ============================================================ */
-
-/* Fungsi generik tonton iklan rewarded.
-   Return Promise<boolean> — true kalau iklan selesai ditonton. */
-function tontonIklanRewarded() {
+function kompresGambar(file) {
   return new Promise((resolve) => {
-    // Kalau slot belum diisi, langsung resolve false
-    const slot = $("slot-iklan-rewarded");
-    if (!slot || slot.innerHTML.trim() === "") {
-      toast("Slot iklan belum tersedia. Hubungi admin.", "error");
-      resolve(false);
-      return;
-    }
-
-    // >>> Kalau pakai SDK Monetag, panggil fungsi show-nya di sini.
-    // Contoh: window.show_XXXXXX().then(() => resolve(true)).catch(() => resolve(false));
-    // Untuk sementara, kita set timeout & callback dummy:
-    let selesai = false;
-    window.__rewardedCallback = () => { selesai = true; resolve(true); };
-
-    // Fallback: kalau dalam 15 detik tidak ada callback, anggap gagal
-    setTimeout(() => { if (!selesai) resolve(false); }, 15000);
-
-    // Trigger iklan (kalau ada)
-    try {
-      if (typeof window.__tampilkanRewarded === "function") {
-        window.__tampilkanRewarded();
-      } else {
-        // Belum ada SDK — langsung tolak
-        resolve(false);
-      }
-    } catch (e) { resolve(false); }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let { width, height } = img;
+        const maks = 800;
+        if (width > maks) { height = height * maks / width; width = maks; }
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        let kualitas = 0.7, dataUrl = canvas.toDataURL("image/jpeg", kualitas);
+        // turunkan kualitas kalau masih > 500KB
+        while (dataUrl.length * 0.75 > 500 * 1024 && kualitas > 0.3) {
+          kualitas -= 0.1;
+          dataUrl = canvas.toDataURL("image/jpeg", kualitas);
+        }
+        resolve(dataUrl);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
   });
 }
 
-/* Tombol tonton iklan → boost 5 menit */
-$("btn-tonton-boost").addEventListener("click", async () => {
-  const sukses = await tontonIklanRewarded();
-  if (!sukses) { toast("Iklan tidak selesai ditonton.", "error"); return; }
-  setLoading(true, "Mengaktifkan boost...");
-  try {
-    const resp = await api("klaimBoost", { durasi_detik: 300, multiplier: 2 });
-    if (!resp.ok) throw new Error(resp.message);
-    state.boost.sampai = resp.data.boost_sampai;
-    state.boost.multiplier = 2;
-    toast("⚡ Boost x2 aktif 5 menit!", "sukses", 3500);
-    SFX.chime();
-  } catch (e) { toast("Gagal: " + e.message, "error"); SFX.buzz(); }
-  finally { setLoading(false); }
-});
-
-/* Tombol tonton iklan → +5 kristal */
-$("btn-tonton-kristal").addEventListener("click", async () => {
-  const sukses = await tontonIklanRewarded();
-  if (!sukses) { toast("Iklan tidak selesai ditonton.", "error"); return; }
-  setLoading(true, "Menambah kristal...");
-  try {
-    const resp = await api("klaimKristal", { jumlah: 5 });
-    if (!resp.ok) throw new Error(resp.message);
-    state.pemain.kristal = resp.data.kristal;
-    Game.updateHeaderSaldo();
-    toast("💎 +5 kristal!", "sukses");
-    SFX.koin();
-  } catch (e) { toast("Gagal: " + e.message, "error"); SFX.buzz(); }
-  finally { setLoading(false); }
-});
-
-/* ============================================================
-   SIDE MENU & TAB
-   ============================================================ */
-const sidemenu = $("sidemenu");
-const overlay = $("overlay");
-
-function bukaMenu() { sidemenu.classList.add("show"); overlay.classList.add("show"); }
-function tutupMenu() { sidemenu.classList.remove("show"); overlay.classList.remove("show"); }
-
-$("btn-menu").addEventListener("click", bukaMenu);
-$("overlay").addEventListener("click", tutupMenu);
-
-/* Klik item menu */
-$$(".sm-item[data-tab]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const tab = btn.dataset.tab;
-    $$(".sm-item").forEach(x => x.classList.remove("aktif"));
-    btn.classList.add("aktif");
-    tutupMenu();
-    setTimeout(() => bukaPanel(tab), 250);
-  });
-});
-
-/* Tutup panel */
-$$(".panel .tutup").forEach(b => {
-  b.addEventListener("click", () => {
-    const tab = b.dataset.tutup;
-    $("panel-" + tab).classList.remove("show");
-  });
-});
-
-function bukaPanel(tab) {
-  // Tutup semua panel dulu
-  $$(".panel").forEach(p => p.classList.remove("show"));
-  const p = $("panel-" + tab);
-  if (!p) return;
-  p.classList.add("show");
-
-  // Render konten sesuai tab
-  if (tab === "game") { renderUnit(); }
-  else if (tab === "manajer") { renderManajer(); }
-  else if (tab === "cabang") { renderCabang(); }
-  else if (tab === "toko") { renderToko(); }
-  else if (tab === "convert") { updateConvertPreview(); }
-  else if (tab === "topup") { renderPaketTopup(); muatRiwayatTopup(); }
-  else if (tab === "voucher") { muatVoucherSaya(); }
-  else if (tab === "cerita") { renderCerita(); }
-  else if (tab === "profil") { renderProfil(); }
+/* =========================================================
+   TAB VOUCHER
+   ========================================================= */
+function renderVoucher(body) {
+  const k = document.createElement("div");
+  k.className = "kartu";
+  k.innerHTML = `
+    <h4>🎟️ Tukar Voucher</h4>
+    <div class="sub">Saldo koin: 🪙 ${formatAngka(state.koin)} • Rupiah: 💵 ${formatAngka(state.rupiah)}</div>
+    <div class="sub" style="margin-top:6px">Harga: 70.000 koin ATAU Rp 7.000. Maks 1 voucher/minggu.</div>
+    <input class="input-biasa" id="voucherNomor" placeholder="Konfirmasi nomor HP" style="margin-top:8px">
+    <button class="btn btn-kuning" id="btnTukarVoucher" style="width:100%;margin-top:8px">Tukar Voucher</button>`;
+  body.appendChild(k);
+  k.querySelector("#btnTukarVoucher").onclick = () => tukarVoucher(k.querySelector("#voucherNomor").value.trim());
+}
+async function tukarVoucher(nomor_konfirmasi) {
+  if (!nomor_konfirmasi) { suaraError(); toast("Isi nomor HP dulu", "error"); return; }
+  loading(true);
+  const resp = await panggilApi("tukarVoucher", { metode_bayar: "koin", nomor_konfirmasi }, TOKEN);
+  loading(false);
+  if (resp.ok) { suaraKoin(); toast("Voucher: " + (resp.data?.kode || "sukses"), "sukses"); if (resp.data) terapkanDataProfil(resp.data); renderPanel("voucher"); }
+  else { suaraError(); toast(resp.message || "Gagal tukar voucher", "error"); }
 }
 
-/* Tombol musik */
-$("btn-musik").addEventListener("click", () => {
-  Musik.toggle();
-  // Kalau sebelumnya blokir autoplay, init AudioContext juga
-  SFX.ctx_();
-});
+/* =========================================================
+   TAB CERITA
+   ========================================================= */
+const DAFTAR_CERITA = [
+  { bab:1, judul:"Motor Pertama",      isi:"Pak Aldi beli motor bekas buat usaha steam. \"Modal nekat, tapi yakin bisa.\"" },
+  { bab:2, judul:"Pelanggan Setia",    isi:"Pelanggan pertama datang tiap minggu. \"Pelan-pelan, yang penting bersih.\"" },
+  { bab:3, judul:"Steam Pertama",      isi:"Steam MP 7000 akhirnya terpasang. \"Ini dia mesin andalan kita!\"" },
+  { bab:4, judul:"Karyawan Pertama",   isi:"Pak Budi direkrut jadi tukang semprot. \"Kerja dulu, hasilnya nanti.\"" },
+  { bab:5, judul:"Cabang Kedua",       isi:"Usaha makin ramai, Pak Aldi buka cabang kedua. \"Jangan puas dulu.\"" },
+  { bab:6, judul:"Ekspansi",           isi:"Cabang bertambah, manajer makin banyak. \"Tim solid, usaha lancar.\"" },
+  { bab:7, judul:"MP 7000",            isi:"Steam MP 7000 jadi legenda. \"Dari motor bekas, jadi kerajaan steam.\"" }
+];
+function renderCerita(body) {
+  DAFTAR_CERITA.forEach(c => {
+    const terbuka = state.ceritaTerbuka.includes(c.bab);
+    const k = document.createElement("div");
+    k.className = "kartu";
+    k.innerHTML = `
+      <div class="row"><h4>Bab ${c.bab}: ${c.judul}</h4><span class="badge ${terbuka ? "badge-aktif" : "badge-lock"}">${terbuka ? "Terbuka" : "🔒"}</span></div>
+      ${terbuka ? `<div class="sub" style="margin-top:6px">${c.isi}</div>` : `<div class="sub" style="margin-top:6px">Selesaikan syarat untuk membuka bab ini.</div>`}`;
+    body.appendChild(k);
+  });
+}
 
-/* ============================================================
-   PANEL ADMIN TERSEMBUNYI
-   Akses: tap logo 5x
-   ============================================================ */
-let logoTapCount = 0;
-let logoTapTimer = null;
-$("logo-admin").addEventListener("click", () => {
-  logoTapCount++;
-  clearTimeout(logoTapTimer);
-  logoTapTimer = setTimeout(() => { logoTapCount = 0; }, 1500);
+/* =========================================================
+   TAB PROFIL
+   ========================================================= */
+function renderProfil(body) {
+  const p = state.profil || {};
+  const k = document.createElement("div");
+  k.className = "kartu";
+  k.innerHTML = `
+    <h4>👤 Profil</h4>
+    <div class="sub">Nama: ${p.nama || "-"}</div>
+    <div class="sub">Nomor HP: ${sensorNomor(p.nomor || "")}</div>
+    <div class="sub">Level: ${state.level}</div>
+    <div class="sub">Total koin pernah: 🪙 ${formatAngka(state.totalKoin)}</div>
+    <div class="sub">Terdaftar: ${p.tanggal_daftar || "-"}</div>
+    <div class="sub">Terakhir login: ${p.terakhir_login || "-"}</div>
+    <button class="btn btn-merah" id="btnLogout" style="width:100%;margin-top:12px">Logout</button>`;
+  body.appendChild(k);
+  k.querySelector("#btnLogout").onclick = () => {
+    localStorage.removeItem("smp7k_token");
+    localStorage.removeItem("smp7k_admin_token");
+    window.location.href = "index.html";
+  };
+}
 
-  if (logoTapCount >= 5) {
-    logoTapCount = 0;
-    mintaLoginAdmin();
+/* =========================================================
+   TERAPKAN DATA PROFIL DARI SERVER
+   ========================================================= */
+function terapkanDataProfil(d) {
+  if (!d) return;
+  if (typeof d.koin === "number")   state.koin = d.koin;
+  if (typeof d.rupiah === "number") state.rupiah = d.rupiah;
+  if (typeof d.kristal === "number")state.kristal = d.kristal;
+  if (typeof d.level === "number")  state.level = d.level;
+  if (typeof d.produksi_per_detik === "number") state.produksiPerDetik = d.produksi_per_detik;
+  if (typeof d.total_koin_pernah === "number") state.totalKoin = d.total_koin_pernah;
+  if (d.upgrade) state.upgrade = d.upgrade;
+  if (d.manajer) state.manajer = d.manajer;
+  if (d.cabang) state.cabang = d.cabang;
+  if (typeof d.cabang_aktif !== "undefined") state.cabangAktif = d.cabang_aktif;
+  if (d.toko) state.toko = d.toko;
+  if (d.cerita_terbuka) state.ceritaTerbuka = d.cerita_terbuka;
+  if (d.profil) state.profil = d.profil;
+  if (d.user) state.profil = d.user;
+  state.koinTersimpan = state.koin;
+  perbaruiHeader();
+  // hitung ulang produksi dari upgrade + manajer
+  hitungProduksi();
+}
+function hitungProduksi() {
+  let total = 0;
+  DAFTAR_UPGRADE.forEach(u => {
+    const lv = state.upgrade[u.bagian] || 0;
+    total += u.produksi * (lv + 1) * (lv > 0 ? 1 : 0);
+  });
+  Object.keys(state.manajer).forEach(b => {
+    const m = state.manajer[b];
+    if (m) total += (m.produksi || DAFTAR_MANAJER.find(x => x.bagian === b)?.produksi || 0);
+  });
+  state.produksiPerDetik = total;
+}
+
+/* =========================================================
+   LOAD PROFIL AWAL
+   ========================================================= */
+async function muatProfil() {
+  loading(true);
+  const resp = await panggilApi("getProfile", null, TOKEN);
+  loading(false);
+  if (resp.ok && resp.data) {
+    state.profil = resp.data.profil || resp.data.user || resp.data;
+    terapkanDataProfil(resp.data);
+    if (resp.data.profil?.nama) localStorage.setItem("smp7k_nama", resp.data.profil.nama);
+  } else {
+    suaraError();
+    toast(resp.message || "Gagal memuat profil", "error");
   }
-});
-
-function mintaLoginAdmin() {
-  bukaModal("🛡️ Login Admin", `
-    <label class="lbl">ID Admin</label>
-    <input type="text" class="inp" id="adm-id" placeholder="ID" inputmode="numeric" />
-    <label class="lbl">Password</label>
-    <input type="password" class="inp" id="adm-pass" placeholder="Password" />
-    <button class="btn btn-merah" style="width:100%;margin-top:14px;padding:12px" id="adm-login">Masuk</button>
-    <div id="adm-err" style="color:#c62828;font-size:12px;margin-top:8px;text-align:center"></div>
-  `);
-  setTimeout(() => {
-    $("adm-login").addEventListener("click", prosesLoginAdmin);
-    $("adm-pass").addEventListener("keydown", (e) => { if (e.key === "Enter") prosesLoginAdmin(); });
-  }, 50);
 }
+muatProfil();
 
-async function prosesLoginAdmin() {
-  const id = $("adm-id").value.trim();
-  const pass = $("adm-pass").value;
-  if (id !== "1001" || pass !== "123456") {
-    $("adm-err").textContent = "ID atau password admin salah.";
-    SFX.buzz();
-    return;
+/* =========================================================
+   PANEL ADMIN TERSEMBUNYI — tap logo 5x
+   ========================================================= */
+let tapLogoTimer = 0, tapLogoHitung = 0;
+function tapLogo() {
+  tapLogoHitung++;
+  clearTimeout(tapLogoTimer);
+  tapLogoTimer = setTimeout(() => { tapLogoHitung = 0; }, 1200);
+  if (tapLogoHitung >= 5) {
+    tapLogoHitung = 0;
+    document.getElementById("adminLoginOverlay").classList.add("aktif");
   }
-  // Simpan flag admin sementara (session)
-  sessionStorage.setItem("mp7000_admin", "1");
-  tutupModal();
-  bukaAdminPanel();
-  toast("🛡️ Selamat datang, Admin!", "sukses");
 }
-</script>
-<script>
-/* ============================================================
-   PANEL ADMIN — Fungsi & Render
-   ============================================================ */
-const admPanel = $("admin-panel");
-const admBody = $("adm-body");
-let admTab = "dash";
-
+function tutupAdminLogin() {
+  document.getElementById("adminLoginOverlay").classList.remove("aktif");
+}
+async function adminLogin() {
+  const admin_id = document.getElementById("adminId").value.trim();
+  const password = document.getElementById("adminPass").value;
+  if (!admin_id || !password) { toast("Isi ID & password", "error"); return; }
+  loading(true);
+  const resp = await panggilApi("adminLogin", { admin_id, password });
+  loading(false);
+  if (resp.ok && resp.data?.token) {
+    state.adminToken = resp.data.token;
+    localStorage.setItem("smp7k_admin_token", resp.data.token);
+    tutupAdminLogin();
+    bukaAdminPanel();
+  } else {
+    suaraError();
+    toast(resp.message || "Login admin gagal", "error");
+  }
+}
 function bukaAdminPanel() {
-  admPanel.classList.add("show");
-  gantiTabAdmin("dash");
+  document.getElementById("adminPanel").classList.add("aktif");
+  bangunTabAdmin();
+  renderAdminTab(state.adminTabAktif);
 }
 function tutupAdminPanel() {
-  admPanel.classList.remove("show");
-  sessionStorage.removeItem("mp7000_admin");
+  document.getElementById("adminPanel").classList.remove("aktif");
 }
-$("adm-tutup").addEventListener("click", tutupAdminPanel);
-
-$$("#adm-tabs button").forEach(b => {
-  b.addEventListener("click", () => gantiTabAdmin(b.dataset.atab));
-});
-
-function gantiTabAdmin(tab) {
-  admTab = tab;
-  $$("#adm-tabs button").forEach(x => x.classList.toggle("aktif", x.dataset.atab === tab));
-  admBody.innerHTML = '<div style="text-align:center;color:#999;padding:30px">Memuat...</div>';
-  renderAdminTab(tab);
+const TAB_ADMIN = [
+  { id:"dashboard", nama:"Dashboard" },{ id:"pemain", nama:"Pemain" },
+  { id:"kasihItem", nama:"Kasih Item" },{ id:"kasihManajer", nama:"Kasih Manajer" },
+  { id:"kasihVoucher", nama:"Kasih Voucher" },{ id:"topup", nama:"Topup" },
+  { id:"voucher", nama:"Voucher" },{ id:"toko", nama:"Toko" },
+  { id:"manajer", nama:"Manajer" },{ id:"cabang", nama:"Cabang" },
+  { id:"cerita", nama:"Cerita" },{ id:"config", nama:"Config" },
+  { id:"pesan", nama:"Pesan" },{ id:"log", nama:"Log" },{ id:"export", nama:"Export CSV" }
+];
+function bangunTabAdmin() {
+  const w = document.getElementById("adminTabs");
+  w.innerHTML = "";
+  TAB_ADMIN.forEach(t => {
+    const b = document.createElement("button");
+    b.textContent = t.nama;
+    b.className = t.id === state.adminTabAktif ? "aktif" : "";
+    b.onclick = () => { state.adminTabAktif = t.id; bangunTabAdmin(); renderAdminTab(t.id); };
+    w.appendChild(b);
+  });
 }
+async function renderAdminTab(id) {
+  const body = document.getElementById("adminBody");
+  body.innerHTML = "<div style='text-align:center;padding:20px'>Memuat...</div>";
+  if (!state.adminToken) { body.innerHTML = "<div style='text-align:center;padding:20px;color:#f66'>Sesi admin habis. Login ulang.</div>"; return; }
 
-async function renderAdminTab(tab) {
-  try {
-    // Semua request admin pakai token admin khusus
-    const tokenAdmin = sessionStorage.getItem("mp7000_admin") ? "ADMIN" : "";
-    if (!tokenAdmin) { admBody.innerHTML = "<div style='padding:20px;color:#c62828'>Sesi admin habis. Tap logo 5x lagi.</div>"; return; }
-
-    if (tab === "dash") {
-      const r = await api("adminDashboard", {}, { abaikanError: true });
-      if (!r.ok) throw new Error(r.message);
-      const d = r.data;
-      admBody.innerHTML = `
-        <div class="stat-grid">
-          <div class="stat-box"><div class="stat-angka">${formatAngka(d.total_pemain)}</div><div class="stat-label">Total Pemain</div></div>
-          <div class="stat-box"><div class="stat-angka">${formatAngka(d.total_koin)}</div><div class="stat-label">Koin Beredar</div></div>
-          <div class="stat-box"><div class="stat-angka">${formatAngka(d.topup_pending)}</div><div class="stat-label">Topup Pending</div></div>
-          <div class="stat-box"><div class="stat-angka">${formatAngka(d.voucher_aktif)}</div><div class="stat-label">Voucher Aktif</div></div>
-        </div>
-      `;
-    }
-    else if (tab === "pemain") {
-      const r = await api("adminListPemain", {}, { abaikanError: true });
-      if (!r.ok) throw new Error(r.message);
-      admBody.innerHTML = `
-        <input class="inp" id="adm-cari" placeholder="🔍 Cari nama / ID / HP..." style="margin-bottom:10px" />
-        <div id="adm-pemain-list"></div>
-      `;
-      const renderList = (q) => {
-        const list = (r.data || []).filter(p =>
-          !q || (p.nama||"").toLowerCase().includes(q) || (p.id_pemain||"").toLowerCase().includes(q) || (p.no_hp||"").includes(q)
-        );
-        $("adm-pemain-list").innerHTML = `
-          <table class="adm-tbl">
-            <thead><tr><th>ID</th><th>Nama</th><th>Level</th><th>Koin</th><th>Status</th></tr></thead>
-            <tbody>${list.map(p => `
-              <tr data-id="${p.id_pemain}">
-                <td>${p.id_pemain}</td><td>${p.nama||"-"}</td><td>${p.level||1}</td>
-                <td>${formatAngka(p.koin)}</td>
-                <td>${p.banned?'<span class="badge merah">Banned</span>':'<span class="badge">Aktif</span>'}</td>
-              </tr>`).join("")}</tbody>
-          </table>
-        `;
-        $$("#adm-pemain-list tr[data-id]").forEach(tr => tr.addEventListener("click", () => detailPemain(tr.dataset.id)));
-      };
-      renderList("");
-      $("adm-cari").addEventListener("input", (e) => renderList(e.target.value.toLowerCase()));
-    }
-    else if (tab === "kasih-item") {
-      admBody.innerHTML = `
-        <label class="lbl">ID Pemain</label>
-        <input class="inp" id="ki-pemain" placeholder="MP7000-0001" />
-        <label class="lbl">Item</label>
-        <select class="inp" id="ki-item">${TOKO_BASE.map(t => `<option value="${t.id}">${t.ikon} ${t.nama}</option>`).join("")}</select>
-        <button class="btn btn-hijau" style="width:100%;margin-top:14px;padding:12px" id="ki-kirim">📦 Kirim Item</button>
-      `;
-      $("ki-kirim").addEventListener("click", async () => {
-        const id = $("ki-pemain").value.trim();
-        const item = $("ki-item").value;
-        if (!id) { toast("Isi ID pemain", "error"); return; }
-        setLoading(true, "Mengirim...");
-        try {
-          const r = await api("adminKasihItem", { id_pemain: id, item_id: item });
-          if (!r.ok) throw new Error(r.message);
-          toast("✅ Item terkirim ke " + id, "sukses");
-        } catch (e) { toast("Gagal: " + e.message, "error"); }
-        finally { setLoading(false); }
-      });
-    }
-    else if (tab === "kasih-manajer") {
-      admBody.innerHTML = `
-        <label class="lbl">ID Pemain</label>
-        <input class="inp" id="km-pemain" placeholder="MP7000-0001" />
-        <label class="lbl">Manajer</label>
-        <select class="inp" id="km-mgr">${MANAJER_BASE.map(m => `<option value="${m.id}">${m.nama} — ${m.bagian}</option>`).join("")}</select>
-        <button class="btn btn-hijau" style="width:100%;margin-top:14px;padding:12px" id="km-kirim">👷 Kirim Manajer</button>
-      `;
-      $("km-kirim").addEventListener("click", async () => {
-        const id = $("km-pemain").value.trim();
-        const mgr = $("km-mgr").value;
-        if (!id) { toast("Isi ID pemain", "error"); return; }
-        setLoading(true, "Mengirim...");
-        try {
-          const r = await api("adminKasihManajer", { id_pemain: id, manajer_id: mgr });
-          if (!r.ok) throw new Error(r.message);
-          toast("✅ Manajer terkirim ke " + id, "sukses");
-        } catch (e) { toast("Gagal: " + e.message, "error"); }
-        finally { setLoading(false); }
-      });
-    }
-    else if (tab === "kasih-voucher") {
-      admBody.innerHTML = `
-        <label class="lbl">ID Pemain</label>
-        <input class="inp" id="kv-pemain" placeholder="MP7000-0001" />
-        <label class="lbl">Jumlah Voucher</label>
-        <input class="inp" type="number" id="kv-jml" value="1" min="1" max="10" />
-        <button class="btn btn-hijau" style="width:100%;margin-top:14px;padding:12px" id="kv-kirim">🎟️ Generate Voucher</button>
-      `;
-      $("kv-kirim").addEventListener("click", async () => {
-        const id = $("kv-pemain").value.trim();
-        const jml = parseInt($("kv-jml").value) || 1;
-        if (!id) { toast("Isi ID pemain", "error"); return; }
-        setLoading(true, "Generate...");
-        try {
-          const r = await api("adminKasihVoucher", { id_pemain: id, jumlah: jml });
-          if (!r.ok) throw new Error(r.message);
-          bukaModal("🎟️ Voucher Dibuat", `
-            <div style="font-family:monospace;font-size:16px;line-height:1.8">${r.data.kode.join("<br>")}</div>
-            <button class="btn btn-merah" style="width:100%;margin-top:12px" onclick="tutupModal()">Tutup</button>
-          `);
-        } catch (e) { toast("Gagal: " + e.message, "error"); }
-        finally { setLoading(false); }
-      });
-    }
-    else if (tab === "topup") {
-      const r = await api("adminListTopup", {}, { abaikanError: true });
-      if (!r.ok) throw new Error(r.message);
-      if (!r.data || !r.data.length) { admBody.innerHTML = "<div style='padding:20px;color:#999'>Belum ada pengajuan.</div>"; return; }
-      admBody.innerHTML = r.data.map(t => `
-        <div class="card">
-          <div><b>${t.id_pemain}</b> — ${t.jenis} ${formatRupiah(t.nominal)}</div>
-          <div style="font-size:11px;color:#757575">${t.tanggal} · Status: <b>${t.status}</b></div>
-          ${t.bukti_url ? `<img src="${t.bukti_url}" style="max-width:100%;border-radius:8px;margin-top:6px" />` : ""}
-          ${t.status === "pending" ? `
-            <div class="row mt10">
-              <button class="btn btn-hijau flex1" data-approve="${t.id}">✅ Approve</button>
-              <button class="btn btn-merah flex1" data-reject="${t.id}">❌ Reject</button>
-            </div>` : ""}
-        </div>
-      `).join("");
-      admBody.querySelectorAll("[data-approve]").forEach(b => b.addEventListener("click", () => aksiTopup(b.dataset.approve, "approve")));
-      admBody.querySelectorAll("[data-reject]").forEach(b => b.addEventListener("click", () => aksiTopup(b.dataset.reject, "reject")));
-    }
-    else if (tab === "voucher") {
-      const r = await api("adminListVoucher", {}, { abaikanError: true });
-      if (!r.ok) throw new Error(r.message);
-      admBody.innerHTML = `
-        <table class="adm-tbl">
-          <thead><tr><th>Kode</th><th>Pemain</th><th>Status</th></tr></thead>
-          <tbody>${(r.data||[]).map(v => `<tr><td>${v.kode}</td><td>${v.id_pemain}</td><td>${v.terpakai?'Terpakai':'Aktif'}</td></tr>`).join("")}</tbody>
-        </table>
-      `;
-    }
-    else if (tab === "toko" || tab === "manajer" || tab === "cabang" || tab === "cerita" || tab === "config") {
-      // Render generik: tampilkan JSON data statis + form edit sederhana
-      const r = await api("adminGetConfig", { bagian: tab }, { abaikanError: true });
-      const data = (r.ok && r.data) ? r.data : (tab === "toko" ? TOKO_BASE : tab === "manajer" ? MANAJER_BASE : tab === "cabang" ? CABANG_BASE : tab === "cerita" ? CERITA_BASE : {});
-      admBody.innerHTML = `
-        <div style="font-size:12px;color:#757575;margin-bottom:8px">Data ${tab} (edit di Apps Script bila perlu)</div>
-        <pre style="background:#fff;padding:12px;border-radius:8px;font-size:11px;overflow:auto;max-height:60vh">${JSON.stringify(data, null, 2)}</pre>
-      `;
-    }
-    else if (tab === "pesan") {
-      admBody.innerHTML = `
-        <label class="lbl">Penerima (ID pemain, atau kosongkan untuk massal)</label>
-        <input class="inp" id="ps-penerima" placeholder="MP7000-0001 / kosong = semua" />
-        <label class="lbl">Pesan</label>
-        <textarea class="inp" id="ps-isi" rows="3" placeholder="Tulis pesan..."></textarea>
-        <button class="btn btn-hijau" style="width:100%;margin-top:14px;padding:12px" id="ps-kirim">📨 Kirim Pesan</button>
-      `;
-      $("ps-kirim").addEventListener("click", async () => {
-        const ke = $("ps-penerima").value.trim();
-        const isi = $("ps-isi").value.trim();
-        if (!isi) { toast("Isi pesan dulu", "error"); return; }
-        setLoading(true, "Mengirim...");
-        try {
-          const r = await api("adminKirimPesan", { ke: ke, isi: isi });
-          if (!r.ok) throw new Error(r.message);
-          toast("✅ Pesan terkirim!", "sukses");
-          $("ps-isi").value = "";
-        } catch (e) { toast("Gagal: " + e.message, "error"); }
-        finally { setLoading(false); }
-      });
-    }
-    else if (tab === "log") {
-      const r = await api("adminListLog", {}, { abaikanError: true });
-      if (!r.ok) throw new Error(r.message);
-      admBody.innerHTML = `
-        <table class="adm-tbl">
-          <thead><tr><th>Waktu</th><th>Aksi</th><th>Detail</th></tr></thead>
-          <tbody>${(r.data||[]).map(l => `<tr><td>${l.waktu}</td><td>${l.aksi}</td><td>${l.detail||""}</td></tr>`).join("")}</tbody>
-        </table>
-      `;
-    }
-    else if (tab === "export") {
-      admBody.innerHTML = `
-        <div style="font-size:13px;color:#555;margin-bottom:12px">Export data per sheet (CSV)</div>
-        <div class="row-wrap">
-          ${["Users","Topup","Voucher","Log","Transaksi"].map(s => `
-            <button class="btn btn-biru" data-export="${s}">📥 ${s}.csv</button>
-          `).join("")}
-        </div>
-      `;
-      admBody.querySelectorAll("[data-export]").forEach(b => b.addEventListener("click", () => exportCSV(b.dataset.export)));
-    }
-  } catch (e) {
-    admBody.innerHTML = `<div style="padding:20px;color:#c62828;font-size:13px">Gagal memuat: ${e.message}</div>`;
-  }
-}
-
-async function aksiTopup(id, aksi) {
-  if (!confirm(aksi === "approve" ? "Approve topup ini?" : "Reject topup ini?")) return;
-  setLoading(true, "Memproses...");
-  try {
-    const r = await api("adminAksiTopup", { id: id, aksi: aksi });
-    if (!r.ok) throw new Error(r.message);
-    toast("✅ Topup " + aksi, "sukses");
-    gantiTabAdmin("topup");
-  } catch (e) { toast("Gagal: " + e.message, "error"); }
-  finally { setLoading(false); }
-}
-
-async function detailPemain(id) {
-  setLoading(true, "Memuat detail...");
-  try {
-    const r = await api("adminDetailPemain", { id_pemain: id }, { abaikanError: true });
-    if (!r.ok) throw new Error(r.message);
-    const p = r.data;
-    bukaModal("👤 " + p.nama, `
-      <div style="font-size:13px;line-height:1.9">
-        <div>ID: <b>${p.id_pemain}</b></div>
-        <div>Nama: <b>${p.nama}</b></div>
-        <div>HP: <b>${p.no_hp||"-"}</b></div>
-        <div>Level: <b>${p.level||1}</b></div>
-        <div>Koin: <b>${formatAngka(p.koin)}</b></div>
-        <div>Rupiah: <b>${formatRupiah(p.rupiah)}</b></div>
-        <div>Kristal: <b>${formatAngka(p.kristal)}</b></div>
-        <div>Status: <b>${p.banned?"Banned":"Aktif"}</b></div>
-      </div>
-      <hr style="margin:12px 0;border:none;border-top:1px solid #eee" />
-      <label class="lbl">Edit Koin</label><input class="inp" type="number" id="ed-koin" value="${p.koin||0}" />
-      <label class="lbl">Edit Rupiah</label><input class="inp" type="number" id="ed-rupiah" value="${p.rupiah||0}" />
-      <label class="lbl">Edit Kristal</label><input class="inp" type="number" id="ed-kristal" value="${p.kristal||0}" />
-      <label class="lbl">Set Level</label><input class="inp" type="number" id="ed-level" value="${p.level||1}" />
-      <button class="btn btn-hijau" style="width:100%;margin-top:12px;padding:11px" id="ed-simpan">💾 Simpan Perubahan</button>
-      <div class="row mt10">
-        <button class="btn btn-abu flex1" id="ed-banned">${p.banned?"Unban":"Ban"}</button>
-        <button class="btn btn-merah flex1" id="ed-hapus">🗑️ Hapus</button>
-      </div>
-    `);
-    $("ed-simpan").addEventListener("click", async () => {
-      setLoading(true, "Menyimpan...");
-      try {
-        const r2 = await api("adminUpdatePemain", {
-          id_pemain: id,
-          koin: parseInt($("ed-koin").value)||0,
-          rupiah: parseInt($("ed-rupiah").value)||0,
-          kristal: parseInt($("ed-kristal").value)||0,
-          level: parseInt($("ed-level").value)||1
-        });
-        if (!r2.ok) throw new Error(r2.message);
-        toast("✅ Data tersimpan", "sukses");
-        tutupModal();
-      } catch (e) { toast("Gagal: " + e.message, "error"); }
-      finally { setLoading(false); }
-    });
-    $("ed-banned").addEventListener("click", async () => {
-      const aksi = p.banned ? "unban" : "ban";
-      if (!confirm(aksi === "ban" ? "Ban pemain ini?" : "Unban pemain ini?")) return;
-      setLoading(true);
-      try {
-        const r2 = await api("adminBanPemain", { id_pemain: id, aksi: aksi });
-        if (!r2.ok) throw new Error(r2.message);
-        toast("✅ " + aksi, "sukses"); tutupModal();
-      } catch (e) { toast("Gagal: " + e.message, "error"); }
-      finally { setLoading(false); }
-    });
-    $("ed-hapus").addEventListener("click", async () => {
-      if (!confirm("HAPUS pemain ini? Tidak bisa dikembalikan!")) return;
-      setLoading(true);
-      try {
-        const r2 = await api("adminHapusPemain", { id_pemain: id });
-        if (!r2.ok) throw new Error(r2.message);
-        toast("🗑️ Pemain dihapus", "sukses"); tutupModal();
-        gantiTabAdmin("pemain");
-      } catch (e) { toast("Gagal: " + e.message, "error"); }
-      finally { setLoading(false); }
-    });
-  } catch (e) { toast("Gagal: " + e.message, "error"); }
-  finally { setLoading(false); }
-}
-
-async function exportCSV(sheet) {
-  setLoading(true, "Export " + sheet + "...");
-  try {
-    const r = await api("adminExportCSV", { sheet: sheet }, { abaikanError: true });
-    if (!r.ok) throw new Error(r.message);
-    const blob = new Blob([r.data.csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = sheet + "_" + Date.now() + ".csv";
-    a.click(); URL.revokeObjectURL(url);
-    toast("📥 " + sheet + ".csv terunduh", "sukses");
-  } catch (e) { toast("Gagal export: " + e.message, "error"); }
-  finally { setLoading(false); }
-}
-
-/* ============================================================
-   INIT DASHBOARD
-   ============================================================ */
-async function init() {
-  setLoading(true, "Memuat data pemain...");
-
-  // Ambil token dari localStorage
-  state.token = localStorage.getItem("mp7000_token") || "";
-  if (!state.token) {
-    window.location.href = "index.html";
+  if (id === "dashboard") {
+    const resp = await panggilApi("adminGetAll", null, state.adminToken);
+    if (resp.ok) {
+      body.innerHTML = `<div class="kartu"><h4>Ringkasan</h4><pre style="font-size:11px;white-space:pre-wrap">${JSON.stringify(resp.data, null, 1)}</pre></div>`;
+    } else body.innerHTML = `<div style="color:#f66">${resp.message}</div>`;
     return;
   }
 
-  // Coba ambil data pemain dari cache dulu (biar cepet)
-  try {
-    const cached = JSON.parse(localStorage.getItem("mp7000_pemain") || "null");
-    if (cached) {
-      state.pemain = cached;
-      updateUIIdentitas();
-    }
-  } catch (e) {}
-
-  // Ambil data lengkap dari server
-  try {
-    const resp = await api("getData", {}, { abaikanError: true });
-    if (!resp.ok) {
-      // Kalau token invalid, tendang ke login
-      if (resp.message && resp.message.toLowerCase().includes("token")) {
-        localStorage.removeItem("mp7000_token");
-        window.location.href = "index.html";
-        return;
-      }
-      throw new Error(resp.message || "Gagal memuat data");
-    }
-    const d = resp.data;
-    state.pemain = d.pemain || state.pemain;
-    state.unit = d.unit || {};
-    state.manajer = d.manajer || {};
-    state.cabang = d.cabang || { aktif:"cb_1", dibuka:["cb_1"] };
-    state.inventori = d.inventori || [];
-    state.boost = d.boost || { sampai:0, multiplier:1 };
-    state.koinPending = 0;
-
-    // Simpan cache pemain
-    localStorage.setItem("mp7000_pemain", JSON.stringify(state.pemain));
-
-    updateUIIdentitas();
-    Game.updateHeaderSaldo();
-    Produksi.updateHeaderLevel();
-
-    // Init gameplay
-    Game.init();
-    Produksi.hitungTotal();
-    Produksi.mulai();
-    Musik.init();
-
-    // Background animasi awan di area game
-    buatAwanGame();
-    // Motor lewat kadang-kadang
-    setInterval(() => { if (Math.random() < 0.3) motorLewat(); }, 15000);
-
-    toast("Selamat datang, " + (state.pemain.nama || "Pemain") + "! 🏍️", "sukses");
-  } catch (e) {
-    console.error(e);
-    toast("Gagal memuat: " + e.message, "error", 5000);
-  } finally {
-    setLoading(false);
+  if (id === "pemain") {
+    const resp = await panggilApi("adminGetAll", null, state.adminToken);
+    if (!resp.ok) { body.innerHTML = `<div style="color:#f66">${resp.message}</div>`; return; }
+    const pemain = resp.data?.pemain || resp.data || [];
+    body.innerHTML = `<input class="admin-input" id="cariPemain" placeholder="Cari pemain...">
+      <div id="daftarPemain"></div>`;
+    const render = (q = "") => {
+      const d = document.getElementById("daftarPemain");
+      d.innerHTML = "";
+      pemain.filter(p => !q || (p.nama || "").toLowerCase().includes(q.toLowerCase()) || (p.nomor || "").includes(q)).forEach(p => {
+        const c = document.createElement("div");
+        c.className = "kartu";
+        c.innerHTML = `<div class="row"><b>${p.nama || "-"}</b><span class="sub">${p.nomor || ""}</span></div>
+          <div class="sub">Lv ${p.level || 1} • 🪙 ${formatAngka(p.koin)} • 💵 ${formatAngka(p.rupiah)} • 💎 ${formatAngka(p.kristal)}</div>
+          <button class="btn btn-biru" style="margin-top:6px">Detail</button>`;
+        c.querySelector("button").onclick = () => detailPemain(p.user_id || p.id);
+        d.appendChild(c);
+      });
+    };
+    render();
+    document.getElementById("cariPemain").oninput = (e) => render(e.target.value);
+    return;
   }
-}
 
-function updateUIIdentitas() {
-  const p = state.pemain || {};
-  $("hdr-nama").textContent = p.nama || "Pemain";
-  $("hdr-id").textContent   = p.id_pemain || "-";
-  $("sm-nama").textContent  = p.nama || "Pemain";
-  $("sm-id").textContent    = p.id_pemain || "-";
-  $("sm-avatar").textContent = (p.nama || "P").charAt(0).toUpperCase();
-}
-
-/* Background: awan bergerak di area game */
-function buatAwanGame() {
-  const area = $("game-area");
-  for (let i = 0; i < 4; i++) {
-    const a = document.createElement("div");
-    a.className = "bg-awan";
-    a.style.top = (10 + Math.random() * 60) + "%";
-    a.style.animationDuration = (30 + Math.random() * 40) + "s";
-    a.style.animationDelay = (-Math.random() * 30) + "s";
-    area.appendChild(a);
+  if (id === "topup") {
+    const resp = await panggilApi("adminGetAll", null, state.adminToken);
+    const daftar = resp.data?.topup || [];
+    body.innerHTML = "";
+    daftar.forEach(t => {
+      const c = document.createElement("div");
+      c.className = "kartu";
+      c.innerHTML = `<div class="row"><b>${t.user_id || t.nama || "-"}</b><span class="sub">${t.status || "pending"}</span></div>
+        <div class="sub">${t.jenis} • Rp ${formatAngka(t.jumlah_bayar)}</div>
+        <div class="row" style="margin-top:6px"><button class="btn btn-hijau">Approve</button><button class="btn btn-merah">Reject</button></div>`;
+      c.querySelectorAll("button")[0].onclick = () => adminApproveTopup(t.topup_id || t.id);
+      c.querySelectorAll("button")[1].onclick = () => adminRejectTopup(t.topup_id || t.id);
+      body.appendChild(c);
+    });
+    return;
   }
+
+  if (id === "kasihItem" || id === "kasihManajer" || id === "kasihVoucher") {
+    body.innerHTML = `<div class="kartu"><h4>${TAB_ADMIN.find(x=>x.id===id).nama}</h4>
+      <input class="admin-input" id="userIdAdmin" placeholder="User ID">
+      <input class="admin-input" id="itemIdAdmin" placeholder="Item ID / Bagian / (kosong)">
+      <button class="btn btn-hijau" style="width:100%" id="btnKirimAdmin">Kirim</button></div>`;
+    document.getElementById("btnKirimAdmin").onclick = async () => {
+      const uid = document.getElementById("userIdAdmin").value.trim();
+      const item = document.getElementById("itemIdAdmin").value.trim();
+      let action = id === "kasihItem" ? "adminKasihItem" : id === "kasihManajer" ? "adminKasihManajer" : "adminKasihVoucher";
+      let data = id === "kasihItem" ? { user_id: uid, item_id: item } : id === "kasihManajer" ? { user_id: uid, bagian: item } : { user_id: uid };
+      const r = await panggilApi(action, data, state.adminToken);
+      toast(r.message || (r.ok ? "Sukses" : "Gagal"), r.ok ? "sukses" : "error");
+    };
+    return;
+  }
+
+  if (id === "log") {
+    const resp = await panggilApi("adminLog", { limit: 50 }, state.adminToken);
+    body.innerHTML = `<pre style="font-size:11px;white-space:pre-wrap">${JSON.stringify(resp.data || resp, null, 1)}</pre>`;
+    return;
+  }
+
+  if (id === "config" || id === "toko" || id === "manajer" || id === "cabang" || id === "cerita") {
+    const actionMap = { config:"adminKelolaConfig", toko:"adminKelolaToko", manajer:"adminKelolaManajer", cabang:"adminKelolaCabang", cerita:"adminKelolaCerita" };
+    body.innerHTML = `<div class="kartu"><h4>Kelola ${id}</h4>
+      <input class="admin-input" id="opAdmin" placeholder="operasi (tambah/edit/hapus)">
+      <textarea class="admin-input" id="dataAdmin" placeholder="Data JSON" rows="4"></textarea>
+      <button class="btn btn-hijau" style="width:100%" id="btnKelola">Kirim</button></div>`;
+    document.getElementById("btnKelola").onclick = async () => {
+      try {
+        const op = document.getElementById("opAdmin").value.trim();
+        const data = JSON.parse(document.getElementById("dataAdmin").value || "{}");
+        const r = await panggilApi(actionMap[id], { operasi: op, [id]: data }, state.adminToken);
+        toast(r.message || (r.ok ? "Sukses" : "Gagal"), r.ok ? "sukses" : "error");
+      } catch(e) { toast("JSON tidak valid", "error"); }
+    };
+    return;
+  }
+
+  if (id === "export") {
+    body.innerHTML = `<div class="kartu"><h4>Export CSV</h4>
+      <input class="admin-input" id="sheetExport" placeholder="Nama sheet (pemain/topup/voucher...)">
+      <button class="btn btn-hijau" style="width:100%" id="btnExport">Export</button></div>`;
+    document.getElementById("btnExport").onclick = async () => {
+      const sheet = document.getElementById("sheetExport").value.trim();
+      const r = await panggilApi("adminExportCSV", { sheet }, state.adminToken);
+      if (r.ok && r.data?.csv) {
+        const blob = new Blob([r.data.csv], { type:"text/csv" });
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = sheet + ".csv"; a.click();
+      } else toast(r.message || "Gagal export", "error");
+    };
+    return;
+  }
+
+  // Fallback untuk tab lain
+  body.innerHTML = `<div class="kartu"><h4>${TAB_ADMIN.find(x=>x.id===id)?.nama || id}</h4><div class="sub">Fitur ini tersedia via API. Gunakan form di bawah.</div>
+    <input class="admin-input" id="genericAction" placeholder="action" value="${id}">
+    <textarea class="admin-input" id="genericData" placeholder='data JSON' rows="3">null</textarea>
+    <button class="btn btn-hijau" style="width:100%" id="btnGeneric">Kirim</button></div>`;
+  document.getElementById("btnGeneric").onclick = async () => {
+    const action = document.getElementById("genericAction").value.trim();
+    let data; try { data = JSON.parse(document.getElementById("genericData").value || "null"); } catch { data = null; }
+    const r = await panggilApi(action, data, state.adminToken);
+    toast(r.message || (r.ok ? "Sukses" : "Gagal"), r.ok ? "sukses" : "error");
+  };
 }
 
-/* Motor lewat di background */
-function motorLewat() {
-  const area = $("game-area");
-  const m = document.createElement("div");
-  m.style.cssText = "position:absolute;font-size:32px;bottom:15%;left:-60px;z-index:2;animation:motorJalan 8s linear forwards;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))";
-  m.textContent = "🏍️";
-  area.appendChild(m);
-  setTimeout(() => m.remove(), 8200);
+async function detailPemain(user_id) {
+  loading(true);
+  const resp = await panggilApi("adminGetPemain", { user_id }, state.adminToken);
+  loading(false);
+  const body = document.getElementById("adminBody");
+  if (!resp.ok) { body.innerHTML = `<div style="color:#f66">${resp.message}</div>`; return; }
+  const p = resp.data?.pemain || resp.data || {};
+  body.innerHTML = `<div class="kartu"><h4>Detail: ${p.nama || user_id}</h4>
+    <pre style="font-size:11px;white-space:pre-wrap">${JSON.stringify(p, null, 1)}</pre>
+    <input class="admin-input" id="editKoin" placeholder="Jumlah koin (+/-)">
+    <button class="btn btn-biru" style="width:100%;margin-top:4px" onclick="adminEditSaldo('${user_id}','koin','tambah')">Tambah Koin</button>
+    <button class="btn btn-merah" style="width:100%;margin-top:4px" onclick="adminEditSaldo('${user_id}','koin','kurang')">Kurangi Koin</button>
+    <input class="admin-input" id="setLevel" placeholder="Level baru" style="margin-top:8px">
+    <button class="btn btn-kuning" style="width:100%" onclick="adminSetLevel('${user_id}')">Set Level</button>
+    <button class="btn btn-abu" style="width:100%;margin-top:8px" onclick="renderAdminTab('pemain')">Kembali</button>
+  </div>`;
 }
-// keyframes motorJalan
-const styleMotor = document.createElement("style");
-styleMotor.textContent = "@keyframes motorJalan{from{transform:translateX(0)}to{transform:translateX(calc(100vw + 80px))}}";
-document.head.appendChild(styleMotor);
+async function adminEditSaldo(user_id, jenis, operasi) {
+  const jumlah = parseFloat(document.getElementById("editKoin").value) || 0;
+  if (jumlah <= 0) { toast("Isi jumlah", "error"); return; }
+  const r = await panggilApi("adminEditSaldo", { user_id, jenis, operasi, jumlah }, state.adminToken);
+  toast(r.message || (r.ok ? "Sukses" : "Gagal"), r.ok ? "sukses" : "error");
+}
+async function adminSetLevel(user_id) {
+  const level = parseInt(document.getElementById("setLevel").value) || 1;
+  const r = await panggilApi("adminSetLevel", { user_id, level }, state.adminToken);
+  toast(r.message || (r.ok ? "Sukses" : "Gagal"), r.ok ? "sukses" : "error");
+}
+async function adminApproveTopup(topup_id) {
+  const r = await panggilApi("adminApproveTopup", { topup_id }, state.adminToken);
+  toast(r.message || (r.ok ? "Approved" : "Gagal"), r.ok ? "sukses" : "error");
+  if (r.ok) renderAdminTab("topup");
+}
+async function adminRejectTopup(topup_id) {
+  const r = await panggilApi("adminRejectTopup", { topup_id }, state.adminToken);
+  toast(r.message || (r.ok ? "Rejected" : "Gagal"), r.ok ? "sukses" : "error");
+  if (r.ok) renderAdminTab("topup");
+}
 
-/* Init saat halaman siap */
-window.addEventListener("load", init);
+/* =========================================================
+   CEK ADMIN TOKEN TERSIMPAN
+   ========================================================= */
+if (state.adminToken) {
+  // Validasi cepat
+  panggilApi("adminGetAll", null, state.adminToken).then(r => {
+    if (!r.ok) { localStorage.removeItem("smp7k_admin_token"); state.adminToken = null; }
+  });
+}
 
-/* Fallback: resume audio context saat tap pertama (browser blokir autoplay) */
-document.addEventListener("pointerdown", function resumeAudio() {
-  SFX.ctx_();
-  Musik.play();
-  document.removeEventListener("pointerdown", resumeAudio);
-}, { once: true });
+/* =========================================================
+   PLACEHOLDER IKLAN
+   ========================================================= */
+/*
+  [SLOT IKLAN MONETAG — REWARDED]
+  Tempel tag <script> Monetag rewarded di sini nanti.
+  Fungsi pemicu: tampilkanIklanRewarded(callback)
+*/
+function tampilkanIklanRewarded(callback) {
+  // Placeholder: langsung panggil callback (nanti diganti Monetag)
+  toast("Iklan reward (placeholder) — +bonus");
+  if (typeof callback === "function") callback();
+}
+/*
+  [SLOT IKLAN PROFITABLECPM — POPUNDER]
+  Tempel tag <script> Profitableratecpm di sini nanti.
+*/
+
+/* =========================================================
+   SLOT KRISTAL & BOOST (dengan tombol tonton iklan)
+   ========================================================= */
+// Bisa ditambahkan ke panel tertentu nanti
+
 </script>
 </body>
 </html>
