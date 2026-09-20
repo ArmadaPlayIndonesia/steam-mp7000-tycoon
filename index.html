@@ -1,918 +1,720 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Steam MP 7000 Tycoon - Login</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* === RESET & BASE === */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Rajdhani', sans-serif;
-      background: #0a0a0a;
-      color: #eee;
-    }
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: radial-gradient(circle at 50% 30%, #1a1a1a 0%, #0a0a0a 70%);
-      position: relative;
-    }
-    /* Pola steam halus */
-    body::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: 
-        radial-gradient(circle at 20% 80%, rgba(255,215,0,0.03) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(52,152,219,0.03) 0%, transparent 50%),
-        repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    /* === CONTAINER === */
-    .container {
-      width: 100%;
-      max-width: 420px;
-      height: 100%;
-      max-height: 100vh;
-      padding: 20px 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      z-index: 1;
-      animation: fadeIn 0.8s ease-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    /* === JUDUL === */
-    .title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(20px, 6vw, 28px);
-      font-weight: 900;
-      color: #FFD700;
-      text-align: center;
-      text-shadow: 0 0 10px rgba(255,215,0,0.6), 0 0 30px rgba(255,215,0,0.3), 0 0 60px rgba(255,215,0,0.1);
-      letter-spacing: 2px;
-      line-height: 1.2;
-      cursor: pointer;
-      user-select: none;
-      animation: glowPulse 2.5s ease-in-out infinite;
-      margin-bottom: 4px;
-    }
-    @keyframes glowPulse {
-      0%, 100% { text-shadow: 0 0 10px rgba(255,215,0,0.6), 0 0 30px rgba(255,215,0,0.3), 0 0 60px rgba(255,215,0,0.1); }
-      50% { text-shadow: 0 0 15px rgba(255,215,0,0.9), 0 0 40px rgba(255,215,0,0.5), 0 0 80px rgba(255,215,0,0.2); }
-    }
-    .subtitle {
-      font-size: clamp(12px, 3.5vw, 15px);
-      color: #aaa;
-      letter-spacing: 1px;
-      margin-bottom: 24px;
-      font-weight: 500;
-    }
-    /* === CARD === */
-    .card {
-      width: 100%;
-      background: rgba(26,26,26,0.9);
-      border: 1px solid rgba(255,215,0,0.15);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-      backdrop-filter: blur(10px);
-    }
-    /* === TABS === */
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      background: rgba(0,0,0,0.3);
-      border-radius: 10px;
-      padding: 4px;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      background: transparent;
-      color: #888;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .tab-btn.active {
-      background: #FFD700;
-      color: #0a0a0a;
-      box-shadow: 0 2px 12px rgba(255,215,0,0.4);
-    }
-    .tab-btn:not(.active):hover {
-      color: #ccc;
-    }
-    /* === FORM === */
-    .form-group {
-      margin-bottom: 14px;
-    }
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      color: #aaa;
-      margin-bottom: 6px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 12px 14px;
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      color: #eee;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 16px;
-      font-weight: 500;
-      transition: border-color 0.3s, box-shadow 0.3s;
-      outline: none;
-    }
-    .form-group input:focus {
-      border-color: #FFD700;
-      box-shadow: 0 0 0 3px rgba(255,215,0,0.15);
-    }
-    .form-group input::placeholder {
-      color: #555;
-    }
-    .form-group input.invalid {
-      border-color: #e74c3c;
-      box-shadow: 0 0 0 3px rgba(231,76,60,0.15);
-    }
-    .error-msg {
-      font-size: 11px;
-      color: #e74c3c;
-      margin-top: 4px;
-      min-height: 14px;
-      font-weight: 600;
-      display: none;
-    }
-    .error-msg.show {
-      display: block;
-    }
-    /* === TOMBOL === */
-    .btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #FFD700, #e6c200);
-      color: #0a0a0a;
-      box-shadow: 0 4px 16px rgba(255,215,0,0.3);
-    }
-    .btn-primary:hover:not(:disabled) {
-      box-shadow: 0 6px 24px rgba(255,215,0,0.5);
-      transform: translateY(-1px);
-    }
-    .btn-primary:active:not(:disabled) {
-      transform: translateY(0);
-    }
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      filter: grayscale(0.5);
-    }
-    /* Spinner */
-    .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(0,0,0,0.3);
-      border-top-color: #0a0a0a;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: none;
-    }
-    .btn.loading .spinner {
-      display: block;
-    }
-    .btn.loading .btn-text {
-      display: none;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    /* Link */
-    .link {
-      text-align: center;
-      margin-top: 14px;
-      font-size: 13px;
-      color: #888;
-    }
-    .link a {
-      color: #FFD700;
-      text-decoration: none;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .link a:hover {
-      text-decoration: underline;
-    }
-    /* === TOAST === */
-    .toast-container {
-      position: fixed;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 90%;
-      max-width: 380px;
-      pointer-events: none;
-    }
-    .toast {
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
-      text-align: center;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-      animation: toastIn 0.35s ease-out;
-      pointer-events: auto;
-    }
-    .toast.success {
-      background: linear-gradient(135deg, #27ae60, #1e8449);
-      border: 1px solid rgba(46,204,113,0.4);
-    }
-    .toast.error {
-      background: linear-gradient(135deg, #e74c3c, #c0392b);
-      border: 1px solid rgba(231,76,60,0.4);
-    }
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .toast.hide {
-      animation: toastOut 0.3s ease-in forwards;
-    }
-    @keyframes toastOut {
-      to { opacity: 0; transform: translateY(-20px); }
-    }
-    /* === MODAL === */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(4px);
-      z-index: 1000;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      animation: fadeIn 0.25s ease-out;
-    }
-    .modal-overlay.show {
-      display: flex;
-    }
-    .modal {
-      width: 100%;
-      max-width: 360px;
-      background: #1a1a1a;
-      border: 1px solid rgba(255,215,0,0.2);
-      border-radius: 16px;
-      padding: 24px;
-      position: relative;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-      animation: modalIn 0.3s ease-out;
-    }
-    @keyframes modalIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    .modal-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 32px;
-      height: 32px;
-      border: none;
-      background: rgba(255,255,255,0.05);
-      border-radius: 8px;
-      color: #888;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-    .modal-close:hover {
-      background: rgba(231,76,60,0.2);
-      color: #e74c3c;
-    }
-    .modal h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 16px;
-      color: #FFD700;
-      margin-bottom: 18px;
-      text-align: center;
-      letter-spacing: 1px;
-    }
-    /* === FOOTER === */
-    .footer {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 11px;
-      color: #555;
-      letter-spacing: 0.5px;
-    }
-    .footer a {
-      color: #FFD700;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    .footer a:hover {
-      text-decoration: underline;
-    }
-    /* === HELP MODAL CONTENT === */
-    .help-content {
-      font-size: 14px;
-      line-height: 1.7;
-      color: #ccc;
-    }
-    .help-content ol {
-      padding-left: 20px;
-    }
-    .help-content li {
-      margin-bottom: 8px;
-    }
-    /* === RESPONSIF === */
-    @media (max-width: 360px) {
-      .container { padding: 12px 10px; }
-      .card { padding: 16px; }
-      .title { font-size: 18px; }
-    }
-    @media (min-width: 768px) {
-      .container { max-width: 420px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Steam MP 7000 Tycoon</title>
+<style>
+  /* === RESET & BASE === */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #f7f8fa;
+    color: #1a1a2e;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* === BACKGROUND === */
+  .bg {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(160deg, #fefefe 0%, #f0f2f5 40%, #e8ebf0 100%);
+    z-index: -2;
+  }
+  /* Awan tipis bergerak */
+  .cloud {
+    position: fixed;
+    background: radial-gradient(ellipse at center, rgba(200,210,220,0.18) 0%, rgba(200,210,220,0) 70%);
+    border-radius: 50%;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .cloud.c1 { width: 320px; height: 120px; top: 12%; left: -320px; animation: cloudMove 42s linear infinite; }
+  .cloud.c2 { width: 260px; height: 100px; top: 42%; left: -260px; animation: cloudMove 58s linear infinite 8s; }
+  .cloud.c3 { width: 400px; height: 150px; top: 72%; left: -400px; animation: cloudMove 70s linear infinite 18s; }
+  @keyframes cloudMove {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(100vw + 500px)); }
+  }
+
+  /* === CONTAINER === */
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px 32px;
+    position: relative;
+    z-index: 1;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 400px;
+    animation: fadeUp 0.5s ease-out;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === BRAND === */
+  .brand {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .logo {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 12px;
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 6px 20px rgba(192,57,43,0.22);
+  }
+  .brand h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a2e;
+    letter-spacing: -0.3px;
+  }
+  .brand p {
+    font-size: 13px;
+    color: #7a8194;
+    margin-top: 4px;
+  }
+
+  /* === CARD === */
+  .card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 24px 20px;
+    box-shadow: 0 4px 24px rgba(26,26,46,0.07), 0 1px 3px rgba(26,26,46,0.05);
+    border: 1px solid rgba(26,26,46,0.04);
+  }
+
+  /* === TABS === */
+  .tabs {
+    display: flex;
+    background: #f0f2f5;
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 22px;
+  }
+  .tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #7a8194;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .tab.active {
+    background: #ffffff;
+    color: #c0392b;
+    box-shadow: 0 1px 4px rgba(26,26,46,0.08);
+  }
+
+  /* === FORM === */
+  .field {
+    margin-bottom: 16px;
+  }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a5162;
+    margin-bottom: 6px;
+  }
+  .field input {
+    width: 100%;
+    padding: 13px 14px;
+    background: #f7f8fa;
+    border: 1.5px solid #e2e5eb;
+    border-radius: 11px;
+    font-size: 15px;
+    font-family: inherit;
+    color: #1a1a2e;
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+  }
+  .field input:focus {
+    border-color: #c0392b;
+    background: #ffffff;
+  }
+  .field input::placeholder {
+    color: #b0b6c3;
+  }
+  .field input.err {
+    border-color: #e74c3c;
+    background: #fef5f5;
+  }
+  .err-msg {
+    font-size: 12px;
+    color: #e74c3c;
+    margin-top: 5px;
+    display: none;
+    font-weight: 500;
+  }
+  .err-msg.show { display: block; }
+
+  /* === BUTTON === */
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(192,57,43,0.28);
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(192,57,43,0.24);
+  }
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .spin {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .btn.loading .spin { display: block; }
+  .btn.loading .label { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .switch-text {
+    text-align: center;
+    font-size: 13px;
+    color: #7a8194;
+    margin-top: 16px;
+  }
+  .switch-text a {
+    color: #c0392b;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* === FOOTER === */
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    color: #b0b6c3;
+    margin-top: 24px;
+  }
+
+  /* === ADMIN FAB === */
+  .admin-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1.5px solid #e2e5eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(26,26,46,0.12);
+    z-index: 50;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .admin-fab:active {
+    transform: scale(0.92);
+  }
+
+  /* === OVERLAY / MODAL === */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,46,0.5);
+    backdrop-filter: blur(3px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.2s;
+  }
+  .overlay.show { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 24px 20px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 20px 50px rgba(26,26,46,0.25);
+    animation: modalIn 0.25s ease-out;
+    position: relative;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.94); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .modal-x {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: #f0f2f5;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #7a8194;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 18px;
+    text-align: center;
+  }
+
+  /* === TOAST === */
+  .toasts {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: calc(100% - 32px);
+    max-width: 380px;
+    pointer-events: none;
+  }
+  .toast {
+    padding: 13px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(26,26,46,0.18);
+    animation: toastIn 0.3s ease-out;
+    pointer-events: auto;
+  }
+  .toast.ok { background: #27ae60; }
+  .toast.no { background: #e74c3c; }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .toast.out { animation: toastOut 0.25s ease-in forwards; }
+  @keyframes toastOut {
+    to { opacity: 0; transform: translateY(-16px); }
+  }
+</style>
 </head>
 <body>
-  <!-- Toast Container -->
-  <div class="toast-container" id="toastContainer"></div>
+  <div class="bg"></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
 
-  <!-- Main Container -->
-  <div class="container">
-    <h1 class="title" id="gameTitle">STEAM MP 7000 TYCOON</h1>
-    <p class="subtitle">Cuci Mobil Jadi Sultan</p>
-
-    <div class="card">
-      <!-- Tabs -->
-      <div class="tabs">
-        <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">MASUK</button>
-        <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">DAFTAR</button>
+  <div class="page">
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo">🚗</div>
+        <h1>Steam MP 7000</h1>
+        <p>Cuci Mobil Jadi Sultan</p>
       </div>
 
-      <!-- Form Login -->
-      <form id="formLogin" onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label for="loginPhone">Nomor HP</label>
-          <input type="tel" id="loginPhone" placeholder="08xxxxxxxxxx" maxlength="13" inputmode="numeric" autocomplete="tel">
-          <div class="error-msg" id="loginPhoneError"></div>
+      <div class="card">
+        <div class="tabs">
+          <button class="tab active" id="tabLogin" onclick="switchTab('login')">Masuk</button>
+          <button class="tab" id="tabRegister" onclick="switchTab('register')">Daftar</button>
         </div>
-        <div class="form-group">
-          <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" placeholder="Minimal 6 karakter" minlength="6" autocomplete="current-password">
-          <div class="error-msg" id="loginPasswordError"></div>
-        </div>
-        <button type="submit" class="btn btn-primary" id="btnLogin">
-          <span class="spinner"></span>
-          <span class="btn-text">MASUK</span>
-        </button>
-        <div class="link">
-          Belum punya akun? <a onclick="switchTab('register')">Daftar</a>
-        </div>
-      </form>
 
-      <!-- Form Register -->
-      <form id="formRegister" style="display:none;" onsubmit="handleRegister(event)">
-        <div class="form-group">
-          <label for="regName">Nama</label>
-          <input type="text" id="regName" placeholder="Nama kamu" maxlength="20" autocomplete="name">
-          <div class="error-msg" id="regNameError"></div>
-        </div>
-        <div class="form-group">
-          <label for="regPhone">Nomor HP</label>
-          <input type="tel" id="regPhone" placeholder="08xxxxxxxxxx" maxlength="13" inputmode="numeric" autocomplete="tel">
-          <div class="error-msg" id="regPhoneError"></div>
-        </div>
-        <div class="form-group">
-          <label for="regPassword">Password</label>
-          <input type="password" id="regPassword" placeholder="Minimal 6 karakter" minlength="6" autocomplete="new-password">
-          <div class="error-msg" id="regPasswordError"></div>
-        </div>
-        <div class="form-group">
-          <label for="regConfirm">Konfirmasi Password</label>
-          <input type="password" id="regConfirm" placeholder="Ulangi password" minlength="6" autocomplete="new-password">
-          <div class="error-msg" id="regConfirmError"></div>
-        </div>
-        <button type="submit" class="btn btn-primary" id="btnRegister">
-          <span class="spinner"></span>
-          <span class="btn-text">DAFTAR</span>
-        </button>
-        <div class="link">
-          Sudah punya akun? <a onclick="switchTab('login')">Masuk</a>
-        </div>
-      </form>
-    </div>
+        <!-- LOGIN -->
+        <form id="formLogin" onsubmit="doLogin(event)">
+          <div class="field">
+            <label>Nomor HP</label>
+            <input type="tel" id="loginPhone" placeholder="08xxxxxxxxxx" maxlength="13" inputmode="numeric" autocomplete="tel">
+            <div class="err-msg" id="loginPhoneErr"></div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="loginPass" placeholder="Minimal 6 karakter" autocomplete="current-password">
+            <div class="err-msg" id="loginPassErr"></div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="btnLogin">
+            <span class="spin"></span>
+            <span class="label">Masuk</span>
+          </button>
+          <div class="switch-text">
+            Belum punya akun? <a onclick="switchTab('register')">Daftar</a>
+          </div>
+        </form>
 
-    <div class="footer">
-      © 2024 Steam MP 7000 Tycoon • v1.0.0 • <a onclick="openHelpModal()">Bantuan</a>
-    </div>
-  </div>
-
-  <!-- Modal Admin Tersembunyi -->
-  <div class="modal-overlay" id="adminModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeAdminModal()">✕</button>
-      <h3>LOGIN ADMIN</h3>
-      <form onsubmit="handleAdminLogin(event)">
-        <div class="form-group">
-          <label for="adminId">ID Admin</label>
-          <input type="number" id="adminId" placeholder="Masukkan ID Admin" inputmode="numeric">
-        </div>
-        <div class="form-group">
-          <label for="adminPassword">Password</label>
-          <input type="password" id="adminPassword" placeholder="Password admin">
-        </div>
-        <button type="submit" class="btn btn-primary" id="btnAdminLogin">
-          <span class="spinner"></span>
-          <span class="btn-text">LOGIN ADMIN</span>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Bantuan -->
-  <div class="modal-overlay" id="helpModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeHelpModal()">✕</button>
-      <h3>CARA MAIN</h3>
-      <div class="help-content">
-        <ol>
-          <li>Daftar akun dengan nomor HP dan password.</li>
-          <li>Masuk ke dashboard dan mulai tap area cuci mobil.</li>
-          <li>Setiap tap menghasilkan koin. Sewa manajer untuk produksi otomatis.</li>
-          <li>Upgrade bagian untuk meningkatkan produksi per detik.</li>
-          <li>Buka cabang baru untuk memperluas bisnis.</li>
-          <li>Convert koin ke rupiah, beli item, dan tukar voucher.</li>
-        </ol>
+        <!-- REGISTER -->
+        <form id="formRegister" style="display:none" onsubmit="doRegister(event)">
+          <div class="field">
+            <label>Nama</label>
+            <input type="text" id="regName" placeholder="Nama kamu" maxlength="20" autocomplete="name">
+            <div class="err-msg" id="regNameErr"></div>
+          </div>
+          <div class="field">
+            <label>Nomor HP</label>
+            <input type="tel" id="regPhone" placeholder="08xxxxxxxxxx" maxlength="13" inputmode="numeric" autocomplete="tel">
+            <div class="err-msg" id="regPhoneErr"></div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="regPass" placeholder="Minimal 6 karakter" autocomplete="new-password">
+            <div class="err-msg" id="regPassErr"></div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="btnRegister">
+            <span class="spin"></span>
+            <span class="label">Daftar</span>
+          </button>
+          <div class="switch-text">
+            Sudah punya akun? <a onclick="switchTab('login')">Masuk</a>
+          </div>
+        </form>
       </div>
+
+      <div class="footer">© 2024 Steam MP 7000 Tycoon</div>
     </div>
   </div>
+
+  <!-- Tombol Admin -->
+  <div class="admin-fab" onclick="openAdmin()" title="Admin">🔐</div>
+
+  <!-- Modal Admin -->
+  <div class="overlay" id="adminOverlay">
+    <div class="modal">
+      <button class="modal-x" onclick="closeAdmin()">✕</button>
+      <h3>Login Admin</h3>
+      <form onsubmit="doAdminLogin(event)">
+        <div class="field">
+          <label>ID Admin</label>
+          <input type="text" id="adminId" placeholder="ID Admin" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="adminPass" placeholder="Password admin">
+        </div>
+        <button type="submit" class="btn btn-primary" id="btnAdmin">
+          <span class="spin"></span>
+          <span class="label">Masuk Admin</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
 
   <script>
     // =============================================
-    // KONFIGURASI BACKEND
+    // KONFIGURASI
     // =============================================
-    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycby_7Mner3wVatE3cji6OTrZuRLR_zfvbBRpU_CAnM51gSa1e5JXTWbvUMg4O0-vt8PY/exec';
+    var API = 'https://script.google.com/macros/s/AKfycbyp04EZaT8vhi5gDmTeSw1ovDVDVh-cF-EkdcQohxu2ys3MwGrJm8yZg6A02qrPHujO6g/exec';
 
     // =============================================
-    // DEVICE ID
+    // HELPERS
     // =============================================
-    function getDeviceId() {
-      let id = localStorage.getItem('mp7000_device_id');
-      if (id) return id;
-      const raw = navigator.userAgent + screen.width + screen.height + Intl.DateTimeFormat().resolvedOptions().timeZone + Math.random().toString(36).slice(2, 18);
-      let hash = 0;
-      for (let i = 0; i < raw.length; i++) {
-        const chr = raw.charCodeAt(i);
-        hash = ((hash << 5) - hash) + chr;
-        hash |= 0;
-      }
-      const hex = Math.abs(hash).toString(16).padStart(16, '0');
-      const rand = Math.random().toString(36).slice(2, 10);
-      id = (hex + rand).slice(0, 24);
-      localStorage.setItem('mp7000_device_id', id);
-      return id;
+    function toast(msg, ok) {
+      var box = document.getElementById('toasts');
+      var el = document.createElement('div');
+      el.className = 'toast ' + (ok ? 'ok' : 'no');
+      el.textContent = msg;
+      box.appendChild(el);
+      setTimeout(function() {
+        el.classList.add('out');
+        setTimeout(function() { el.remove(); }, 250);
+      }, 2800);
     }
 
-    // =============================================
-    // API CALL
-    // =============================================
-    async function apiCall(action, data = {}, token = null) {
+    function getDevice() {
+      var d = localStorage.getItem('smp7k_device');
+      if (d) return d;
+      d = 'dev_' + Math.random().toString(36).slice(2, 14) + Date.now().toString(36).slice(-4);
+      localStorage.setItem('smp7k_device', d);
+      return d;
+    }
+
+    async function api(action, data, token) {
       try {
-        const res = await fetch(BACKEND_URL, {
+        var body = { action: action, token: token || null, data: data || {} };
+        var res = await fetch(API, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action, token, data })
+          body: JSON.stringify(body)
         });
-        const text = await res.text();
+        if (!res.ok) return { ok: false, message: 'Server tidak merespons' };
+        var text = await res.text();
         try {
-          const json = JSON.parse(text);
-          return json;
+          return JSON.parse(text);
         } catch (e) {
-          return { ok: false, message: 'Server sedang sibuk, coba lagi' };
+          return { ok: false, message: 'Server tidak merespons' };
         }
-      } catch (err) {
+      } catch (e) {
         return { ok: false, message: 'Koneksi gagal, coba lagi' };
       }
     }
 
-    // =============================================
-    // TOAST
-    // =============================================
-    function toast(msg, type = 'success') {
-      const container = document.getElementById('toastContainer');
-      const el = document.createElement('div');
-      el.className = 'toast ' + type;
+    function validPhone(p) {
+      return /^08\d{8,11}$/.test(p);
+    }
+
+    function showErr(id, msg) {
+      var el = document.getElementById(id);
+      if (!el) return;
       el.textContent = msg;
-      container.appendChild(el);
-      setTimeout(() => {
-        el.classList.add('hide');
-        setTimeout(() => el.remove(), 300);
-      }, 3000);
+      el.classList.add('show');
+      var input = el.parentElement.querySelector('input');
+      if (input) input.classList.add('err');
     }
 
-    // =============================================
-    // FORMAT
-    // =============================================
-    function formatNumber(n) {
-      return new Intl.NumberFormat('id-ID').format(Math.floor(n));
-    }
-    function formatRupiah(n) {
-      return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.floor(n));
-    }
-
-    // =============================================
-    // AUDIO SYSTEM
-    // =============================================
-    const AudioPool = (() => {
-      const pools = {};
-      const POOL_SIZE = 6;
-      function createPool(src) {
-        const pool = [];
-        for (let i = 0; i < POOL_SIZE; i++) {
-          const audio = new Audio(src);
-          audio.preload = 'auto';
-          audio.volume = 0.5;
-          pool.push(audio);
-        }
-        return pool;
-      }
-      function getPool(name) {
-        if (!pools[name]) {
-          const src = 'asset/' + name + '.mp3';
-          pools[name] = createPool(src);
-        }
-        return pools[name];
-      }
-      let idx = {};
-      function play(name) {
-        if (!isSfxOn()) return;
-        try {
-          const pool = getPool(name);
-          if (!idx[name]) idx[name] = 0;
-          const audio = pool[idx[name] % POOL_SIZE];
-          idx[name]++;
-          audio.currentTime = 0;
-          audio.play().catch(() => {});
-        } catch (e) { /* silent */ }
-      }
-      return { play };
-    })();
-
-    let bgmAudio = null;
-    let bgmStarted = false;
-
-    function isBgmOn() {
-      return localStorage.getItem('mp7000_bgm') !== 'off';
-    }
-    function isSfxOn() {
-      return localStorage.getItem('mp7000_sfx') !== 'off';
-    }
-    function playBgm() {
-      if (!isBgmOn()) return;
-      if (!bgmAudio) {
-        try {
-          bgmAudio = new Audio('asset/bgm.mp3');
-          bgmAudio.loop = true;
-          bgmAudio.volume = 0.3;
-        } catch (e) { return; }
-      }
-      bgmAudio.play().catch(() => {});
-      bgmStarted = true;
-    }
-    function stopBgm() {
-      if (bgmAudio) {
-        bgmAudio.pause();
-        bgmStarted = false;
-      }
-    }
-    function playSfx(name) {
-      AudioPool.play(name);
+    function clearErr(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = '';
+      el.classList.remove('show');
+      var input = el.parentElement.querySelector('input');
+      if (input) input.classList.remove('err');
     }
 
-    // Mulai BGM setelah gesture pertama
-    function initAudioOnGesture() {
-      if (bgmStarted) return;
-      playBgm();
-    }
-    document.addEventListener('click', initAudioOnGesture, { once: false });
-    document.addEventListener('touchstart', initAudioOnGesture, { once: false });
-
-    // =============================================
-    // TAB SWITCHING
-    // =============================================
-    function switchTab(tab) {
-      const tabLogin = document.getElementById('tabLogin');
-      const tabRegister = document.getElementById('tabRegister');
-      const formLogin = document.getElementById('formLogin');
-      const formRegister = document.getElementById('formRegister');
-
-      if (tab === 'login') {
-        tabLogin.classList.add('active');
-        tabRegister.classList.remove('active');
-        formLogin.style.display = 'block';
-        formRegister.style.display = 'none';
-        document.getElementById('loginPhone').focus();
-      } else {
-        tabRegister.classList.add('active');
-        tabLogin.classList.remove('active');
-        formRegister.style.display = 'block';
-        formLogin.style.display = 'none';
-        document.getElementById('regName').focus();
-      }
-    }
-
-    // =============================================
-    // VALIDASI
-    // =============================================
-    function validatePhone(phone) {
-      return /^08\d{8,11}$/.test(phone);
-    }
-    function showError(id, msg) {
-      const el = document.getElementById(id);
-      if (el) {
-        el.textContent = msg;
-        el.classList.add('show');
-      }
-      const input = el ? el.previousElementSibling : null;
-      if (input) input.classList.add('invalid');
-    }
-    function clearError(id) {
-      const el = document.getElementById(id);
-      if (el) {
-        el.textContent = '';
-        el.classList.remove('show');
-      }
-      const input = el ? el.previousElementSibling : null;
-      if (input) input.classList.remove('invalid');
-    }
-    function clearAllErrors(formId) {
-      const form = document.getElementById(formId);
-      if (!form) return;
-      form.querySelectorAll('.error-msg').forEach(el => {
-        el.textContent = '';
-        el.classList.remove('show');
+    function clearAll(formId) {
+      var form = document.getElementById(formId);
+      form.querySelectorAll('.err-msg').forEach(function(e) {
+        e.textContent = '';
+        e.classList.remove('show');
       });
-      form.querySelectorAll('input').forEach(inp => inp.classList.remove('invalid'));
+      form.querySelectorAll('input').forEach(function(i) {
+        i.classList.remove('err');
+      });
+    }
+
+    function setLoading(btnId, on) {
+      var b = document.getElementById(btnId);
+      if (!b) return;
+      b.disabled = on;
+      if (on) b.classList.add('loading');
+      else b.classList.remove('loading');
     }
 
     // =============================================
-    // HANDLE LOGIN
+    // TAB
     // =============================================
-    async function handleLogin(e) {
-      e.preventDefault();
-      clearAllErrors('formLogin');
-
-      const phone = document.getElementById('loginPhone').value.trim();
-      const password = document.getElementById('loginPassword').value;
-
-      let valid = true;
-      if (!validatePhone(phone)) {
-        showError('loginPhoneError', 'Nomor HP harus diawali 08, 10-13 digit');
-        valid = false;
-      }
-      if (password.length < 6) {
-        showError('loginPasswordError', 'Password minimal 6 karakter');
-        valid = false;
-      }
-      if (!valid) {
-        playSfx('error');
-        return;
-      }
-
-      const btn = document.getElementById('btnLogin');
-      btn.disabled = true;
-      btn.classList.add('loading');
-
-      const res = await apiCall('login', { nomor_hp: phone, password, device_id: getDeviceId() });
-
-      btn.disabled = false;
-      btn.classList.remove('loading');
-
-      if (res.ok) {
-        localStorage.setItem('mp7000_token', res.data.token);
-        localStorage.setItem('mp7000_user', JSON.stringify(res.data.user || {}));
-        localStorage.setItem('mp7000_is_admin', 'false');
-        playSfx('coin');
-        toast('Login berhasil!', 'success');
-        setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
+    function switchTab(t) {
+      var tl = document.getElementById('tabLogin');
+      var tr = document.getElementById('tabRegister');
+      var fl = document.getElementById('formLogin');
+      var fr = document.getElementById('formRegister');
+      if (t === 'login') {
+        tl.classList.add('active');
+        tr.classList.remove('active');
+        fl.style.display = 'block';
+        fr.style.display = 'none';
+        setTimeout(function() { document.getElementById('loginPhone').focus(); }, 100);
       } else {
-        playSfx('error');
-        toast(res.message || 'Login gagal', 'error');
+        tr.classList.add('active');
+        tl.classList.remove('active');
+        fr.style.display = 'block';
+        fl.style.display = 'none';
+        setTimeout(function() { document.getElementById('regName').focus(); }, 100);
       }
     }
 
     // =============================================
-    // HANDLE REGISTER
+    // LOGIN PEMAIN
     // =============================================
-    async function handleRegister(e) {
+    async function doLogin(e) {
       e.preventDefault();
-      clearAllErrors('formRegister');
+      clearAll('formLogin');
+      var phone = document.getElementById('loginPhone').value.trim().replace(/\s+/g, '');
+      var pass = document.getElementById('loginPass').value;
+      var ok = true;
 
-      const name = document.getElementById('regName').value.trim();
-      const phone = document.getElementById('regPhone').value.trim();
-      const password = document.getElementById('regPassword').value;
-      const confirm = document.getElementById('regConfirm').value;
+      if (!validPhone(phone)) {
+        showErr('loginPhoneErr', 'Nomor HP harus diawali 08, 10-13 digit');
+        ok = false;
+      }
+      if (pass.length < 6) {
+        showErr('loginPassErr', 'Password minimal 6 karakter');
+        ok = false;
+      }
+      if (!ok) return;
 
-      let valid = true;
+      setLoading('btnLogin', true);
+      var r = await api('login', { nomor: phone, password: pass, device_id: getDevice() });
+      setLoading('btnLogin', false);
+
+      if (r.ok && r.data && r.data.token) {
+        localStorage.setItem('smp7k_token', r.data.token);
+        if (r.data.user) localStorage.setItem('smp7k_user', JSON.stringify(r.data.user));
+        toast('Login berhasil!', true);
+        setTimeout(function() { window.location.href = 'dashboard.html'; }, 600);
+      } else {
+        toast(r.message || 'Login gagal', false);
+      }
+    }
+
+    // =============================================
+    // REGISTER
+    // =============================================
+    async function doRegister(e) {
+      e.preventDefault();
+      clearAll('formRegister');
+      var name = document.getElementById('regName').value.trim();
+      var phone = document.getElementById('regPhone').value.trim().replace(/\s+/g, '');
+      var pass = document.getElementById('regPass').value;
+      var ok = true;
+
       if (!name) {
-        showError('regNameError', 'Nama tidak boleh kosong');
-        valid = false;
-      } else if (name.length > 20) {
-        showError('regNameError', 'Nama maksimal 20 karakter');
-        valid = false;
+        showErr('regNameErr', 'Nama tidak boleh kosong');
+        ok = false;
       }
-      if (!validatePhone(phone)) {
-        showError('regPhoneError', 'Nomor HP harus diawali 08, 10-13 digit');
-        valid = false;
+      if (!validPhone(phone)) {
+        showErr('regPhoneErr', 'Nomor HP harus diawali 08, 10-13 digit');
+        ok = false;
       }
-      if (password.length < 6) {
-        showError('regPasswordError', 'Password minimal 6 karakter');
-        valid = false;
+      if (pass.length < 6) {
+        showErr('regPassErr', 'Password minimal 6 karakter');
+        ok = false;
       }
-      if (confirm !== password) {
-        showError('regConfirmError', 'Konfirmasi password tidak sama');
-        valid = false;
-      }
-      if (!valid) {
-        playSfx('error');
-        return;
-      }
+      if (!ok) return;
 
-      const btn = document.getElementById('btnRegister');
-      btn.disabled = true;
-      btn.classList.add('loading');
+      setLoading('btnRegister', true);
+      var r = await api('register', { nama: name, nomor: phone, password: pass, device_id: getDevice() });
+      setLoading('btnRegister', false);
 
-      const res = await apiCall('register', { nama: name, nomor_hp: phone, password, device_id: getDeviceId() });
-
-      btn.disabled = false;
-      btn.classList.remove('loading');
-
-      if (res.ok) {
-        playSfx('coin');
-        toast('Registrasi berhasil! Silakan masuk.', 'success');
-        switchTab('login');
-        document.getElementById('loginPhone').value = phone;
-        document.getElementById('loginPassword').value = '';
-        document.getElementById('loginPassword').focus();
+      if (r.ok && r.data && r.data.token) {
+        localStorage.setItem('smp7k_token', r.data.token);
+        if (r.data.user) localStorage.setItem('smp7k_user', JSON.stringify(r.data.user));
+        toast('Registrasi berhasil!', true);
+        setTimeout(function() { window.location.href = 'dashboard.html'; }, 600);
+      } else if (r.ok && r.data && !r.data.token) {
+        // Registrasi sukses tapi tidak ada token → auto login manual
+        var lr = await api('login', { nomor: phone, password: pass, device_id: getDevice() });
+        if (lr.ok && lr.data && lr.data.token) {
+          localStorage.setItem('smp7k_token', lr.data.token);
+          if (lr.data.user) localStorage.setItem('smp7k_user', JSON.stringify(lr.data.user));
+          toast('Registrasi berhasil!', true);
+          setTimeout(function() { window.location.href = 'dashboard.html'; }, 600);
+        } else {
+          toast('Registrasi sukses, silakan login', true);
+          switchTab('login');
+        }
       } else {
-        playSfx('error');
-        toast(res.message || 'Registrasi gagal', 'error');
+        var msg = r.message || 'Registrasi gagal';
+        if (msg.toLowerCase().indexOf('sudah') !== -1 || msg.toLowerCase().indexOf('terdaftar') !== -1) {
+          msg = 'Nomor sudah terdaftar, silakan login';
+        }
+        toast(msg, false);
       }
     }
 
     // =============================================
-    // HANDLE ADMIN LOGIN
+    // ADMIN
     // =============================================
-    async function handleAdminLogin(e) {
-      e.preventDefault();
-      const adminId = document.getElementById('adminId').value.trim();
-      const password = document.getElementById('adminPassword').value;
-
-      if (!adminId || !password) {
-        playSfx('error');
-        toast('Isi ID Admin dan Password', 'error');
-        return;
-      }
-
-      const btn = document.getElementById('btnAdminLogin');
-      btn.disabled = true;
-      btn.classList.add('loading');
-
-      const res = await apiCall('adminLogin', { admin_id: parseInt(adminId, 10), password, device_id: getDeviceId() });
-
-      btn.disabled = false;
-      btn.classList.remove('loading');
-
-      if (res.ok) {
-        localStorage.setItem('mp7000_token', res.data.token);
-        localStorage.setItem('mp7000_is_admin', 'true');
-        playSfx('coin');
-        toast('Login admin berhasil!', 'success');
-        setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
-      } else {
-        playSfx('error');
-        toast(res.message || 'Login admin gagal', 'error');
-      }
+    function openAdmin() {
+      document.getElementById('adminOverlay').classList.add('show');
+      setTimeout(function() { document.getElementById('adminId').focus(); }, 100);
     }
-
-    // =============================================
-    // MODAL ADMIN (TAP 5x)
-    // =============================================
-    let tapCount = 0;
-    let tapTimer = null;
-    document.getElementById('gameTitle').addEventListener('click', () => {
-      tapCount++;
-      if (tapTimer) clearTimeout(tapTimer);
-      tapTimer = setTimeout(() => { tapCount = 0; }, 3000);
-      if (tapCount >= 5) {
-        tapCount = 0;
-        openAdminModal();
-      }
-    });
-
-    // Ctrl+Shift+A
-    document.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-        e.preventDefault();
-        openAdminModal();
-      }
-      if (e.key === 'Escape') {
-        closeAdminModal();
-        closeHelpModal();
-      }
-    });
-
-    function openAdminModal() {
-      document.getElementById('adminModal').classList.add('show');
-      document.getElementById('adminId').focus();
-    }
-    function closeAdminModal() {
-      document.getElementById('adminModal').classList.remove('show');
+    function closeAdmin() {
+      document.getElementById('adminOverlay').classList.remove('show');
       document.getElementById('adminId').value = '';
-      document.getElementById('adminPassword').value = '';
+      document.getElementById('adminPass').value = '';
     }
 
-    // =============================================
-    // MODAL BANTUAN
-    // =============================================
-    function openHelpModal() {
-      document.getElementById('helpModal').classList.add('show');
-    }
-    function closeHelpModal() {
-      document.getElementById('helpModal').classList.remove('show');
+    async function doAdminLogin(e) {
+      e.preventDefault();
+      var id = document.getElementById('adminId').value.trim();
+      var pass = document.getElementById('adminPass').value;
+      if (!id || !pass) {
+        toast('Isi ID dan Password admin', false);
+        return;
+      }
+      setLoading('btnAdmin', true);
+      var r = await api('adminLogin', { admin_id: id, password: pass });
+      setLoading('btnAdmin', false);
+
+      if (r.ok && r.data && r.data.token) {
+        localStorage.setItem('smp7k_token', r.data.token);
+        localStorage.setItem('smp7k_admin', '1');
+        toast('Login admin berhasil!', true);
+        setTimeout(function() { window.location.href = 'dashboard.html?admin=1'; }, 600);
+      } else {
+        toast(r.message || 'Login admin gagal', false);
+      }
     }
 
-    // Tutup modal klik overlay
-    document.getElementById('adminModal').addEventListener('click', (e) => {
-      if (e.target === e.currentTarget) closeAdminModal();
+    // Tutup modal klik overlay & ESC
+    document.getElementById('adminOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeAdmin();
     });
-    document.getElementById('helpModal').addEventListener('click', (e) => {
-      if (e.target === e.currentTarget) closeHelpModal();
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeAdmin();
     });
 
     // =============================================
-    // AUTO REDIRECT JIKA SUDAH LOGIN
+    // AUTO REDIRECT
     // =============================================
     (function() {
-      if (localStorage.getItem('mp7000_token')) {
-        window.location.href = 'dashboard.html';
+      var t = localStorage.getItem('smp7k_token');
+      var isAdmin = localStorage.getItem('smp7k_admin') === '1';
+      if (t) {
+        window.location.href = isAdmin ? 'dashboard.html?admin=1' : 'dashboard.html';
       }
     })();
+
+    // Enter di input → submit form
+    document.getElementById('loginPhone').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); document.getElementById('formLogin').requestSubmit(); }
+    });
+    document.getElementById('loginPass').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); document.getElementById('formLogin').requestSubmit(); }
+    });
+    document.getElementById('regPhone').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); document.getElementById('formRegister').requestSubmit(); }
+    });
   </script>
 </body>
 </html>
