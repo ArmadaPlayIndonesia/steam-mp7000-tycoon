@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Steam MP 7000 Tycoon — Login</title>
+
+<!-- ============================================================
+     CSS INLINE (tidak ada file terpisah)
+     Tema: Merah Putih (steam MP 7000)
+     ============================================================ -->
+<style>
+  :root {
+    --merah: #d32f2f;
+    --merah-tua: #b71c1c;
+    --merah-terang: #ef5350;
+    --putih: #ffffff;
+    --abu: #f5f5f5;
+    --abu-gelap: #757575;
+    --teks: #212121;
+    --shadow: 0 4px 14px rgba(0,0,0,.15);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--teks);
+    background: linear-gradient(180deg, #fff 0%, #ffecec 60%, #ffd6d6 100%);
+    overflow: hidden;
+  }
+
+  /* ============ BACKGROUND ANIMASI (awan + air menetes) ============ */
+  #bg-layer {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .awan {
+    position: absolute;
+    width: 120px;
+    height: 40px;
+    background: rgba(255,255,255,.75);
+    border-radius: 40px;
+    filter: blur(1px);
+    animation: awanJalan linear infinite;
+  }
+  .awan::before, .awan::after {
+    content: "";
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+  }
+  .awan::before { width: 60px; height: 60px; top: -28px; left: 18px; }
+  .awan::after  { width: 45px; height: 45px; top: -18px; left: 60px; }
+
+  @keyframes awanJalan {
+    from { transform: translateX(-20vw); }
+    to   { transform: translateX(120vw); }
+  }
+
+  .tetes {
+    position: absolute;
+    top: -10px;
+    width: 3px;
+    height: 12px;
+    background: linear-gradient(180deg, rgba(120,190,255,0), rgba(80,160,255,.85));
+    border-radius: 2px;
+    animation: tetesJatuh linear infinite;
+  }
+  @keyframes tetesJatuh {
+    0%   { transform: translateY(-20px); opacity: 0; }
+    10%  { opacity: .9; }
+    100% { transform: translateY(110vh); opacity: 0; }
+  }
+
+  /* ============ KONTEN ============ */
+  #app {
+    position: relative;
+    z-index: 1;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 18px 32px;
+    overflow-y: auto;
+  }
+
+  /* ============ LOGO ============ */
+  .logo-wrap {
+    text-align: center;
+    margin: 8px 0 18px;
+  }
+  .logo-bulat {
+    width: 86px;
+    height: 86px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, var(--merah-terang), var(--merah-tua));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(211,47,47,.4);
+    animation: pulseLogo 3s ease-in-out infinite;
+  }
+  @keyframes pulseLogo {
+    0%,100% { transform: scale(1); }
+    50%     { transform: scale(1.05); }
+  }
+  .logo-bulat svg { width: 52px; height: 52px; }
+
+  .judul-game {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--merah-tua);
+    letter-spacing: .5px;
+    margin: 0;
+  }
+  .subjudul-game {
+    font-size: 12px;
+    color: var(--abu-gelap);
+    margin: 2px 0 0;
+  }
+
+  /* ============ CARD FORM ============ */
+  .card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--putih);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    padding: 20px 18px 22px;
+    animation: masukCard .35s ease-out;
+  }
+  @keyframes masukCard {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Toggle tab login/register */
+  .toggle-tab {
+    display: flex;
+    background: var(--abu);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 16px;
+  }
+  .toggle-tab button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--abu-gelap);
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .toggle-tab button.aktif {
+    background: var(--merah);
+    color: var(--putih);
+    box-shadow: 0 2px 8px rgba(211,47,47,.35);
+  }
+
+  /* Form */
+  .form-group { margin-bottom: 12px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--abu-gelap);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 2px solid #eee;
+    border-radius: 11px;
+    outline: none;
+    transition: border-color .2s;
+    background: #fafafa;
+    color: var(--teks);
+  }
+  .form-group input:focus {
+    border-color: var(--merah-terang);
+    background: var(--putih);
+  }
+  .form-group .hint {
+    font-size: 11px;
+    color: #9e9e9e;
+    margin-top: 4px;
+  }
+
+  /* Tombol utama */
+  .btn-utama {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(180deg, var(--merah-terang), var(--merah));
+    color: var(--putih);
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(211,47,47,.35);
+    transition: transform .1s, box-shadow .2s;
+    letter-spacing: .3px;
+  }
+  .btn-utama:active { transform: scale(.97); }
+  .btn-utama:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* Pesan error / sukses */
+  .pesan {
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 12px;
+    display: none;
+    line-height: 1.4;
+  }
+  .pesan.error { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; display: block; }
+  .pesan.sukses { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; display: block; }
+
+  /* Kotak hasil register (tampil ID pemain) */
+  .kotak-id {
+    margin-top: 12px;
+    padding: 14px;
+    background: #fff8e1;
+    border: 2px dashed #ffb300;
+    border-radius: 12px;
+    text-align: center;
+    display: none;
+  }
+  .kotak-id.show { display: block; animation: masukCard .3s ease-out; }
+  .kotak-id .label { font-size: 12px; color: #8d6e00; font-weight: 700; }
+  .kotak-id .idnya {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--merah-tua);
+    letter-spacing: 1px;
+    margin: 6px 0;
+    font-family: monospace;
+  }
+  .kotak-id .catatan { font-size: 11px; color: #8d6e00; }
+
+  /* Footer */
+  .footer-note {
+    margin-top: 18px;
+    font-size: 11px;
+    color: #9e9e9e;
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.5;
+  }
+
+  /* Loading overlay */
+  #loading {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 999;
+    backdrop-filter: blur(2px);
+  }
+  #loading.show { display: flex; }
+  .spinner {
+    width: 44px;
+    height: 44px;
+    border: 4px solid #ffcdd2;
+    border-top-color: var(--merah);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading p {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--merah-tua);
+    font-weight: 700;
+  }
+
+  /* Layar kecil */
+  @media (max-width: 360px) {
+    .judul-game { font-size: 19px; }
+    .logo-bulat { width: 72px; height: 72px; }
+    .logo-bulat svg { width: 44px; height: 44px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ BACKGROUND ANIMASI ============ -->
+<div id="bg-layer"></div>
+
+<!-- ============ LOADING OVERLAY ============ -->
+<div id="loading">
+  <div class="spinner"></div>
+  <p id="loading-text">Menghubungi server...</p>
+</div>
+
+<!-- ============ KONTEN UTAMA ============ -->
+<div id="app">
+
+  <!-- Logo & judul -->
+  <div class="logo-wrap">
+    <div class="logo-bulat">
+      <!-- SVG inline: ikon motor + air -->
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="46" r="8" stroke="#fff" stroke-width="3"/>
+        <circle cx="46" cy="46" r="8" stroke="#fff" stroke-width="3"/>
+        <path d="M20 46 L28 32 L42 32 L46 46" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M28 32 L24 24 L34 24" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 18 q4 -6 8 0 q4 6 8 0" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".85"/>
+        <path d="M36 14 q3 -5 6 0 q3 5 6 0" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".85"/>
+      </svg>
+    </div>
+    <h1 class="judul-game">Steam MP 7000 Tycoon</h1>
+    <p class="subjudul-game">Cuci motor, kumpulin koin, jadi bos steam! 🏍️💦</p>
+  </div>
+
+  <!-- Card form -->
+  <div class="card">
+
+    <!-- Pesan error/sukses -->
+    <div id="pesan" class="pesan"></div>
+
+    <!-- Toggle Login / Register -->
+    <div class="toggle-tab">
+      <button id="tab-login" class="aktif" type="button">Masuk</button>
+      <button id="tab-register" type="button">Daftar</button>
+    </div>
+
+    <!-- ===== FORM LOGIN ===== -->
+    <form id="form-login" autocomplete="off">
+      <div class="form-group">
+        <label for="login-id">ID Pemain</label>
+        <input type="text" id="login-id" placeholder="MP7000-0001" inputmode="text" />
+      </div>
+      <div class="form-group">
+        <label for="login-pass">Password</label>
+        <input type="password" id="login-pass" placeholder="••••••" />
+      </div>
+      <button type="submit" class="btn-utama" id="btn-login">Masuk</button>
+    </form>
+
+    <!-- ===== FORM REGISTER ===== -->
+    <form id="form-register" autocomplete="off" style="display:none">
+      <div class="form-group">
+        <label for="reg-nama">Nama Lengkap</label>
+        <input type="text" id="reg-nama" placeholder="Contoh: Pak Aldi" maxlength="40" />
+      </div>
+      <div class="form-group">
+        <label for="reg-hp">Nomor HP</label>
+        <input type="tel" id="reg-hp" placeholder="08xxxxxxxxxx" inputmode="numeric" maxlength="13" />
+        <div class="hint">Wajib diawali "08", 10–13 digit</div>
+      </div>
+      <div class="form-group">
+        <label for="reg-pass">Password</label>
+        <input type="password" id="reg-pass" placeholder="Minimal 6 karakter" />
+      </div>
+      <div class="form-group">
+        <label for="reg-pass2">Ulangi Password</label>
+        <input type="password" id="reg-pass2" placeholder="Ulangi password" />
+      </div>
+      <button type="submit" class="btn-utama" id="btn-register">Daftar Sekarang</button>
+
+      <!-- Kotak hasil register -->
+      <div id="kotak-id" class="kotak-id">
+        <div class="label">ID Pemain Kamu</div>
+        <div class="idnya" id="id-hasil">MP7000-0000</div>
+        <div class="catatan">⚠️ Simpan ID ini! Kamu butuh buat login. Password jangan sampai lupa ya.</div>
+      </div>
+    </form>
+
+  </div>
+
+  <p class="footer-note">
+    Dengan masuk, kamu setuju main fair play. Koin hasil convert tidak bisa dikembalikan.
+  </p>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT INLINE
+     ============================================================ -->
+<script>
+/* ============================================================
+   KONFIGURASI BACKEND
+   >>> GANTI DI SINI KALAU URL WEB APP BERUBAH <<<
+   ============================================================ */
+const API_URL = "https://script.google.com/macros/s/AKfycbygMaU_I70oOmIqWt2zuM-FzN_6pGm1DehfAx-atlQ3OsExVbQpbBTyQk_wsYlWOLaoLQ/exec";
+
+/* ============================================================
+   UTIL: DEVICE ID
+   Generate & simpan di localStorage (persistent per perangkat)
+   ============================================================ */
+function ambilDeviceId() {
+  let did = localStorage.getItem("mp7000_device_id");
+  if (!did) {
+    // Format: DEV-<timestamp36>-<random>
+    const ts = Date.now().toString(36);
+    const rnd = Math.random().toString(36).slice(2, 10);
+    did = "DEV-" + ts + "-" + rnd;
+    localStorage.setItem("mp7000_device_id", did);
+  }
+  return did;
+}
+
+/* ============================================================
+   UTIL: ELEMEN
+   ============================================================ */
+const $ = (id) => document.getElementById(id);
+const pesanEl = $("pesan");
+const loadingEl = $("loading");
+const loadingText = $("loading-text");
+
+/* Tampilkan pesan error / sukses */
+function tampilPesan(teks, tipe) {
+  pesanEl.className = "pesan " + (tipe || "error");
+  pesanEl.textContent = teks;
+  // Auto-hilang setelah 5 detik kalau bukan error fatal
+  clearTimeout(window.__pesanTimer);
+  window.__pesanTimer = setTimeout(() => {
+    pesanEl.className = "pesan";
+  }, 5000);
+}
+function sembunyikanPesan() {
+  pesanEl.className = "pesan";
+}
+
+/* Loading indicator */
+function setLoading(aktif, teks) {
+  loadingText.textContent = teks || "Menghubungi server...";
+  loadingEl.classList.toggle("show", !!aktif);
+}
+
+/* ============================================================
+   UTIL: FETCH KE SERVER
+   Semua request pakai format { action, token, data }
+   ============================================================ */
+async function kirimKeServer(action, data, pakaiToken) {
+  const body = {
+    action: action,
+    token: pakaiToken ? (localStorage.getItem("mp7000_token") || "") : "",
+    data: data || {}
+  };
+
+  const resp = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    // Catatan: jangan pakai mode:'no-cors'. Backend sudah atur CORS.
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    throw new Error("Server balas error HTTP " + resp.status);
+  }
+
+  let json;
+  try {
+    json = await resp.json();
+  } catch (e) {
+    throw new Error("Jawaban server bukan JSON valid.");
+  }
+  return json;
+}
+
+/* ============================================================
+   VALIDASI FORM
+   ============================================================ */
+function validasiHP(hp) {
+  // Wajib "08" + total 10-13 digit
+  if (!/^08\d+$/.test(hp)) return "Nomor HP harus diawali \"08\" dan hanya angka.";
+  if (hp.length < 10 || hp.length > 13) return "Panjang nomor HP harus 10–13 digit.";
+  return null;
+}
+function validasiPassword(pass) {
+  if (!pass || pass.length < 6) return "Password minimal 6 karakter.";
+  return null;
+}
+
+/* ============================================================
+   TOGGLE TAB LOGIN / REGISTER
+   ============================================================ */
+const tabLogin = $("tab-login");
+const tabRegister = $("tab-register");
+const formLogin = $("form-login");
+const formRegister = $("form-register");
+
+function tampilkanLogin() {
+  tabLogin.classList.add("aktif");
+  tabRegister.classList.remove("aktif");
+  formLogin.style.display = "block";
+  formRegister.style.display = "none";
+  sembunyikanPesan();
+  $("kotak-id").classList.remove("show");
+}
+function tampilkanRegister() {
+  tabRegister.classList.add("aktif");
+  tabLogin.classList.remove("aktif");
+  formLogin.style.display = "none";
+  formRegister.style.display = "block";
+  sembunyikanPesan();
+}
+tabLogin.addEventListener("click", tampilkanLogin);
+tabRegister.addEventListener("click", tampilkanRegister);
+
+/* ============================================================
+   SUBMIT: LOGIN
+   ============================================================ */
+formLogin.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  sembunyikanPesan();
+
+  const idPemain = $("login-id").value.trim().toUpperCase();
+  const password = $("login-pass").value;
+
+  if (!idPemain) return tampilPesan("ID pemain wajib diisi.");
+  if (!password) return tampilPesan("Password wajib diisi.");
+
+  const btn = $("btn-login");
+  btn.disabled = true;
+  setLoading(true, "Mencoba masuk...");
+
+  try {
+    const resp = await kirimKeServer("login", {
+      id_pemain: idPemain,
+      password: password,
+      device_id: ambilDeviceId()
+    }, false);
+
+    if (!resp.ok) {
+      tampilPesan(resp.message || "Login gagal. Cek ID & password.", "error");
+      return;
+    }
+
+    // Simpan token & data pemain
+    const d = resp.data || {};
+    if (!d.token) {
+      tampilPesan("Server tidak mengirim token. Hubungi admin.", "error");
+      return;
+    }
+    localStorage.setItem("mp7000_token", d.token);
+    localStorage.setItem("mp7000_pemain", JSON.stringify(d.pemain || {}));
+
+    tampilPesan("Berhasil masuk! Mengalihkan...", "sukses");
+    setTimeout(() => { window.location.href = "dashboard.html"; }, 700);
+
+  } catch (err) {
+    console.error(err);
+    tampilPesan("Gagal konek ke server. Cek internet kamu ya. (" + err.message + ")", "error");
+  } finally {
+    btn.disabled = false;
+    setLoading(false);
+  }
+});
+
+/* ============================================================
+   SUBMIT: REGISTER
+   ============================================================ */
+formRegister.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  sembunyikanPesan();
+  $("kotak-id").classList.remove("show");
+
+  const nama = $("reg-nama").value.trim();
+  const hp = $("reg-hp").value.trim();
+  const pass = $("reg-pass").value;
+  const pass2 = $("reg-pass2").value;
+
+  if (!nama || nama.length < 2) return tampilPesan("Nama minimal 2 karakter.");
+  const errHP = validasiHP(hp);
+  if (errHP) return tampilPesan(errHP);
+  const errPass = validasiPassword(pass);
+  if (errPass) return tampilPesan(errPass);
+  if (pass !== pass2) return tampilPesan("Password dan ulangi password tidak sama.");
+
+  const btn = $("btn-register");
+  btn.disabled = true;
+  setLoading(true, "Mendaftarkan akun...");
+
+  try {
+    const resp = await kirimKeServer("register", {
+      nama: nama,
+      no_hp: hp,
+      password: pass,
+      device_id: ambilDeviceId()
+    }, false);
+
+    if (!resp.ok) {
+      tampilPesan(resp.message || "Registrasi gagal.", "error");
+      return;
+    }
+
+    const d = resp.data || {};
+    if (!d.id_pemain) {
+      tampilPesan("Server tidak mengirim ID pemain. Hubungi admin.", "error");
+      return;
+    }
+
+    // Tampilkan ID pemain yang di-generate
+    $("id-hasil").textContent = d.id_pemain;
+    $("kotak-id").classList.add("show");
+    tampilPesan("Akun berhasil dibuat! Catat ID kamu ya.", "sukses");
+
+    // Reset form register
+    $("reg-nama").value = "";
+    $("reg-hp").value = "";
+    $("reg-pass").value = "";
+    $("reg-pass2").value = "";
+
+    // Auto-isi form login biar gampang
+    $("login-id").value = d.id_pemain;
+
+  } catch (err) {
+    console.error(err);
+    tampilPesan("Gagal konek ke server. Coba lagi. (" + err.message + ")", "error");
+  } finally {
+    btn.disabled = false;
+    setLoading(false);
+  }
+});
+
+/* ============================================================
+   BACKGROUND ANIMASI: buat awan & tetes air
+   ============================================================ */
+(function buatBackground() {
+  const layer = $("bg-layer");
+
+  // 5 awan beda posisi & kecepatan
+  const awanData = [
+    { top: "8%",  scale: 1.0, dur: 45, delay: 0 },
+    { top: "22%", scale: 0.7, dur: 60, delay: -10 },
+    { top: "55%", scale: 1.2, dur: 55, delay: -25 },
+    { top: "70%", scale: 0.9, dur: 70, delay: -40 },
+    { top: "40%", scale: 0.6, dur: 50, delay: -5 }
+  ];
+  awanData.forEach((a) => {
+    const el = document.createElement("div");
+    el.className = "awan";
+    el.style.top = a.top;
+    el.style.transform = "scale(" + a.scale + ")";
+    el.style.animationDuration = a.dur + "s";
+    el.style.animationDelay = a.delay + "s";
+    layer.appendChild(el);
+  });
+
+  // 12 tetes air jatuh di posisi random
+  for (let i = 0; i < 12; i++) {
+    const t = document.createElement("div");
+    t.className = "tetes";
+    t.style.left = Math.random() * 100 + "%";
+    t.style.animationDuration = (2 + Math.random() * 3) + "s";
+    t.style.animationDelay = (Math.random() * 4) + "s";
+    layer.appendChild(t);
+  }
+})();
+
+/* ============================================================
+   CEK SESI: kalau sudah login, langsung ke dashboard
+   ============================================================ */
+(function cekSesi() {
+  const token = localStorage.getItem("mp7000_token");
+  if (token) {
+    // Ada token, redirect otomatis (biar tidak perlu login ulang)
+    // Komentar: kalau mau user tetap lihat halaman login, hapus blok ini.
+    window.location.href = "dashboard.html";
+  }
+})();
+
+/* ============================================================
+   UTIL TAMBAHAN: format angka ribuan (buat tampilan nanti)
+   ============================================================ */
+function formatAngka(n) {
+  return (n || 0).toLocaleString("id-ID");
+}
+</script>
+</body>
+</html>
