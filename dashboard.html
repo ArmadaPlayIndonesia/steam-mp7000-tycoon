@@ -1,1354 +1,1861 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Steam MP 7000 Tycoon — Dashboard</title>
-<style>
-  /* ===== RESET & DASAR ===== */
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body { height:100%; overflow:hidden; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: linear-gradient(160deg, #7a0000 0%, #c00 50%, #ff4d4d 100%);
-    color:#fff; position:relative; user-select:none;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Steam MP 7000 Tycoon - Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* === RESET & BASE === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'Rajdhani', sans-serif;
+      background: #0a0a0a;
+      color: #eee;
+      overflow-x: hidden;
+    }
+    body {
+      background: radial-gradient(circle at 50% 20%, #1a1a1a 0%, #0a0a0a 70%);
+      min-height: 100vh;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255,215,0,0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(52,152,219,0.03) 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* === LOADING SCREEN === */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      gap: 20px;
+    }
+    .loading-screen .spinner-lg {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255,215,0,0.15);
+      border-top-color: #FFD700;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .loading-screen p {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      color: #FFD700;
+      letter-spacing: 2px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-  /* ===== BACKGROUND AWAN ===== */
-  .bg-awan { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
-  .awan {
-    position:absolute; width:120px; height:40px; background:rgba(255,255,255,.13);
-    border-radius:50px; filter:blur(6px); animation:gerakAwan linear infinite;
-  }
-  .awan::before, .awan::after { content:""; position:absolute; background:rgba(255,255,255,.13); border-radius:50%; }
-  .awan::before { width:60px; height:60px; top:-25px; left:15px; }
-  .awan::after  { width:45px; height:45px; top:-18px; left:55px; }
-  .awan.a1 { top:10%; animation-duration:30s; }
-  .awan.a2 { top:35%; animation-duration:42s; animation-delay:-10s; transform:scale(.8); }
-  .awan.a3 { top:70%; animation-duration:50s; animation-delay:-25s; transform:scale(1.2); }
-  @keyframes gerakAwan { from{left:-160px} to{left:110%} }
+    /* === APP CONTAINER === */
+    .app {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+      max-width: 480px;
+      margin: 0 auto;
+      padding-bottom: 20px;
+    }
+    .app.show { display: flex; }
 
-  /* ===== HEADER ===== */
-  .header {
-    position:relative; z-index:10;
-    display:flex; align-items:center; gap:8px;
-    padding:8px 10px;
-    background:rgba(0,0,0,.35); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-    border-bottom:1px solid rgba(255,255,255,.15);
-    flex-wrap:wrap;
-  }
-  .header .nama { font-weight:800; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px; }
-  .stat { display:flex; align-items:center; gap:3px; font-size:12px; font-weight:700; background:rgba(255,255,255,.12); padding:4px 7px; border-radius:8px; }
-  .stat .ikon { font-size:13px; }
-  .header-spacer { flex:1; }
-  .btn-header {
-    background:rgba(255,255,255,.15); border:none; color:#fff; width:34px; height:34px;
-    border-radius:10px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-    transition:.2s;
-  }
-  .btn-header:active { transform:scale(.92); background:rgba(255,255,255,.3); }
+    /* === HEADER === */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,215,0,0.1);
+      padding: 10px 12px;
+    }
+    .header-row1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .player-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .player-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #FFD700;
+      letter-spacing: 0.5px;
+    }
+    .player-level {
+      font-size: 11px;
+      color: #888;
+      font-weight: 600;
+    }
+    .btn-logout {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(231,76,60,0.4);
+      background: rgba(231,76,60,0.1);
+      border-radius: 10px;
+      color: #e74c3c;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover {
+      background: rgba(231,76,60,0.3);
+    }
+    .header-row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .saldo-card {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 6px 8px;
+      text-align: center;
+    }
+    .saldo-label {
+      font-size: 9px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    .saldo-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .saldo-koin .saldo-value { color: #FFD700; }
+    .saldo-rupiah .saldo-value { color: #2ecc71; }
+    .saldo-kristal .saldo-value { color: #3498db; }
+    .header-row3 {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      font-weight: 600;
+    }
+    .header-row3 span { color: #FFD700; }
 
-  /* Level bar di header */
-  .level-bar-wrap { width:100%; display:flex; align-items:center; gap:6px; margin-top:2px; }
-  .level-bar { flex:1; height:6px; background:rgba(0,0,0,.35); border-radius:6px; overflow:hidden; }
-  .level-bar-fill { height:100%; width:0%; background:linear-gradient(90deg,#ffd700,#ff8c00); border-radius:6px; transition:width .4s; }
-  .level-txt { font-size:10px; font-weight:700; opacity:.9; }
+    /* === TAB ADMIN === */
+    .main-tabs {
+      display: none;
+      gap: 4px;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.3);
+    }
+    .main-tabs.show { display: flex; }
+    .main-tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: #888;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .main-tab-btn.active {
+      background: #FFD700;
+      color: #0a0a0a;
+    }
 
-  /* ===== AREA GAME (TAP) ===== */
-  .area-game {
-    position:absolute; inset:0; z-index:1;
-    display:flex; align-items:center; justify-content:center;
-    touch-action:manipulation;
-  }
-  .motor-visual {
-    font-size:110px; filter:drop-shadow(0 8px 20px rgba(0,0,0,.4));
-    animation:goyang 2.5s ease-in-out infinite; pointer-events:none;
-  }
-  @keyframes goyang { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-10px) rotate(2deg)} }
+    /* === AREA TAP === */
+    .tap-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 16px;
+      position: relative;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .tap-circle {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #2a2a2a, #111);
+      border: 3px solid rgba(255,215,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      cursor: pointer;
+      transition: transform 0.08s, box-shadow 0.2s;
+      box-shadow: 0 0 40px rgba(255,215,0,0.1), inset 0 0 30px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .tap-circle:active {
+      transform: scale(0.92);
+      box-shadow: 0 0 60px rgba(255,215,0,0.3);
+    }
+    .tap-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,215,0,0.3);
+      transform: scale(0);
+      animation: ripple 0.6s ease-out;
+      pointer-events: none;
+    }
+    @keyframes ripple {
+      to { transform: scale(4); opacity: 0; }
+    }
+    .float-text {
+      position: absolute;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #FFD700;
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+      text-shadow: 0 0 10px rgba(255,215,0,0.6);
+    }
+    @keyframes floatUp {
+      to { transform: translateY(-80px); opacity: 0; }
+    }
+    .tap-stats {
+      margin-top: 16px;
+      display: flex;
+      gap: 20px;
+      font-size: 13px;
+      color: #aaa;
+    }
+    .tap-stats b { color: #FFD700; }
 
-  /* Efek tap "+1" */
-  .efek-tap {
-    position:absolute; font-size:22px; font-weight:900; color:#ffd700;
-    text-shadow:0 2px 6px rgba(0,0,0,.5); pointer-events:none; z-index:50;
-    animation:naikHilang 0.8s ease-out forwards;
-  }
-  @keyframes naikHilang {
-    0%   { transform:translate(-50%,-50%) scale(.6); opacity:1; }
-    100% { transform:translate(-50%,-160%) scale(1.3); opacity:0; }
-  }
-  /* Partikel busa */
-  .partikel {
-    position:absolute; width:10px; height:10px; background:rgba(255,255,255,.85);
-    border-radius:50%; pointer-events:none; z-index:49;
-    animation:pecah 0.7s ease-out forwards;
-  }
-  @keyframes pecah {
-    0%   { transform:translate(-50%,-50%) scale(.3); opacity:1; }
-    100% { transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.4); opacity:0; }
-  }
+    /* === MENU GRID === */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 12px;
+    }
+    .menu-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 10px 4px;
+      background: rgba(26,26,26,0.8);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      color: #ccc;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      min-height: 64px;
+    }
+    .menu-btn:hover {
+      background: rgba(255,215,0,0.1);
+      border-color: rgba(255,215,0,0.3);
+      color: #FFD700;
+    }
+    .menu-btn .icon { font-size: 20px; }
 
-  /* ===== MENU SLIDE DARI KIRI ===== */
-  .overlay {
-    position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:100;
-    opacity:0; pointer-events:none; transition:.3s;
-  }
-  .overlay.aktif { opacity:1; pointer-events:auto; }
-  .menu-slide {
-    position:fixed; top:0; left:0; bottom:0; width:78%; max-width:320px;
-    background:linear-gradient(180deg,#a30000,#7a0000); z-index:101;
-    transform:translateX(-105%); transition:.3s cubic-bezier(.4,0,.2,1);
-    display:flex; flex-direction:column; box-shadow:6px 0 24px rgba(0,0,0,.5);
-  }
-  .menu-slide.aktif { transform:translateX(0); }
-  .menu-header { padding:16px; border-bottom:1px solid rgba(255,255,255,.15); display:flex; justify-content:space-between; align-items:center; }
-  .menu-header h2 { font-size:16px; font-weight:800; }
-  .menu-list { flex:1; overflow-y:auto; padding:8px; }
-  .menu-item {
-    display:flex; align-items:center; gap:12px; padding:13px 14px; border-radius:12px;
-    background:rgba(255,255,255,.08); margin-bottom:6px; cursor:pointer; transition:.2s;
-    font-weight:600; font-size:14px;
-  }
-  .menu-item:active, .menu-item.aktif { background:rgba(255,255,255,.25); transform:translateX(4px); }
-  .menu-item .ikon { font-size:20px; width:26px; text-align:center; }
+    /* === MODAL === */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 0;
+      animation: fadeIn 0.2s ease-out;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      width: 100%;
+      max-width: 480px;
+      max-height: 85vh;
+      background: #1a1a1a;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      padding: 20px;
+      overflow-y: auto;
+      position: relative;
+      animation: slideUp 0.3s ease-out;
+      border: 1px solid rgba(255,215,0,0.15);
+      border-bottom: none;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      color: #888;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-close:hover { background: rgba(231,76,60,0.2); color: #e74c3c; }
+    .modal h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 15px;
+      color: #FFD700;
+      margin-bottom: 16px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .modal-list { display: flex; flex-direction: column; gap: 8px; }
+    .modal-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      gap: 8px;
+    }
+    .modal-item-info { flex: 1; min-width: 0; }
+    .modal-item-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: #eee;
+    }
+    .modal-item-sub {
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+    }
+    .modal-item-sub b { color: #FFD700; }
+    .badge-aktif {
+      font-size: 10px;
+      background: rgba(46,204,113,0.2);
+      color: #2ecc71;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+      border: 1px solid rgba(46,204,113,0.3);
+    }
+    .btn-sm {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .btn-yellow { background: #FFD700; color: #0a0a0a; }
+    .btn-yellow:hover:not(:disabled) { background: #e6c200; }
+    .btn-yellow:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-red { background: #e74c3c; color: #fff; }
+    .btn-red:hover:not(:disabled) { background: #c0392b; }
+    .btn-green { background: #2ecc71; color: #fff; }
+    .btn-green:hover:not(:disabled) { background: #27ae60; }
+    .btn-blue { background: #3498db; color: #fff; }
+    .btn-blue:hover:not(:disabled) { background: #2980b9; }
+    .btn-full { width: 100%; padding: 12px; font-size: 13px; }
+    .btn-row { display: flex; gap: 8px; margin-top: 12px; }
 
-  /* ===== PANEL KONTEN (tab) ===== */
-  .panel {
-    position:fixed; inset:0; top:0; z-index:90;
-    background:linear-gradient(160deg,#8a0000,#c00 50%,#ff4d4d);
-    transform:translateY(100%); transition:.32s cubic-bezier(.4,0,.2,1);
-    display:flex; flex-direction:column; padding-top:0;
-  }
-  .panel.aktif { transform:translateY(0); }
-  .panel-head {
-    display:flex; align-items:center; gap:10px; padding:12px 14px;
-    background:rgba(0,0,0,.3); border-bottom:1px solid rgba(255,255,255,.15);
-  }
-  .panel-head h3 { font-size:16px; font-weight:800; flex:1; }
-  .panel-body { flex:1; overflow-y:auto; padding:14px; -webkit-overflow-scrolling:touch; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      color: #aaa;
+      margin-bottom: 5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: #eee;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      outline: none;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: #FFD700;
+      box-shadow: 0 0 0 2px rgba(255,215,0,0.15);
+    }
+    .form-group select { cursor: pointer; }
+    .form-group select option { background: #1a1a1a; }
 
-  /* Kartu umum */
-  .kartu {
-    background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18);
-    border-radius:14px; padding:12px 14px; margin-bottom:10px;
-  }
-  .kartu h4 { font-size:14px; margin-bottom:4px; }
-  .kartu .sub { font-size:11px; opacity:.8; }
-  .row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .row + .row { margin-top:6px; }
-  .btn {
-    padding:8px 14px; border:none; border-radius:9px; font-weight:700; font-size:12px;
-    cursor:pointer; transition:.2s;
-  }
-  .btn:active { transform:scale(.95); }
-  .btn:disabled { opacity:.45; cursor:not-allowed; }
-  .btn-merah { background:linear-gradient(135deg,#fff,#ffe0e0); color:#c00; }
-  .btn-hijau { background:linear-gradient(135deg,#4caf50,#2e7d32); color:#fff; }
-  .btn-biru  { background:linear-gradient(135deg,#2196f3,#1565c0); color:#fff; }
-  .btn-abu   { background:rgba(255,255,255,.15); color:#fff; }
-  .btn-kuning{ background:linear-gradient(135deg,#ffd700,#ff8c00); color:#5a3000; }
+    /* === TOAST === */
+    .toast-container {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 90%;
+      max-width: 380px;
+      pointer-events: none;
+    }
+    .toast {
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      animation: toastIn 0.35s ease-out;
+      pointer-events: auto;
+    }
+    .toast.success {
+      background: linear-gradient(135deg, #27ae60, #1e8449);
+      border: 1px solid rgba(46,204,113,0.4);
+    }
+    .toast.error {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      border: 1px solid rgba(231,76,60,0.4);
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .toast.hide { animation: toastOut 0.3s ease-in forwards; }
+    @keyframes toastOut { to { opacity: 0; transform: translateY(-20px); } }
 
-  .input-biasa {
-    width:100%; padding:11px 13px; border-radius:10px; border:1px solid rgba(255,255,255,.3);
-    background:rgba(255,255,255,.12); color:#fff; font-size:14px; outline:none;
-  }
-  .input-biasa::placeholder { color:rgba(255,255,255,.5); }
+    /* === ADMIN PANEL === */
+    .admin-panel { display: none; padding: 12px; }
+    .admin-panel.show { display: block; }
+    .sub-tabs {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      scrollbar-width: none;
+    }
+    .sub-tabs::-webkit-scrollbar { display: none; }
+    .sub-tab-btn {
+      padding: 7px 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      background: transparent;
+      color: #888;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .sub-tab-btn.active {
+      background: #FFD700;
+      color: #0a0a0a;
+      border-color: #FFD700;
+    }
+    .admin-content { display: none; }
+    .admin-content.show { display: block; }
+    .admin-table {
+      width: 100%;
+      font-size: 12px;
+      border-collapse: collapse;
+    }
+    .admin-table th {
+      text-align: left;
+      padding: 6px 8px;
+      color: #FFD700;
+      font-size: 10px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255,215,0,0.2);
+    }
+    .admin-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: #ccc;
+    }
+    .admin-table tr:hover td { background: rgba(255,215,0,0.03); }
+    .admin-actions { display: flex; gap: 4px; flex-wrap: wrap; }
+    .admin-actions button {
+      padding: 4px 8px;
+      border: none;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .admin-log {
+      font-family: monospace;
+      font-size: 11px;
+      color: #aaa;
+      background: rgba(0,0,0,0.4);
+      padding: 10px;
+      border-radius: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      line-height: 1.6;
+    }
 
-  .badge { display:inline-block; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:700; }
-  .badge-aktif { background:#4caf50; }
-  .badge-lock  { background:rgba(0,0,0,.4); }
+    /* === QRIS === */
+    .qris-box {
+      text-align: center;
+      padding: 12px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+    .qris-box img {
+      max-width: 200px;
+      width: 100%;
+      border-radius: 8px;
+    }
+    .qris-fallback {
+      display: none;
+      padding: 12px;
+      background: rgba(255,215,0,0.05);
+      border: 1px dashed rgba(255,215,0,0.3);
+      border-radius: 8px;
+      font-size: 12px;
+      color: #FFD700;
+      line-height: 1.6;
+    }
 
-  /* ===== TOAST ===== */
-  .toast {
-    position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(120%);
-    background:rgba(0,0,0,.85); color:#fff; padding:11px 20px; border-radius:30px;
-    font-size:13px; font-weight:600; z-index:999; transition:.3s; max-width:88%; text-align:center;
-    box-shadow:0 8px 24px rgba(0,0,0,.4);
-  }
-  .toast.tampil { transform:translateX(-50%) translateY(0); }
-  .toast.sukses { background:rgba(46,125,50,.95); }
-  .toast.error  { background:rgba(183,28,28,.95); }
+    /* === VOUCHER CODE === */
+    .voucher-code {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: #FFD700;
+      text-align: center;
+      padding: 16px;
+      background: rgba(255,215,0,0.05);
+      border: 2px dashed rgba(255,215,0,0.4);
+      border-radius: 12px;
+      letter-spacing: 2px;
+      margin: 12px 0;
+      word-break: break-all;
+    }
 
-  /* ===== LOADING ===== */
-  .loading-overlay {
-    position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:900;
-    display:none; align-items:center; justify-content:center;
-  }
-  .loading-overlay.aktif { display:flex; }
-  .spinner {
-    width:44px; height:44px; border:4px solid rgba(255,255,255,.25);
-    border-top-color:#fff; border-radius:50%; animation:spin .8s linear infinite;
-  }
-  @keyframes spin { to { transform:rotate(360deg); } }
-
-  /* ===== PANEL ADMIN ===== */
-  .admin-overlay {
-    position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:950;
-    display:none; align-items:center; justify-content:center; padding:20px;
-  }
-  .admin-overlay.aktif { display:flex; }
-  .admin-login-card {
-    width:100%; max-width:340px; background:#1a1a1a; border:1px solid #333;
-    border-radius:16px; padding:20px; color:#fff;
-  }
-  .admin-login-card h3 { text-align:center; margin-bottom:14px; color:#ff5252; }
-  .admin-panel {
-    position:fixed; inset:0; background:#111; z-index:960; display:none;
-    flex-direction:column; color:#eee;
-  }
-  .admin-panel.aktif { display:flex; }
-  .admin-head { background:#1a1a1a; padding:10px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #333; }
-  .admin-head h3 { flex:1; font-size:15px; color:#ff5252; }
-  .admin-tabs { display:flex; overflow-x:auto; background:#1a1a1a; border-bottom:1px solid #333; padding:6px; gap:4px; }
-  .admin-tabs button {
-    padding:7px 12px; border:none; background:#222; color:#aaa; border-radius:8px;
-    font-size:11px; font-weight:700; white-space:nowrap; cursor:pointer;
-  }
-  .admin-tabs button.aktif { background:#ff5252; color:#fff; }
-  .admin-body { flex:1; overflow-y:auto; padding:12px; }
-  .admin-body .kartu { background:#1a1a1a; border-color:#333; }
-  .admin-body h4 { color:#ff5252; }
-  .admin-input {
-    width:100%; padding:9px 11px; border-radius:8px; border:1px solid #333;
-    background:#222; color:#fff; font-size:13px; outline:none; margin-bottom:6px;
-  }
-  .tabel-admin { width:100%; border-collapse:collapse; font-size:11px; }
-  .tabel-admin th, .tabel-admin td { padding:6px 4px; border-bottom:1px solid #2a2a2a; text-align:left; }
-  .tabel-admin th { color:#ff5252; }
-
-  /* Slot iklan */
-  .slot-iklan {
-    background:rgba(0,0,0,.3); border:1px dashed rgba(255,255,255,.3);
-    border-radius:10px; padding:14px; text-align:center; font-size:11px;
-    opacity:.7; margin-bottom:10px;
-  }
-
-  /* Scrollbar halus */
-  ::-webkit-scrollbar { width:5px; }
-  ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.3); border-radius:5px; }
-</style>
+    /* === RESPONSIF === */
+    @media (max-width: 360px) {
+      .tap-circle { width: 150px; height: 150px; font-size: 60px; }
+      .menu-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 8px; }
+      .menu-btn { font-size: 9px; min-height: 58px; padding: 6px 2px; }
+      .menu-btn .icon { font-size: 18px; }
+    }
+    @media (min-width: 768px) {
+      .app { max-width: 480px; border-left: 1px solid rgba(255,215,0,0.05); border-right: 1px solid rgba(255,215,0,0.05); }
+    }
+  </style>
 </head>
 <body>
-
-<!-- Background awan -->
-<div class="bg-awan">
-  <div class="awan a1"></div>
-  <div class="awan a2"></div>
-  <div class="awan a3"></div>
-</div>
-
-<!-- ===== AREA GAME (tap) ===== -->
-<div class="area-game" id="areaGame">
-  <div class="motor-visual" id="motorVisual">🏍️</div>
-</div>
-
-<!-- ===== HEADER ===== -->
-<div class="header" style="position:fixed;top:0;left:0;right:0;">
-  <div class="nama" id="hdrNama" onclick="tapLogo()">🏍️ Pak Aldi</div>
-  <div class="stat"><span class="ikon">🪙</span><span id="hdrKoin">0</span></div>
-  <div class="stat"><span class="ikon">💵</span><span id="hdrRupiah">0</span></div>
-  <div class="stat"><span class="ikon">💎</span><span id="hdrKristal">0</span></div>
-  <div class="header-spacer"></div>
-  <button class="btn-header" id="btnMusik" onclick="toggleMusik()">🔊</button>
-  <button class="btn-header" onclick="bukaMenu()">☰</button>
-  <div class="level-bar-wrap">
-    <span class="level-txt">Lv <span id="hdrLevel">1</span></span>
-    <div class="level-bar"><div class="level-bar-fill" id="hdrLevelFill"></div></div>
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="spinner-lg"></div>
+    <p>MEMUAT...</p>
   </div>
-</div>
 
-<!-- ===== MENU SLIDE ===== -->
-<div class="overlay" id="overlayMenu" onclick="tutupMenu()"></div>
-<div class="menu-slide" id="menuSlide">
-  <div class="menu-header">
-    <h2>🏍️ Menu</h2>
-    <button class="btn-header" onclick="tutupMenu()">✕</button>
-  </div>
-  <div class="menu-list" id="menuList"></div>
-</div>
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
-<!-- ===== PANEL KONTEN ===== -->
-<div class="panel" id="panel">
-  <div class="panel-head">
-    <button class="btn-header" onclick="tutupPanel()">←</button>
-    <h3 id="panelJudul">Game</h3>
-  </div>
-  <div class="panel-body" id="panelBody"></div>
-</div>
-
-<!-- ===== TOAST & LOADING ===== -->
-<div class="toast" id="toast"></div>
-<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
-
-<!-- ===== ADMIN LOGIN OVERLAY ===== -->
-<div class="admin-overlay" id="adminLoginOverlay">
-  <div class="admin-login-card">
-    <h3>🔐 Admin Login</h3>
-    <input class="admin-input" type="text" id="adminId" placeholder="Admin ID" value="1001">
-    <input class="admin-input" type="password" id="adminPass" placeholder="Password" value="123456">
-    <button class="btn btn-merah" style="width:100%;padding:11px;margin-top:6px" onclick="adminLogin()">Masuk</button>
-    <button class="btn btn-abu" style="width:100%;padding:9px;margin-top:6px" onclick="tutupAdminLogin()">Batal</button>
-  </div>
-</div>
-
-<!-- ===== ADMIN PANEL ===== -->
-<div class="admin-panel" id="adminPanel">
-  <div class="admin-head">
-    <h3>⚙️ Admin Panel</h3>
-    <button class="btn-header" onclick="tutupAdminPanel()">✕</button>
-  </div>
-  <div class="admin-tabs" id="adminTabs"></div>
-  <div class="admin-body" id="adminBody"></div>
-</div>
-
-<!-- ===== AUDIO MUSIK ===== -->
-<audio id="musikLatar" loop preload="none">
-  <source src="assets/musik-latar.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-/* =========================================================
-   KONFIGURASI — SAMA PERSIS DENGAN index.html
-   ========================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbyp04EZaT8vhi5gDmTeSw1ovDVDVh-cF-EkdcQohxu2ys3MwGrJm8yZg6A02qrPHujO6g/exec";
-const API_KEY = "smp7k_ganti_ini_nanti";
-
-/* =========================================================
-   CEK TOKEN — kalau tidak ada, tendang ke index
-   ========================================================= */
-let TOKEN = localStorage.getItem("smp7k_token");
-if (!TOKEN) { window.location.href = "index.html"; }
-
-/* =========================================================
-   STATE LOKAL
-   ========================================================= */
-let state = {
-  profil: null,          // data dari getProfile
-  koin: 0,
-  rupiah: 0,
-  kristal: 0,
-  level: 1,
-  produksiPerDetik: 0,
-  totalKoin: 0,
-  upgrade: {},           // bagian -> level
-  manajer: {},           // bagian -> {level, stamina, ...}
-  cabang: [],
-  cabangAktif: 1,
-  toko: [],
-  itemDimiliki: {},
-  ceritaTerbuka: [],
-  logTerakhirSync: 0,
-  deviceId: localStorage.getItem("smp7k_device_id") || (() => {
-    const id = "dev_" + Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-6);
-    localStorage.setItem("smp7k_device_id", id); return id;
-  })(),
-  adminToken: localStorage.getItem("smp7k_admin_token") || null,
-  adminTabAktif: "dashboard"
-};
-
-/* =========================================================
-   FUNGSI API TERPUSAT
-   ========================================================= */
-async function panggilApi(action, data = null, token = null) {
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        api_key: API_KEY,
-        action: action,
-        token: token,
-        data: data
-      })
-    });
-
-    if (!res.ok) return { ok:false, message:"Server tidak merespons dengan benar ("+res.status+")" };
-
-    let json;
-    try { json = await res.json(); }
-    catch { return { ok:false, message:"Server tidak merespons dengan benar" }; }
-
-    // Sesi habis → tendang
-    if (json.ok === false && json.message && json.message.toLowerCase().includes("sesi")) {
-      localStorage.removeItem("smp7k_token");
-      window.location.href = "index.html";
-      return json;
-    }
-    return json;
-  } catch (err) {
-    return { ok:false, message:"Koneksi bermasalah. Cek internet." };
-  }
-}
-
-/* =========================================================
-   UI HELPER
-   ========================================================= */
-function toast(msg, tipe = "") {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.className = "toast tampil " + tipe;
-  clearTimeout(t._tm);
-  t._tm = setTimeout(() => { t.className = "toast " + tipe; }, 2200);
-}
-function loading(aktif) {
-  document.getElementById("loadingOverlay").classList.toggle("aktif", aktif);
-}
-function formatAngka(n) {
-  n = Math.floor(n || 0);
-  if (n >= 1e12) return (n/1e12).toFixed(1) + "T";
-  if (n >= 1e9)  return (n/1e9).toFixed(1) + "M";
-  if (n >= 1e6)  return (n/1e6).toFixed(1) + "jt";
-  if (n >= 1e3)  return (n/1e3).toFixed(1) + "rb";
-  return n.toString();
-}
-function sensorNomor(nomor) {
-  if (!nomor || nomor.length < 6) return nomor || "-";
-  return nomor.slice(0,4) + "****" + nomor.slice(-2);
-}
-
-/* =========================================================
-   EFEK SUARA (Web Audio API)
-   ========================================================= */
-let audioCtx = null;
-function ctxAudio() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return audioCtx;
-}
-function suaraTap() {
-  try {
-    const c = ctxAudio(), o = c.createOscillator(), g = c.createGain();
-    o.type = "sine"; o.frequency.setValueAtTime(900, c.currentTime);
-    o.frequency.exponentialRampToValueAtTime(400, c.currentTime + 0.08);
-    g.gain.setValueAtTime(0.06, c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.1);
-    o.connect(g); g.connect(c.destination);
-    o.start(); o.stop(c.currentTime + 0.1);
-  } catch(e){}
-}
-function suaraKoin() {
-  try {
-    const c = ctxAudio(), o = c.createOscillator(), g = c.createGain();
-    o.type = "triangle"; o.frequency.setValueAtTime(1200, c.currentTime);
-    o.frequency.setValueAtTime(1600, c.currentTime + 0.04);
-    g.gain.setValueAtTime(0.07, c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.18);
-    o.connect(g); g.connect(c.destination);
-    o.start(); o.stop(c.currentTime + 0.18);
-  } catch(e){}
-}
-function suaraLevel() {
-  try {
-    const c = ctxAudio();
-    [523,659,784,1047].forEach((f,i) => {
-      const o = c.createOscillator(), g = c.createGain();
-      o.type = "sine"; o.frequency.value = f;
-      g.gain.setValueAtTime(0.001, c.currentTime + i*0.09);
-      g.gain.exponentialRampToValueAtTime(0.08, c.currentTime + i*0.09 + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + i*0.09 + 0.2);
-      o.connect(g); g.connect(c.destination);
-      o.start(c.currentTime + i*0.09); o.stop(c.currentTime + i*0.09 + 0.22);
-    });
-  } catch(e){}
-}
-function suaraError() {
-  try {
-    const c = ctxAudio(), o = c.createOscillator(), g = c.createGain();
-    o.type = "sawtooth"; o.frequency.setValueAtTime(160, c.currentTime);
-    g.gain.setValueAtTime(0.07, c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.25);
-    o.connect(g); g.connect(c.destination);
-    o.start(); o.stop(c.currentTime + 0.25);
-  } catch(e){}
-}
-
-/* =========================================================
-   MUSIK LATAR
-   ========================================================= */
-const elMusik = document.getElementById("musikLatar");
-let musikAktif = localStorage.getItem("smp7k_musik") !== "off";
-elMusik.volume = 0.35;
-function terapkanMusik() {
-  document.getElementById("btnMusik").textContent = musikAktif ? "🔊" : "🔇";
-  if (musikAktif) {
-    elMusik.play().catch(() => {
-      // Autoplay diblokir → tunggu interaksi pertama
-      const mulai = () => { elMusik.play().catch(()=>{}); document.removeEventListener("touchstart", mulai); document.removeEventListener("click", mulai); };
-      document.addEventListener("touchstart", mulai);
-      document.addEventListener("click", mulai);
-    });
-  } else {
-    elMusik.pause();
-  }
-}
-function toggleMusik() {
-  musikAktif = !musikAktif;
-  localStorage.setItem("smp7k_musik", musikAktif ? "on" : "off");
-  terapkanMusik();
-  toast(musikAktif ? "Musik dinyalakan" : "Musik dimatikan");
-}
-terapkanMusik();
-
-/* =========================================================
-   TAP GAME
-   ========================================================= */
-const areaGame = document.getElementById("areaGame");
-areaGame.addEventListener("touchstart", (e) => {
-  // Cegah multitouch berlebihan
-  if (e.touches.length > 3) return;
-  for (let i = 0; i < e.touches.length; i++) {
-    prosesTap(e.touches[i].clientX, e.touches[i].clientY);
-  }
-}, { passive: true });
-areaGame.addEventListener("mousedown", (e) => prosesTap(e.clientX, e.clientY));
-
-function prosesTap(x, y) {
-  state.koin += 1;
-  state.totalKoin += 1;
-  perbaruiHeader();
-  suaraTap();
-  buatEfekTap(x, y);
-}
-
-function buatEfekTap(x, y) {
-  // +1
-  const plus = document.createElement("div");
-  plus.className = "efek-tap";
-  plus.textContent = "+1";
-  plus.style.left = x + "px";
-  plus.style.top  = y + "px";
-  document.body.appendChild(plus);
-  setTimeout(() => plus.remove(), 800);
-
-  // partikel busa
-  for (let i = 0; i < 5; i++) {
-    const p = document.createElement("div");
-    p.className = "partikel";
-    const sudut = Math.random() * Math.PI * 2;
-    const jarak = 20 + Math.random() * 35;
-    p.style.setProperty("--dx", Math.cos(sudut) * jarak + "px");
-    p.style.setProperty("--dy", Math.sin(sudut) * jarak + "px");
-    p.style.left = x + "px";
-    p.style.top  = y + "px";
-    p.style.width = p.style.height = (5 + Math.random() * 8) + "px";
-    document.body.appendChild(p);
-    setTimeout(() => p.remove(), 700);
-  }
-}
-
-/* =========================================================
-   HEADER UPDATE
-   ========================================================= */
-function perbaruiHeader() {
-  document.getElementById("hdrKoin").textContent   = formatAngka(state.koin);
-  document.getElementById("hdrRupiah").textContent = formatAngka(state.rupiah);
-  document.getElementById("hdrKristal").textContent= formatAngka(state.kristal);
-  document.getElementById("hdrLevel").textContent  = state.level;
-  document.getElementById("hdrNama").textContent   = "🏍️ " + (state.profil?.nama || localStorage.getItem("smp7k_nama") || "Pak Aldi");
-  const perlu = state.level * 10000;
-  const persen = Math.min(100, (state.totalKoin % perlu) / perlu * 100);
-  document.getElementById("hdrLevelFill").style.width = persen + "%";
-}
-
-/* =========================================================
-   PRODUKSI OTOMATIS (client-side)
-   ========================================================= */
-setInterval(() => {
-  if (state.produksiPerDetik > 0) {
-    state.koin += state.produksiPerDetik;
-    state.totalKoin += state.produksiPerDetik;
-    perbaruiHeader();
-  }
-}, 1000);
-
-/* =========================================================
-   SYNC PROGRESS KE SERVER tiap 10 detik
-   ========================================================= */
-async function syncProgress() {
-  if (!state.profil) return;
-  const tambahan = Math.floor(state.koin - (state.koinTersimpan || 0));
-  if (tambahan <= 0 && state.produksiPerDetik <= 0) return;
-
-  const resp = await panggilApi("syncProgress", {
-    koin_tambahan: tambahan,
-    produksi_per_detik: state.produksiPerDetik,
-    total_koin_pernah: Math.floor(state.totalKoin),
-    device_id: state.deviceId
-  }, TOKEN);
-
-  if (resp.ok && resp.data) {
-    state.koinTersimpan = Math.floor(state.koin);
-    // Server bisa mengoreksi
-    if (typeof resp.data.koin === "number") state.koin = resp.data.koin;
-    if (typeof resp.data.rupiah === "number") state.rupiah = resp.data.rupiah;
-    if (typeof resp.data.kristal === "number") state.kristal = resp.data.kristal;
-    if (typeof resp.data.level === "number") state.level = resp.data.level;
-    perbaruiHeader();
-  }
-}
-setInterval(syncProgress, 10000);
-
-/* Sync terakhir saat keluar */
-window.addEventListener("beforeunload", () => {
-  if (!state.profil) return;
-  const tambahan = Math.floor(state.koin - (state.koinTersimpan || 0));
-  if (tambahan <= 0 && state.produksiPerDetik <= 0) return;
-  // Pakai sendBeacon kalau ada, fallback fetch keepalive
-  const payload = JSON.stringify({
-    api_key: API_KEY, action: "syncProgress", token: TOKEN,
-    data: {
-      koin_tambahan: tambahan,
-      produksi_per_detik: state.produksiPerDetik,
-      total_koin_pernah: Math.floor(state.totalKoin),
-      device_id: state.deviceId
-    }
-  });
-  if (navigator.sendBeacon) {
-    navigator.sendBeacon(API_URL, new Blob([payload], { type: "application/json" }));
-  } else {
-    fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: payload, keepalive:true }).catch(()=>{});
-  }
-});
-
-/* =========================================================
-   MENU SLIDE
-   ========================================================= */
-const DAFTAR_MENU = [
-  { id:"game",    ikon:"🎮", nama:"Game" },
-  { id:"manajer", ikon:"👷", nama:"Manajer" },
-  { id:"cabang",  ikon:"🏪", nama:"Cabang" },
-  { id:"toko",    ikon:"🛒", nama:"Toko" },
-  { id:"convert", ikon:"💱", nama:"Convert" },
-  { id:"topup",   ikon:"📱", nama:"Topup" },
-  { id:"voucher", ikon:"🎟️", nama:"Voucher" },
-  { id:"cerita",  ikon:"📖", nama:"Cerita" },
-  { id:"profil",  ikon:"👤", nama:"Profil" }
-];
-function bangunMenu() {
-  const wadah = document.getElementById("menuList");
-  wadah.innerHTML = "";
-  DAFTAR_MENU.forEach(m => {
-    const d = document.createElement("div");
-    d.className = "menu-item";
-    d.innerHTML = `<span class="ikon">${m.ikon}</span><span>${m.nama}</span>`;
-    d.onclick = () => { tutupMenu(); bukaPanel(m.id); };
-    wadah.appendChild(d);
-  });
-}
-bangunMenu();
-
-function bukaMenu() {
-  document.getElementById("menuSlide").classList.add("aktif");
-  document.getElementById("overlayMenu").classList.add("aktif");
-}
-function tutupMenu() {
-  document.getElementById("menuSlide").classList.remove("aktif");
-  document.getElementById("overlayMenu").classList.remove("aktif");
-}
-
-/* =========================================================
-   PANEL KONTEN
-   ========================================================= */
-function bukaPanel(id) {
-  document.getElementById("panel").classList.add("aktif");
-  const m = DAFTAR_MENU.find(x => x.id === id);
-  document.getElementById("panelJudul").textContent = (m ? m.ikon + " " + m.nama : id);
-  renderPanel(id);
-}
-function tutupPanel() {
-  document.getElementById("panel").classList.remove("aktif");
-}
-
-function renderPanel(id) {
-  const body = document.getElementById("panelBody");
-  body.innerHTML = "";
-  switch(id) {
-    case "game":    renderGame(body); break;
-    case "manajer": renderManajer(body); break;
-    case "cabang":  renderCabang(body); break;
-    case "toko":    renderToko(body); break;
-    case "convert": renderConvert(body); break;
-    case "topup":   renderTopup(body); break;
-    case "voucher": renderVoucher(body); break;
-    case "cerita":  renderCerita(body); break;
-    case "profil":  renderProfil(body); break;
-  }
-}
-
-/* =========================================================
-   TAB GAME
-   ========================================================= */
-const DAFTAR_UPGRADE = [
-  { bagian:"semprot", nama:"Tukang Semprot", produksi:1,  harga:100 },
-  { bagian:"sabun",   nama:"Tukang Sabun",   produksi:5,  harga:1000 },
-  { bagian:"bilas",   nama:"Tukang Bilas",   produksi:25, harga:10000 },
-  { bagian:"kering",  nama:"Tukang Kering",  produksi:100,harga:100000 },
-  { bagian:"poles",   nama:"Tukang Poles",   produksi:500,harga:1000000 },
-  { bagian:"kompresor",nama:"Kompresor",     produksi:2500,harga:10000000 }
-];
-function renderGame(body) {
-  const info = document.createElement("div");
-  info.className = "kartu";
-  info.innerHTML = `<h4>🎮 Area Tap</h4><div class="sub">Tap di mana saja buat dapet koin. Produksi otomatis: <b>${formatAngka(state.produksiPerDetik)} koin/detik</b></div>`;
-  body.appendChild(info);
-
-  DAFTAR_UPGRADE.forEach(u => {
-    const lv = state.upgrade[u.bagian] || 0;
-    const hargaUpgrade = Math.floor(u.harga * Math.pow(1.6, lv));
-    const produksiTotal = u.produksi * (lv + 1);
-    const k = document.createElement("div");
-    k.className = "kartu";
-    k.innerHTML = `
-      <div class="row"><h4>${u.nama}</h4><span class="badge badge-aktif">Lv ${lv}</span></div>
-      <div class="sub">Produksi: ${formatAngka(produksiTotal)} koin/detik</div>
-      <div class="row" style="margin-top:8px">
-        <span class="sub">Upgrade: 🪙 ${formatAngka(hargaUpgrade)}</span>
-        <button class="btn btn-merah" ${state.koin < hargaUpgrade ? "disabled" : ""}>Upgrade</button>
-      </div>`;
-    k.querySelector("button").onclick = () => upgradeBagian(u.bagian);
-    body.appendChild(k);
-  });
-}
-
-async function upgradeBagian(bagian) {
-  loading(true);
-  const resp = await panggilApi("upgradeBagian", { bagian }, TOKEN);
-  loading(false);
-  if (resp.ok) {
-    suaraKoin();
-    toast("Upgrade sukses!", "sukses");
-    if (resp.data) terapkanDataProfil(resp.data);
-    renderPanel("game");
-  } else {
-    suaraError(); toast(resp.message || "Gagal upgrade", "error");
-  }
-}
-
-/* =========================================================
-   TAB MANAJER
-   ========================================================= */
-const DAFTAR_MANAJER = [
-  { bagian:"semprot", nama:"Pak Budi",  skill:"Semprot Cepat",  harga:500,     produksi:1 },
-  { bagian:"sabun",   nama:"Bu Siti",   skill:"Busa Lebat",     harga:5000,    produksi:5 },
-  { bagian:"bilas",   nama:"Pak Andi",  skill:"Bilas Bersih",   harga:50000,   produksi:25 },
-  { bagian:"kering",  nama:"Bu Rina",   skill:"Kering Kilat",   harga:500000,  produksi:100 },
-  { bagian:"poles",   nama:"Pak Joko",  skill:"Poles Mengkilap",harga:5000000, produksi:500 },
-  { bagian:"kompresor",nama:"Teknisi Umar", skill:"Angin Kencang", harga:50000000, produksi:2500 }
-];
-function renderManajer(body) {
-  DAFTAR_MANAJER.forEach(m => {
-    const dimiliki = state.manajer[m.bagian];
-    const k = document.createElement("div");
-    k.className = "kartu";
-    k.innerHTML = `
-      <div class="row"><h4>${m.nama}</h4><span class="badge ${dimiliki ? "badge-aktif" : "badge-lock"}">${dimiliki ? "Aktif" : "Belum disewa"}</span></div>
-      <div class="sub">Bagian: ${m.bagian} • Skill: ${m.skill}</div>
-      <div class="sub">Produksi: ${formatAngka(m.produksi)} koin/detik</div>
-      ${dimiliki ? `<div class="sub">Level ${dimiliki.level || 1} • Stamina ${dimiliki.stamina || 100}%</div>` : ""}
-      <div class="row" style="margin-top:8px">
-        <span class="sub">Sewa: 🪙 ${formatAngka(m.harga)}</span>
-        ${dimiliki ? `<button class="btn btn-abu" disabled>Sudah disewa</button>` :
-          `<button class="btn btn-hijau" ${state.koin < m.harga ? "disabled" : ""}>Sewa</button>`}
-      </div>`;
-    if (!dimiliki) k.querySelector("button").onclick = () => sewaManajer(m.bagian);
-    body.appendChild(k);
-  });
-}
-async function sewaManajer(bagian) {
-  loading(true);
-  const resp = await panggilApi("sewaManajer", { bagian }, TOKEN);
-  loading(false);
-  if (resp.ok) { suaraLevel(); toast("Manajer disewa!", "sukses"); if (resp.data) terapkanDataProfil(resp.data); renderPanel("manajer"); }
-  else { suaraError(); toast(resp.message || "Gagal sewa", "error"); }
-}
-
-/* =========================================================
-   TAB CABANG
-   ========================================================= */
-function renderCabang(body) {
-  const k = document.createElement("div");
-  k.className = "kartu";
-  k.innerHTML = `<h4>🏪 Cabang Aktif: ${state.cabangAktif}</h4>`;
-  body.appendChild(k);
-
-  (state.cabang.length ? state.cabang : [1]).forEach(c => {
-    const nomor = c.nomor || c;
-    const aktif = nomor == state.cabangAktif;
-    const d = document.createElement("div");
-    d.className = "kartu";
-    d.innerHTML = `
-      <div class="row"><h4>Cabang ${nomor}</h4>${aktif ? '<span class="badge badge-aktif">Aktif</span>' : ""}</div>
-      ${!aktif ? `<button class="btn btn-biru" style="margin-top:6px;width:100%">Pindah ke Cabang Ini</button>` : ""}`;
-    if (!aktif) d.querySelector("button").onclick = () => pindahCabang(nomor);
-    body.appendChild(d);
-  });
-
-  const buka = document.createElement("div");
-  buka.className = "kartu";
-  const cabangBerikut = (state.cabang.length ? Math.max(...state.cabang.map(c => c.nomor || c)) : 1) + 1;
-  buka.innerHTML = `<h4>Buka Cabang Baru (Cabang ${cabangBerikut})</h4><div class="sub">Syarat: level 5+ dan 🪙 1.000.000</div>
-    <button class="btn btn-kuning" style="margin-top:6px;width:100%" ${state.level < 5 || state.koin < 1000000 ? "disabled" : ""}>Buka Cabang ${cabangBerikut}</button>`;
-  buka.querySelector("button").onclick = () => bukaCabang(cabangBerikut);
-  body.appendChild(buka);
-}
-async function pindahCabang(nomor) {
-  loading(true);
-  const resp = await panggilApi("pindahCabang", { nomor_cabang: nomor }, TOKEN);
-  loading(false);
-  if (resp.ok) { toast("Pindah cabang sukses", "sukses"); state.cabangAktif = nomor; if (resp.data) terapkanDataProfil(resp.data); renderPanel("cabang"); }
-  else { suaraError(); toast(resp.message || "Gagal pindah", "error"); }
-}
-async function bukaCabang(nomor) {
-  loading(true);
-  const resp = await panggilApi("bukaCabang", { nomor_cabang: nomor }, TOKEN);
-  loading(false);
-  if (resp.ok) { suaraLevel(); toast("Cabang baru dibuka!", "sukses"); if (resp.data) terapkanDataProfil(resp.data); renderPanel("cabang"); }
-  else { suaraError(); toast(resp.message || "Gagal buka cabang", "error"); }
-}
-
-/* =========================================================
-   TAB TOKO
-   ========================================================= */
-const DAFTAR_TOKO = [
-  { id:"skin",    nama:"Skin motor",          koin:50000,  rupiah:4000 },
-  { id:"tema",    nama:"Tema steam",          koin:100000, rupiah:8000 },
-  { id:"badge",   nama:"Badge",               koin:20000,  rupiah:1500 },
-  { id:"boost",   nama:"Boost 1 jam",         koin:200000, rupiah:15000 },
-  { id:"unlock",  nama:"Unlock manajer cepat",koin:500000, rupiah:40000 },
-  { id:"voucher", nama:"Voucher cuci",        koin:70000,  rupiah:7000 }
-];
-function renderToko(body) {
-  const daftar = state.toko.length ? state.toko : DAFTAR_TOKO;
-  daftar.forEach(it => {
-    const k = document.createElement("div");
-    k.className = "kartu";
-    k.innerHTML = `
-      <h4>${it.nama}</h4>
-      <div class="sub">🪙 ${formatAngka(it.koin)} &nbsp;|&nbsp; 💵 Rp ${formatAngka(it.rupiah)}</div>
-      <div class="row" style="margin-top:8px">
-        <button class="btn btn-merah" ${state.koin < it.koin ? "disabled" : ""}>Beli dengan Koin</button>
-        <button class="btn btn-biru">Beli dengan Rupiah</button>
-      </div>`;
-    k.querySelectorAll("button")[0].onclick = () => beliItem(it.id, "koin");
-    k.querySelectorAll("button")[1].onclick = () => beliItem(it.id, "rupiah");
-    body.appendChild(k);
-  });
-}
-async function beliItem(item_id, metode_bayar) {
-  loading(true);
-  const resp = await panggilApi("beliItem", { item_id, metode_bayar }, TOKEN);
-  loading(false);
-  if (resp.ok) { suaraKoin(); toast("Pembelian sukses!", "sukses"); if (resp.data) terapkanDataProfil(resp.data); renderPanel("toko"); }
-  else { suaraError(); toast(resp.message || "Gagal beli", "error"); }
-}
-
-/* =========================================================
-   TAB CONVERT
-   ========================================================= */
-function renderConvert(body) {
-  const k = document.createElement("div");
-  k.className = "kartu";
-  k.innerHTML = `
-    <h4>💱 Convert Koin → Rupiah</h4>
-    <div class="sub">Minimal 10.000 koin. Setelah convert tidak bisa dibatalkan.</div>
-    <input class="input-biasa" id="convertJumlah" type="number" placeholder="Jumlah koin" style="margin-top:8px">
-    <div class="sub" id="convertPreview" style="margin-top:6px">Preview: -</div>
-    <div class="row" style="margin-top:8px">
-      <label class="sub"><input type="radio" name="metode" value="potong" checked> Potong 10%</label>
-      <label class="sub"><input type="radio" name="metode" value="iklan"> Nonton Iklan</label>
+  <!-- App -->
+  <div class="app" id="app">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-row1">
+        <div class="player-info">
+          <div class="player-name" id="playerName">-</div>
+          <div class="player-level" id="playerLevel">Level 1</div>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()" title="Logout">⏻</button>
+      </div>
+      <div class="header-row2">
+        <div class="saldo-card saldo-koin">
+          <div class="saldo-label">🪙 Koin</div>
+          <div class="saldo-value" id="saldoKoin">0</div>
+        </div>
+        <div class="saldo-card saldo-rupiah">
+          <div class="saldo-label">💵 Rupiah</div>
+          <div class="saldo-value" id="saldoRupiah">0</div>
+        </div>
+        <div class="saldo-card saldo-kristal">
+          <div class="saldo-label">💎 Kristal</div>
+          <div class="saldo-value" id="saldoKristal">0</div>
+        </div>
+      </div>
+      <div class="header-row3">
+        Cabang Aktif: <span id="cabangAktif">Cabang #1</span>
+      </div>
     </div>
-    <button class="btn btn-kuning" id="btnConvert" style="width:100%;margin-top:10px">Konversi Sekarang</button>`;
-  body.appendChild(k);
 
-  const input = k.querySelector("#convertJumlah");
-  const preview = k.querySelector("#convertPreview");
-  input.oninput = () => {
-    const j = parseInt(input.value) || 0;
-    if (j < 10000) { preview.textContent = "Minimal 10.000 koin"; return; }
-    const metode = k.querySelector('input[name="metode"]:checked').value;
-    const bersih = metode === "potong" ? j * 0.9 : j;
-    preview.textContent = `Dapat: 💵 ${formatAngka(bersih)} (${metode === "potong" ? "potong 10%" : "tanpa potong"})`;
-  };
-  k.querySelectorAll('input[name="metode"]').forEach(r => r.onchange = () => input.oninput());
-  k.querySelector("#btnConvert").onclick = () => convertKoin(parseInt(input.value) || 0, k.querySelector('input[name="metode"]:checked').value);
-}
-async function convertKoin(jumlah, metode_biaya) {
-  if (jumlah < 10000) { suaraError(); toast("Minimal 10.000 koin", "error"); return; }
-  loading(true);
-  const resp = await panggilApi("convertKoin", { jumlah_koin: jumlah, metode_biaya }, TOKEN);
-  loading(false);
-  if (resp.ok) { suaraKoin(); toast("Convert sukses!", "sukses"); if (resp.data) terapkanDataProfil(resp.data); renderPanel("convert"); }
-  else { suaraError(); toast(resp.message || "Gagal convert", "error"); }
-}
+    <!-- Main Tabs (Admin) -->
+    <div class="main-tabs" id="mainTabs">
+      <button class="main-tab-btn active" onclick="switchMainTab('game')">GAME</button>
+      <button class="main-tab-btn" onclick="switchMainTab('admin')">ADMIN</button>
+    </div>
 
-/* =========================================================
-   TAB TOPUP
-   ========================================================= */
-const PAKET_TOPUP = {
-  koin:   [{ rp:5000, isi:100000 },{ rp:10000, isi:250000 },{ rp:25000, isi:700000 },{ rp:50000, isi:1500000 },{ rp:100000, isi:3500000 }],
-  rupiah: [{ rp:5000, isi:5500 },{ rp:10000, isi:12000 },{ rp:25000, isi:32500 },{ rp:50000, isi:70000 },{ rp:100000, isi:150000 }],
-  kristal:[{ rp:5000, isi:10 },{ rp:10000, isi:25 },{ rp:25000, isi:70 },{ rp:50000, isi:160 },{ rp:100000, isi:350 }]
-};
-function renderTopup(body) {
-  const jenis = ["koin","rupiah","kristal"];
-  const judul = document.createElement("div");
-  judul.className = "kartu";
-  judul.innerHTML = `<h4>📱 Topup</h4><div class="sub">Pilih paket, scan QRIS, upload bukti.</div>`;
-  body.appendChild(judul);
+    <!-- Game Panel -->
+    <div id="gamePanel" style="flex:1; display:flex; flex-direction:column;">
+      <!-- Tap Area -->
+      <div class="tap-area" id="tapArea">
+        <div class="tap-circle" id="tapCircle">🚗</div>
+        <div class="tap-stats">
+          <span>Tap: <b id="tapCountDisplay">0</b></span>
+          <span>Koin/detik: <b id="koinPerDetikDisplay">0</b></span>
+        </div>
+      </div>
 
-  jenis.forEach(j => {
-    const k = document.createElement("div");
-    k.className = "kartu";
-    k.innerHTML = `<h4 style="text-transform:capitalize">Paket ${j}</h4>`;
-    PAKET_TOPUP[j].forEach(p => {
-      const b = document.createElement("div");
-      b.className = "row";
-      b.style.marginTop = "6px";
-      b.innerHTML = `<span class="sub">Rp ${formatAngka(p.rp)} → ${formatAngka(p.isi)} ${j === "koin" ? "koin" : j === "rupiah" ? "rupiah" : "kristal"}</span>
-        <button class="btn btn-biru">Pilih</button>`;
-      b.querySelector("button").onclick = () => pilihPaketTopup(j, p);
-      k.appendChild(b);
-    });
-    body.appendChild(k);
-  });
-}
-function pilihPaketTopup(jenis, paket) {
-  const body = document.getElementById("panelBody");
-  body.innerHTML = "";
-  const k = document.createElement("div");
-  k.className = "kartu";
-  k.innerHTML = `
-    <h4>📱 Paket ${jenis} — Rp ${formatAngka(paket.rp)}</h4>
-    <div class="sub">Isi: ${formatAngka(paket.isi)} ${jenis}</div>
-    <div class="slot-iklan">[Slot QRIS — assets/qris.png]</div>
-    <img src="assets/qris.png" alt="QRIS" style="width:100%;border-radius:12px;margin-bottom:10px" onerror="this.style.display='none'">
-    <input type="file" accept="image/*" id="buktiTopup" class="input-biasa">
-    <button class="btn btn-kuning" id="btnKirimTopup" style="width:100%;margin-top:10px">Upload & Kirim Bukti</button>
-    <button class="btn btn-abu" style="width:100%;margin-top:6px" onclick="renderPanel('topup')">Kembali</button>`;
-  body.appendChild(k);
-  k.querySelector("#btnKirimTopup").onclick = () => kirimTopup(jenis, paket);
-}
-async function kirimTopup(jenis, paket) {
-  const file = document.getElementById("buktiTopup").files[0];
-  if (!file) { suaraError(); toast("Pilih gambar bukti dulu", "error"); return; }
-  loading(true);
-  const base64 = await kompresGambar(file);
-  const resp = await panggilApi("ajukanTopup", {
-    jenis: jenis,
-    paket: paket.rp,
-    jumlah_bayar: paket.rp,
-    bukti_base64: base64
-  }, TOKEN);
-  loading(false);
-  if (resp.ok) { toast("Pengajuan topup terkirim!", "sukses"); renderPanel("topup"); }
-  else { suaraError(); toast(resp.message || "Gagal kirim topup", "error"); }
-}
-function kompresGambar(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        let { width, height } = img;
-        const maks = 800;
-        if (width > maks) { height = height * maks / width; width = maks; }
-        canvas.width = width; canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
-        let kualitas = 0.7, dataUrl = canvas.toDataURL("image/jpeg", kualitas);
-        // turunkan kualitas kalau masih > 500KB
-        while (dataUrl.length * 0.75 > 500 * 1024 && kualitas > 0.3) {
-          kualitas -= 0.1;
-          dataUrl = canvas.toDataURL("image/jpeg", kualitas);
-        }
-        resolve(dataUrl);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
+      <!-- Menu Grid -->
+      <div class="menu-grid">
+        <button class="menu-btn" onclick="openModal('sewaManajer')"><span class="icon">👨‍🔧</span>Sewa Manajer</button>
+        <button class="menu-btn" onclick="openModal('upgrade')"><span class="icon">⬆️</span>Upgrade</button>
+        <button class="menu-btn" onclick="openModal('bukaCabang')"><span class="icon">🏪</span>Buka Cabang</button>
+        <button class="menu-btn" onclick="openModal('pindahCabang')"><span class="icon">🔄</span>Pindah Cabang</button>
+        <button class="menu-btn" onclick="openModal('convert')"><span class="icon">💱</span>Convert</button>
+        <button class="menu-btn" onclick="openModal('toko')"><span class="icon">🛒</span>Toko</button>
+        <button class="menu-btn" onclick="openModal('voucher')"><span class="icon">🎫</span>Voucher</button>
+        <button class="menu-btn" onclick="openModal('topup')"><span class="icon">📱</span>Topup</button>
+        <button class="menu-btn" onclick="openModal('cerita')"><span class="icon">📖</span>Cerita</button>
+        <button class="menu-btn" onclick="openModal('pengaturan')"><span class="icon">⚙️</span>Pengaturan</button>
+        <button class="menu-btn" onclick="openModal('bantuan')"><span class="icon">❓</span>Bantuan</button>
+        <button class="menu-btn" onclick="handleLogout()"><span class="icon">🚪</span>Logout</button>
+      </div>
+    </div>
 
-/* =========================================================
-   TAB VOUCHER
-   ========================================================= */
-function renderVoucher(body) {
-  const k = document.createElement("div");
-  k.className = "kartu";
-  k.innerHTML = `
-    <h4>🎟️ Tukar Voucher</h4>
-    <div class="sub">Saldo koin: 🪙 ${formatAngka(state.koin)} • Rupiah: 💵 ${formatAngka(state.rupiah)}</div>
-    <div class="sub" style="margin-top:6px">Harga: 70.000 koin ATAU Rp 7.000. Maks 1 voucher/minggu.</div>
-    <input class="input-biasa" id="voucherNomor" placeholder="Konfirmasi nomor HP" style="margin-top:8px">
-    <button class="btn btn-kuning" id="btnTukarVoucher" style="width:100%;margin-top:8px">Tukar Voucher</button>`;
-  body.appendChild(k);
-  k.querySelector("#btnTukarVoucher").onclick = () => tukarVoucher(k.querySelector("#voucherNomor").value.trim());
-}
-async function tukarVoucher(nomor_konfirmasi) {
-  if (!nomor_konfirmasi) { suaraError(); toast("Isi nomor HP dulu", "error"); return; }
-  loading(true);
-  const resp = await panggilApi("tukarVoucher", { metode_bayar: "koin", nomor_konfirmasi }, TOKEN);
-  loading(false);
-  if (resp.ok) { suaraKoin(); toast("Voucher: " + (resp.data?.kode || "sukses"), "sukses"); if (resp.data) terapkanDataProfil(resp.data); renderPanel("voucher"); }
-  else { suaraError(); toast(resp.message || "Gagal tukar voucher", "error"); }
-}
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+      <div class="sub-tabs">
+        <button class="sub-tab-btn active" onclick="switchSubTab('pemain')">PEMAIN</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('topup')">TOPUP</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('voucher')">VOUCHER</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('toko')">TOKO</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('manajer')">MANAJER</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('cabang')">CABANG</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('cerita')">CERITA</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('config')">CONFIG</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('hadiah')">HADIAH</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('log')">LOG</button>
+        <button class="sub-tab-btn" onclick="switchSubTab('export')">EXPORT</button>
+      </div>
+      <div id="adminContent"></div>
+    </div>
+  </div>
 
-/* =========================================================
-   TAB CERITA
-   ========================================================= */
-const DAFTAR_CERITA = [
-  { bab:1, judul:"Motor Pertama",      isi:"Pak Aldi beli motor bekas buat usaha steam. \"Modal nekat, tapi yakin bisa.\"" },
-  { bab:2, judul:"Pelanggan Setia",    isi:"Pelanggan pertama datang tiap minggu. \"Pelan-pelan, yang penting bersih.\"" },
-  { bab:3, judul:"Steam Pertama",      isi:"Steam MP 7000 akhirnya terpasang. \"Ini dia mesin andalan kita!\"" },
-  { bab:4, judul:"Karyawan Pertama",   isi:"Pak Budi direkrut jadi tukang semprot. \"Kerja dulu, hasilnya nanti.\"" },
-  { bab:5, judul:"Cabang Kedua",       isi:"Usaha makin ramai, Pak Aldi buka cabang kedua. \"Jangan puas dulu.\"" },
-  { bab:6, judul:"Ekspansi",           isi:"Cabang bertambah, manajer makin banyak. \"Tim solid, usaha lancar.\"" },
-  { bab:7, judul:"MP 7000",            isi:"Steam MP 7000 jadi legenda. \"Dari motor bekas, jadi kerajaan steam.\"" }
-];
-function renderCerita(body) {
-  DAFTAR_CERITA.forEach(c => {
-    const terbuka = state.ceritaTerbuka.includes(c.bab);
-    const k = document.createElement("div");
-    k.className = "kartu";
-    k.innerHTML = `
-      <div class="row"><h4>Bab ${c.bab}: ${c.judul}</h4><span class="badge ${terbuka ? "badge-aktif" : "badge-lock"}">${terbuka ? "Terbuka" : "🔒"}</span></div>
-      ${terbuka ? `<div class="sub" style="margin-top:6px">${c.isi}</div>` : `<div class="sub" style="margin-top:6px">Selesaikan syarat untuk membuka bab ini.</div>`}`;
-    body.appendChild(k);
-  });
-}
+  <script>
+    // =============================================
+    // KONFIGURASI
+    // =============================================
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycby_7Mner3wVatE3cji6OTrZuRLR_zfvbBRpU_CAnM51gSa1e5JXTWbvUMg4O0-vt8PY/exec';
+    let token = localStorage.getItem('mp7000_token');
+    let isAdmin = localStorage.getItem('mp7000_is_admin') === 'true';
+    let user = JSON.parse(localStorage.getItem('mp7000_user') || '{}');
 
-/* =========================================================
-   TAB PROFIL
-   ========================================================= */
-function renderProfil(body) {
-  const p = state.profil || {};
-  const k = document.createElement("div");
-  k.className = "kartu";
-  k.innerHTML = `
-    <h4>👤 Profil</h4>
-    <div class="sub">Nama: ${p.nama || "-"}</div>
-    <div class="sub">Nomor HP: ${sensorNomor(p.nomor || "")}</div>
-    <div class="sub">Level: ${state.level}</div>
-    <div class="sub">Total koin pernah: 🪙 ${formatAngka(state.totalKoin)}</div>
-    <div class="sub">Terdaftar: ${p.tanggal_daftar || "-"}</div>
-    <div class="sub">Terakhir login: ${p.terakhir_login || "-"}</div>
-    <button class="btn btn-merah" id="btnLogout" style="width:100%;margin-top:12px">Logout</button>`;
-  body.appendChild(k);
-  k.querySelector("#btnLogout").onclick = () => {
-    localStorage.removeItem("smp7k_token");
-    localStorage.removeItem("smp7k_admin_token");
-    window.location.href = "index.html";
-  };
-}
+    // Game state
+    let saldoKoin = 0, saldoRupiah = 0, saldoKristal = 0;
+    let koinPerDetik = 0;
+    let totalProduksiManajer = 0;
+    let koinTambahSinceSync = 0;
+    let totalKoinPernah = 0;
+    let lastSyncTime = Date.now();
+    let tapCount = 0;
+    let tapTimestamps = [];
+    let cabangAktif = 1;
+    let manajerAktif = [];
+    let bagianLevel = {};
+    let syncInterval = null;
+    let produksiInterval = null;
 
-/* =========================================================
-   TERAPKAN DATA PROFIL DARI SERVER
-   ========================================================= */
-function terapkanDataProfil(d) {
-  if (!d) return;
-  if (typeof d.koin === "number")   state.koin = d.koin;
-  if (typeof d.rupiah === "number") state.rupiah = d.rupiah;
-  if (typeof d.kristal === "number")state.kristal = d.kristal;
-  if (typeof d.level === "number")  state.level = d.level;
-  if (typeof d.produksi_per_detik === "number") state.produksiPerDetik = d.produksi_per_detik;
-  if (typeof d.total_koin_pernah === "number") state.totalKoin = d.total_koin_pernah;
-  if (d.upgrade) state.upgrade = d.upgrade;
-  if (d.manajer) state.manajer = d.manajer;
-  if (d.cabang) state.cabang = d.cabang;
-  if (typeof d.cabang_aktif !== "undefined") state.cabangAktif = d.cabang_aktif;
-  if (d.toko) state.toko = d.toko;
-  if (d.cerita_terbuka) state.ceritaTerbuka = d.cerita_terbuka;
-  if (d.profil) state.profil = d.profil;
-  if (d.user) state.profil = d.user;
-  state.koinTersimpan = state.koin;
-  perbaruiHeader();
-  // hitung ulang produksi dari upgrade + manajer
-  hitungProduksi();
-}
-function hitungProduksi() {
-  let total = 0;
-  DAFTAR_UPGRADE.forEach(u => {
-    const lv = state.upgrade[u.bagian] || 0;
-    total += u.produksi * (lv + 1) * (lv > 0 ? 1 : 0);
-  });
-  Object.keys(state.manajer).forEach(b => {
-    const m = state.manajer[b];
-    if (m) total += (m.produksi || DAFTAR_MANAJER.find(x => x.bagian === b)?.produksi || 0);
-  });
-  state.produksiPerDetik = total;
-}
+    // =============================================
+    // DEVICE ID
+    // =============================================
+    function getDeviceId() {
+      let id = localStorage.getItem('mp7000_device_id');
+      if (id) return id;
+      const raw = navigator.userAgent + screen.width + screen.height + Intl.DateTimeFormat().resolvedOptions().timeZone + Math.random().toString(36).slice(2, 18);
+      let hash = 0;
+      for (let i = 0; i < raw.length; i++) {
+        const chr = raw.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0;
+      }
+      const hex = Math.abs(hash).toString(16).padStart(16, '0');
+      const rand = Math.random().toString(36).slice(2, 10);
+      id = (hex + rand).slice(0, 24);
+      localStorage.setItem('mp7000_device_id', id);
+      return id;
+    }
 
-/* =========================================================
-   LOAD PROFIL AWAL
-   ========================================================= */
-async function muatProfil() {
-  loading(true);
-  const resp = await panggilApi("getProfile", null, TOKEN);
-  loading(false);
-  if (resp.ok && resp.data) {
-    state.profil = resp.data.profil || resp.data.user || resp.data;
-    terapkanDataProfil(resp.data);
-    if (resp.data.profil?.nama) localStorage.setItem("smp7k_nama", resp.data.profil.nama);
-  } else {
-    suaraError();
-    toast(resp.message || "Gagal memuat profil", "error");
-  }
-}
-muatProfil();
-
-/* =========================================================
-   PANEL ADMIN TERSEMBUNYI — tap logo 5x
-   ========================================================= */
-let tapLogoTimer = 0, tapLogoHitung = 0;
-function tapLogo() {
-  tapLogoHitung++;
-  clearTimeout(tapLogoTimer);
-  tapLogoTimer = setTimeout(() => { tapLogoHitung = 0; }, 1200);
-  if (tapLogoHitung >= 5) {
-    tapLogoHitung = 0;
-    document.getElementById("adminLoginOverlay").classList.add("aktif");
-  }
-}
-function tutupAdminLogin() {
-  document.getElementById("adminLoginOverlay").classList.remove("aktif");
-}
-async function adminLogin() {
-  const admin_id = document.getElementById("adminId").value.trim();
-  const password = document.getElementById("adminPass").value;
-  if (!admin_id || !password) { toast("Isi ID & password", "error"); return; }
-  loading(true);
-  const resp = await panggilApi("adminLogin", { admin_id, password });
-  loading(false);
-  if (resp.ok && resp.data?.token) {
-    state.adminToken = resp.data.token;
-    localStorage.setItem("smp7k_admin_token", resp.data.token);
-    tutupAdminLogin();
-    bukaAdminPanel();
-  } else {
-    suaraError();
-    toast(resp.message || "Login admin gagal", "error");
-  }
-}
-function bukaAdminPanel() {
-  document.getElementById("adminPanel").classList.add("aktif");
-  bangunTabAdmin();
-  renderAdminTab(state.adminTabAktif);
-}
-function tutupAdminPanel() {
-  document.getElementById("adminPanel").classList.remove("aktif");
-}
-const TAB_ADMIN = [
-  { id:"dashboard", nama:"Dashboard" },{ id:"pemain", nama:"Pemain" },
-  { id:"kasihItem", nama:"Kasih Item" },{ id:"kasihManajer", nama:"Kasih Manajer" },
-  { id:"kasihVoucher", nama:"Kasih Voucher" },{ id:"topup", nama:"Topup" },
-  { id:"voucher", nama:"Voucher" },{ id:"toko", nama:"Toko" },
-  { id:"manajer", nama:"Manajer" },{ id:"cabang", nama:"Cabang" },
-  { id:"cerita", nama:"Cerita" },{ id:"config", nama:"Config" },
-  { id:"pesan", nama:"Pesan" },{ id:"log", nama:"Log" },{ id:"export", nama:"Export CSV" }
-];
-function bangunTabAdmin() {
-  const w = document.getElementById("adminTabs");
-  w.innerHTML = "";
-  TAB_ADMIN.forEach(t => {
-    const b = document.createElement("button");
-    b.textContent = t.nama;
-    b.className = t.id === state.adminTabAktif ? "aktif" : "";
-    b.onclick = () => { state.adminTabAktif = t.id; bangunTabAdmin(); renderAdminTab(t.id); };
-    w.appendChild(b);
-  });
-}
-async function renderAdminTab(id) {
-  const body = document.getElementById("adminBody");
-  body.innerHTML = "<div style='text-align:center;padding:20px'>Memuat...</div>";
-  if (!state.adminToken) { body.innerHTML = "<div style='text-align:center;padding:20px;color:#f66'>Sesi admin habis. Login ulang.</div>"; return; }
-
-  if (id === "dashboard") {
-    const resp = await panggilApi("adminGetAll", null, state.adminToken);
-    if (resp.ok) {
-      body.innerHTML = `<div class="kartu"><h4>Ringkasan</h4><pre style="font-size:11px;white-space:pre-wrap">${JSON.stringify(resp.data, null, 1)}</pre></div>`;
-    } else body.innerHTML = `<div style="color:#f66">${resp.message}</div>`;
-    return;
-  }
-
-  if (id === "pemain") {
-    const resp = await panggilApi("adminGetAll", null, state.adminToken);
-    if (!resp.ok) { body.innerHTML = `<div style="color:#f66">${resp.message}</div>`; return; }
-    const pemain = resp.data?.pemain || resp.data || [];
-    body.innerHTML = `<input class="admin-input" id="cariPemain" placeholder="Cari pemain...">
-      <div id="daftarPemain"></div>`;
-    const render = (q = "") => {
-      const d = document.getElementById("daftarPemain");
-      d.innerHTML = "";
-      pemain.filter(p => !q || (p.nama || "").toLowerCase().includes(q.toLowerCase()) || (p.nomor || "").includes(q)).forEach(p => {
-        const c = document.createElement("div");
-        c.className = "kartu";
-        c.innerHTML = `<div class="row"><b>${p.nama || "-"}</b><span class="sub">${p.nomor || ""}</span></div>
-          <div class="sub">Lv ${p.level || 1} • 🪙 ${formatAngka(p.koin)} • 💵 ${formatAngka(p.rupiah)} • 💎 ${formatAngka(p.kristal)}</div>
-          <button class="btn btn-biru" style="margin-top:6px">Detail</button>`;
-        c.querySelector("button").onclick = () => detailPemain(p.user_id || p.id);
-        d.appendChild(c);
-      });
-    };
-    render();
-    document.getElementById("cariPemain").oninput = (e) => render(e.target.value);
-    return;
-  }
-
-  if (id === "topup") {
-    const resp = await panggilApi("adminGetAll", null, state.adminToken);
-    const daftar = resp.data?.topup || [];
-    body.innerHTML = "";
-    daftar.forEach(t => {
-      const c = document.createElement("div");
-      c.className = "kartu";
-      c.innerHTML = `<div class="row"><b>${t.user_id || t.nama || "-"}</b><span class="sub">${t.status || "pending"}</span></div>
-        <div class="sub">${t.jenis} • Rp ${formatAngka(t.jumlah_bayar)}</div>
-        <div class="row" style="margin-top:6px"><button class="btn btn-hijau">Approve</button><button class="btn btn-merah">Reject</button></div>`;
-      c.querySelectorAll("button")[0].onclick = () => adminApproveTopup(t.topup_id || t.id);
-      c.querySelectorAll("button")[1].onclick = () => adminRejectTopup(t.topup_id || t.id);
-      body.appendChild(c);
-    });
-    return;
-  }
-
-  if (id === "kasihItem" || id === "kasihManajer" || id === "kasihVoucher") {
-    body.innerHTML = `<div class="kartu"><h4>${TAB_ADMIN.find(x=>x.id===id).nama}</h4>
-      <input class="admin-input" id="userIdAdmin" placeholder="User ID">
-      <input class="admin-input" id="itemIdAdmin" placeholder="Item ID / Bagian / (kosong)">
-      <button class="btn btn-hijau" style="width:100%" id="btnKirimAdmin">Kirim</button></div>`;
-    document.getElementById("btnKirimAdmin").onclick = async () => {
-      const uid = document.getElementById("userIdAdmin").value.trim();
-      const item = document.getElementById("itemIdAdmin").value.trim();
-      let action = id === "kasihItem" ? "adminKasihItem" : id === "kasihManajer" ? "adminKasihManajer" : "adminKasihVoucher";
-      let data = id === "kasihItem" ? { user_id: uid, item_id: item } : id === "kasihManajer" ? { user_id: uid, bagian: item } : { user_id: uid };
-      const r = await panggilApi(action, data, state.adminToken);
-      toast(r.message || (r.ok ? "Sukses" : "Gagal"), r.ok ? "sukses" : "error");
-    };
-    return;
-  }
-
-  if (id === "log") {
-    const resp = await panggilApi("adminLog", { limit: 50 }, state.adminToken);
-    body.innerHTML = `<pre style="font-size:11px;white-space:pre-wrap">${JSON.stringify(resp.data || resp, null, 1)}</pre>`;
-    return;
-  }
-
-  if (id === "config" || id === "toko" || id === "manajer" || id === "cabang" || id === "cerita") {
-    const actionMap = { config:"adminKelolaConfig", toko:"adminKelolaToko", manajer:"adminKelolaManajer", cabang:"adminKelolaCabang", cerita:"adminKelolaCerita" };
-    body.innerHTML = `<div class="kartu"><h4>Kelola ${id}</h4>
-      <input class="admin-input" id="opAdmin" placeholder="operasi (tambah/edit/hapus)">
-      <textarea class="admin-input" id="dataAdmin" placeholder="Data JSON" rows="4"></textarea>
-      <button class="btn btn-hijau" style="width:100%" id="btnKelola">Kirim</button></div>`;
-    document.getElementById("btnKelola").onclick = async () => {
+    // =============================================
+    // API CALL
+    // =============================================
+    async function apiCall(action, data = {}, tok = null) {
       try {
-        const op = document.getElementById("opAdmin").value.trim();
-        const data = JSON.parse(document.getElementById("dataAdmin").value || "{}");
-        const r = await panggilApi(actionMap[id], { operasi: op, [id]: data }, state.adminToken);
-        toast(r.message || (r.ok ? "Sukses" : "Gagal"), r.ok ? "sukses" : "error");
-      } catch(e) { toast("JSON tidak valid", "error"); }
-    };
-    return;
-  }
+        const res = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action, token: tok || token, data })
+        });
+        const text = await res.text();
+        try {
+          const json = JSON.parse(text);
+          if (!json.ok && json.message && json.message.toLowerCase().includes('sesi habis')) {
+            handleSessionExpired();
+            return json;
+          }
+          return json;
+        } catch (e) {
+          return { ok: false, message: 'Server sedang sibuk, coba lagi' };
+        }
+      } catch (err) {
+        return { ok: false, message: 'Koneksi gagal, coba lagi' };
+      }
+    }
 
-  if (id === "export") {
-    body.innerHTML = `<div class="kartu"><h4>Export CSV</h4>
-      <input class="admin-input" id="sheetExport" placeholder="Nama sheet (pemain/topup/voucher...)">
-      <button class="btn btn-hijau" style="width:100%" id="btnExport">Export</button></div>`;
-    document.getElementById("btnExport").onclick = async () => {
-      const sheet = document.getElementById("sheetExport").value.trim();
-      const r = await panggilApi("adminExportCSV", { sheet }, state.adminToken);
-      if (r.ok && r.data?.csv) {
-        const blob = new Blob([r.data.csv], { type:"text/csv" });
-        const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = sheet + ".csv"; a.click();
-      } else toast(r.message || "Gagal export", "error");
-    };
-    return;
-  }
+    function handleSessionExpired() {
+      localStorage.removeItem('mp7000_token');
+      localStorage.removeItem('mp7000_user');
+      localStorage.removeItem('mp7000_is_admin');
+      window.location.href = 'index.html';
+    }
 
-  // Fallback untuk tab lain
-  body.innerHTML = `<div class="kartu"><h4>${TAB_ADMIN.find(x=>x.id===id)?.nama || id}</h4><div class="sub">Fitur ini tersedia via API. Gunakan form di bawah.</div>
-    <input class="admin-input" id="genericAction" placeholder="action" value="${id}">
-    <textarea class="admin-input" id="genericData" placeholder='data JSON' rows="3">null</textarea>
-    <button class="btn btn-hijau" style="width:100%" id="btnGeneric">Kirim</button></div>`;
-  document.getElementById("btnGeneric").onclick = async () => {
-    const action = document.getElementById("genericAction").value.trim();
-    let data; try { data = JSON.parse(document.getElementById("genericData").value || "null"); } catch { data = null; }
-    const r = await panggilApi(action, data, state.adminToken);
-    toast(r.message || (r.ok ? "Sukses" : "Gagal"), r.ok ? "sukses" : "error");
-  };
-}
+    // =============================================
+    // TOAST & FORMAT
+    // =============================================
+    function toast(msg, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div');
+      el.className = 'toast ' + type;
+      el.textContent = msg;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.classList.add('hide');
+        setTimeout(() => el.remove(), 300);
+      }, 3000);
+    }
+    function formatNumber(n) {
+      return new Intl.NumberFormat('id-ID').format(Math.floor(n));
+    }
+    function formatRupiah(n) {
+      return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.floor(n));
+    }
 
-async function detailPemain(user_id) {
-  loading(true);
-  const resp = await panggilApi("adminGetPemain", { user_id }, state.adminToken);
-  loading(false);
-  const body = document.getElementById("adminBody");
-  if (!resp.ok) { body.innerHTML = `<div style="color:#f66">${resp.message}</div>`; return; }
-  const p = resp.data?.pemain || resp.data || {};
-  body.innerHTML = `<div class="kartu"><h4>Detail: ${p.nama || user_id}</h4>
-    <pre style="font-size:11px;white-space:pre-wrap">${JSON.stringify(p, null, 1)}</pre>
-    <input class="admin-input" id="editKoin" placeholder="Jumlah koin (+/-)">
-    <button class="btn btn-biru" style="width:100%;margin-top:4px" onclick="adminEditSaldo('${user_id}','koin','tambah')">Tambah Koin</button>
-    <button class="btn btn-merah" style="width:100%;margin-top:4px" onclick="adminEditSaldo('${user_id}','koin','kurang')">Kurangi Koin</button>
-    <input class="admin-input" id="setLevel" placeholder="Level baru" style="margin-top:8px">
-    <button class="btn btn-kuning" style="width:100%" onclick="adminSetLevel('${user_id}')">Set Level</button>
-    <button class="btn btn-abu" style="width:100%;margin-top:8px" onclick="renderAdminTab('pemain')">Kembali</button>
-  </div>`;
-}
-async function adminEditSaldo(user_id, jenis, operasi) {
-  const jumlah = parseFloat(document.getElementById("editKoin").value) || 0;
-  if (jumlah <= 0) { toast("Isi jumlah", "error"); return; }
-  const r = await panggilApi("adminEditSaldo", { user_id, jenis, operasi, jumlah }, state.adminToken);
-  toast(r.message || (r.ok ? "Sukses" : "Gagal"), r.ok ? "sukses" : "error");
-}
-async function adminSetLevel(user_id) {
-  const level = parseInt(document.getElementById("setLevel").value) || 1;
-  const r = await panggilApi("adminSetLevel", { user_id, level }, state.adminToken);
-  toast(r.message || (r.ok ? "Sukses" : "Gagal"), r.ok ? "sukses" : "error");
-}
-async function adminApproveTopup(topup_id) {
-  const r = await panggilApi("adminApproveTopup", { topup_id }, state.adminToken);
-  toast(r.message || (r.ok ? "Approved" : "Gagal"), r.ok ? "sukses" : "error");
-  if (r.ok) renderAdminTab("topup");
-}
-async function adminRejectTopup(topup_id) {
-  const r = await panggilApi("adminRejectTopup", { topup_id }, state.adminToken);
-  toast(r.message || (r.ok ? "Rejected" : "Gagal"), r.ok ? "sukses" : "error");
-  if (r.ok) renderAdminTab("topup");
-}
+    // =============================================
+    // AUDIO SYSTEM
+    // =============================================
+    const AudioPool = (() => {
+      const pools = {};
+      const POOL_SIZE = 6;
+      function createPool(src) {
+        const pool = [];
+        for (let i = 0; i < POOL_SIZE; i++) {
+          const audio = new Audio(src);
+          audio.preload = 'auto';
+          audio.volume = 0.5;
+          pool.push(audio);
+        }
+        return pool;
+      }
+      function getPool(name) {
+        if (!pools[name]) {
+          pools[name] = createPool('asset/' + name + '.mp3');
+        }
+        return pools[name];
+      }
+      let idx = {};
+      function play(name) {
+        if (!isSfxOn()) return;
+        try {
+          const pool = getPool(name);
+          if (!idx[name]) idx[name] = 0;
+          const audio = pool[idx[name] % POOL_SIZE];
+          idx[name]++;
+          audio.currentTime = 0;
+          audio.play().catch(() => {});
+        } catch (e) {}
+      }
+      return { play };
+    })();
 
-/* =========================================================
-   CEK ADMIN TOKEN TERSIMPAN
-   ========================================================= */
-if (state.adminToken) {
-  // Validasi cepat
-  panggilApi("adminGetAll", null, state.adminToken).then(r => {
-    if (!r.ok) { localStorage.removeItem("smp7k_admin_token"); state.adminToken = null; }
-  });
-}
+    let bgmAudio = null;
+    let bgmStarted = false;
 
-/* =========================================================
-   PLACEHOLDER IKLAN
-   ========================================================= */
-/*
-  [SLOT IKLAN MONETAG — REWARDED]
-  Tempel tag <script> Monetag rewarded di sini nanti.
-  Fungsi pemicu: tampilkanIklanRewarded(callback)
-*/
-function tampilkanIklanRewarded(callback) {
-  // Placeholder: langsung panggil callback (nanti diganti Monetag)
-  toast("Iklan reward (placeholder) — +bonus");
-  if (typeof callback === "function") callback();
-}
-/*
-  [SLOT IKLAN PROFITABLECPM — POPUNDER]
-  Tempel tag <script> Profitableratecpm di sini nanti.
-*/
+    function isBgmOn() { return localStorage.getItem('mp7000_bgm') !== 'off'; }
+    function isSfxOn() { return localStorage.getItem('mp7000_sfx') !== 'off'; }
+    function playBgm() {
+      if (!isBgmOn()) return;
+      if (!bgmAudio) {
+        try {
+          bgmAudio = new Audio('asset/bgm.mp3');
+          bgmAudio.loop = true;
+          bgmAudio.volume = 0.3;
+        } catch (e) { return; }
+      }
+      bgmAudio.play().catch(() => {});
+      bgmStarted = true;
+    }
+    function stopBgm() {
+      if (bgmAudio) { bgmAudio.pause(); bgmStarted = false; }
+    }
+    function playSfx(name) { AudioPool.play(name); }
 
-/* =========================================================
-   SLOT KRISTAL & BOOST (dengan tombol tonton iklan)
-   ========================================================= */
-// Bisa ditambahkan ke panel tertentu nanti
+    document.addEventListener('click', function initAudio() {
+      if (!bgmStarted) playBgm();
+    }, { once: false });
+    document.addEventListener('touchstart', function initAudio() {
+      if (!bgmStarted) playBgm();
+    }, { once: false });
 
-</script>
+    // =============================================
+    // INISIALISASI
+    // =============================================
+    async function init() {
+      if (!token) {
+        window.location.href = 'index.html';
+        return;
+      }
+      const res = await apiCall('getProfile');
+      if (!res.ok) {
+        if (res.message && res.message.toLowerCase().includes('sesi habis')) {
+          handleSessionExpired();
+        } else {
+          toast(res.message || 'Gagal memuat profil', 'error');
+          playSfx('error');
+          document.getElementById('loadingScreen').innerHTML =
+            '<p style="color:#e74c3c">Gagal memuat. <a href="index.html" style="color:#FFD700">Kembali</a></p>';
+        }
+        return;
+      }
+      const p = res.data;
+      user = p.user || user;
+      localStorage.setItem('mp7000_user', JSON.stringify(user));
+      saldoKoin = p.saldo_koin || 0;
+      saldoRupiah = p.saldo_rupiah || 0;
+      saldoKristal = p.saldo_kristal || 0;
+      cabangAktif = p.cabang_aktif || 1;
+      manajerAktif = p.manajer || [];
+      bagianLevel = p.bagian_level || {};
+      totalProduksiManajer = p.produksi_per_detik || 0;
+      totalKoinPernah = p.total_koin_pernah || 0;
+
+      // Hitung produksi dari manajer
+      hitungProduksi();
+
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('app').classList.add('show');
+      if (isAdmin) {
+        document.getElementById('mainTabs').classList.add('show');
+      }
+      updateUI();
+      startLoops();
+    }
+
+    function hitungProduksi() {
+      totalProduksiManajer = 0;
+      manajerAktif.forEach(m => {
+        totalProduksiManajer += (m.produksi_per_detik || 0);
+      });
+      koinPerDetik = totalProduksiManajer;
+      document.getElementById('koinPerDetikDisplay').textContent = formatNumber(koinPerDetik);
+    }
+
+    function updateUI() {
+      document.getElementById('playerName').textContent = user.nama || 'Pemain';
+      document.getElementById('playerLevel').textContent = 'Level ' + (user.level || 1);
+      document.getElementById('saldoKoin').textContent = formatNumber(saldoKoin);
+      document.getElementById('saldoRupiah').textContent = formatNumber(saldoRupiah);
+      document.getElementById('saldoKristal').textContent = formatNumber(saldoKristal);
+      document.getElementById('cabangAktif').textContent = 'Cabang #' + cabangAktif;
+    }
+
+    // =============================================
+    // GAME LOOPS
+    // =============================================
+    function startLoops() {
+      if (produksiInterval) clearInterval(produksiInterval);
+      produksiInterval = setInterval(() => {
+        if (totalProduksiManajer > 0) {
+          saldoKoin += totalProduksiManajer;
+          koinTambahSinceSync += totalProduksiManajer;
+          totalKoinPernah += totalProduksiManajer;
+          document.getElementById('saldoKoin').textContent = formatNumber(saldoKoin);
+        }
+      }, 1000);
+
+      if (syncInterval) clearInterval(syncInterval);
+      syncInterval = setInterval(syncProgress, 10000);
+      window.addEventListener('beforeunload', syncProgress);
+    }
+
+    async function syncProgress() {
+      const tambahan = koinTambahSinceSync;
+      if (tambahan <= 0 && totalProduksiManajer <= 0) return;
+      const res = await apiCall('syncProgress', {
+        koin_tambahan: tambahan,
+        produksi_per_detik: totalProduksiManajer,
+        total_koin_pernah: totalKoinPernah,
+        device_id: getDeviceId()
+      });
+      if (res.ok && res.data) {
+        if (res.data.saldo_koin !== undefined) saldoKoin = res.data.saldo_koin;
+        if (res.data.saldo_rupiah !== undefined) saldoRupiah = res.data.saldo_rupiah;
+        if (res.data.saldo_kristal !== undefined) saldoKristal = res.data.saldo_kristal;
+        document.getElementById('saldoKoin').textContent = formatNumber(saldoKoin);
+        document.getElementById('saldoRupiah').textContent = formatNumber(saldoRupiah);
+        document.getElementById('saldoKristal').textContent = formatNumber(saldoKristal);
+      }
+      koinTambahSinceSync = 0;
+    }
+
+    // =============================================
+    // TAP SYSTEM
+    // =============================================
+    let lastTapSfx = 0;
+    let lastTapTime = 0;
+    document.getElementById('tapCircle').addEventListener('click', (e) => {
+      const now = Date.now();
+      // Anti-bot: max 15 tap/detik
+      tapTimestamps = tapTimestamps.filter(t => now - t < 1000);
+      if (tapTimestamps.length >= 15) {
+        toast('Pelan dulu bro', 'error');
+        playSfx('error');
+        return;
+      }
+      // Jeda minimal 100ms
+      if (now - lastTapTime < 100) return;
+      lastTapTime = now;
+      tapTimestamps.push(now);
+
+      // Tambah koin
+      saldoKoin += 1;
+      koinTambahSinceSync += 1;
+      totalKoinPernah += 1;
+      tapCount++;
+      document.getElementById('saldoKoin').textContent = formatNumber(saldoKoin);
+      document.getElementById('tapCountDisplay').textContent = formatNumber(tapCount);
+
+      // Ripple effect
+      const rect = e.currentTarget.getBoundingClientRect();
+      const ripple = document.createElement('div');
+      ripple.className = 'tap-ripple';
+      const size = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+      e.currentTarget.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+
+      // Float text
+      const float = document.createElement('div');
+      float.className = 'float-text';
+      float.textContent = '+1';
+      float.style.left = (e.clientX - rect.left) + 'px';
+      float.style.top = (e.clientY - rect.top - 20) + 'px';
+      e.currentTarget.appendChild(float);
+      setTimeout(() => float.remove(), 800);
+
+      // SFX throttle 80ms
+      if (now - lastTapSfx > 80) {
+        playSfx('tap');
+        lastTapSfx = now;
+      }
+    });
+
+    // =============================================
+    // MODAL SYSTEM
+    // =============================================
+    let activeModal = null;
+
+    function openModal(name) {
+      closeAllModals();
+      activeModal = name;
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.id = 'modal-' + name;
+      overlay.innerHTML = getModalContent(name);
+      document.body.appendChild(overlay);
+      requestAnimationFrame(() => overlay.classList.add('show'));
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal(name);
+      });
+      loadModalData(name);
+    }
+
+    function closeModal(name) {
+      const overlay = document.getElementById('modal-' + name);
+      if (overlay) {
+        overlay.classList.remove('show');
+        setTimeout(() => overlay.remove(), 300);
+      }
+      activeModal = null;
+    }
+
+    function closeAllModals() {
+      document.querySelectorAll('.modal-overlay').forEach(el => el.remove());
+      activeModal = null;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && activeModal) closeModal(activeModal);
+    });
+
+    function getModalContent(name) {
+      const templates = {
+        sewaManajer: `<div class="modal"><button class="modal-close" onclick="closeModal('sewaManajer')">✕</button><h3>SEWA MANAJER</h3><div id="sewaManajerContent" class="modal-list"></div></div>`,
+        upgrade: `<div class="modal"><button class="modal-close" onclick="closeModal('upgrade')">✕</button><h3>UPGRADE BAGIAN</h3><div id="upgradeContent" class="modal-list"></div></div>`,
+        bukaCabang: `<div class="modal"><button class="modal-close" onclick="closeModal('bukaCabang')">✕</button><h3>BUKA CABANG</h3><div id="bukaCabangContent" class="modal-list"></div></div>`,
+        pindahCabang: `<div class="modal"><button class="modal-close" onclick="closeModal('pindahCabang')">✕</button><h3>PINDAH CABANG</h3><div id="pindahCabangContent" class="modal-list"></div></div>`,
+        convert: `<div class="modal"><button class="modal-close" onclick="closeModal('convert')">✕</button><h3>CONVERT KOIN</h3><div id="convertContent"></div></div>`,
+        toko: `<div class="modal"><button class="modal-close" onclick="closeModal('toko')">✕</button><h3>TOKO</h3><div id="tokoContent" class="modal-list"></div></div>`,
+        voucher: `<div class="modal"><button class="modal-close" onclick="closeModal('voucher')">✕</button><h3>TUKAR VOUCHER</h3><div id="voucherContent"></div></div>`,
+        topup: `<div class="modal"><button class="modal-close" onclick="closeModal('topup')">✕</button><h3>TOPUP</h3><div id="topupContent"></div></div>`,
+        cerita: `<div class="modal"><button class="modal-close" onclick="closeModal('cerita')">✕</button><h3>CERITA</h3><div id="ceritaContent" class="modal-list"></div></div>`,
+        pengaturan: `<div class="modal"><button class="modal-close" onclick="closeModal('pengaturan')">✕</button><h3>PENGATURAN</h3><div id="pengaturanContent"></div></div>`,
+        bantuan: `<div class="modal"><button class="modal-close" onclick="closeModal('bantuan')">✕</button><h3>BANTUAN</h3><div style="font-size:14px;line-height:1.7;color:#ccc"><ol style="padding-left:20px"><li>Tap area mobil untuk dapat koin.</li><li>Sewa manajer untuk produksi otomatis.</li><li>Upgrade bagian untuk meningkatkan produksi.</li><li>Buka cabang baru untuk memperluas bisnis.</li><li>Convert koin ke rupiah, beli item, dan tukar voucher.</li><li>Sinkron otomatis setiap 10 detik.</li></ol></div></div>`
+      };
+      return templates[name] || '';
+    }
+
+    async function loadModalData(name) {
+      switch (name) {
+        case 'sewaManajer': await loadSewaManajer(); break;
+        case 'upgrade': await loadUpgrade(); break;
+        case 'bukaCabang': await loadBukaCabang(); break;
+        case 'pindahCabang': await loadPindahCabang(); break;
+        case 'convert': renderConvert(); break;
+        case 'toko': await loadToko(); break;
+        case 'voucher': renderVoucher(); break;
+        case 'topup': renderTopup(); break;
+        case 'cerita': await loadCerita(); break;
+        case 'pengaturan': renderPengaturan(); break;
+      }
+    }
+
+    // =============================================
+    // MODAL: SEWA MANAJER
+    // =============================================
+    const MANAJER_LIST = [
+      { bagian: 'Semprot', nama: 'Pak Budi', harga: 500, produksi: 1 },
+      { bagian: 'Sabun', nama: 'Bu Siti', harga: 5000, produksi: 5 },
+      { bagian: 'Bilas', nama: 'Pak Andi', harga: 50000, produksi: 25 },
+      { bagian: 'Kering', nama: 'Bu Rina', harga: 500000, produksi: 100 },
+      { bagian: 'Poles', nama: 'Pak Joko', harga: 5000000, produksi: 500 },
+      { bagian: 'Kompresor', nama: 'Teknisi Umar', harga: 50000000, produksi: 2500 }
+    ];
+
+    async function loadSewaManajer() {
+      const el = document.getElementById('sewaManajerContent');
+      el.innerHTML = '<p style="text-align:center;color:#888">Memuat...</p>';
+      const res = await apiCall('getProfile');
+      const aktif = res.ok ? (res.data.manajer || []).map(m => m.bagian) : manajerAktif.map(m => m.bagian);
+      el.innerHTML = MANAJER_LIST.map(m => {
+        const isAktif = aktif.includes(m.bagian);
+        return `<div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">${m.bagian} — ${m.nama}</div>
+            <div class="modal-item-sub">Harga: <b>${formatNumber(m.harga)} koin</b> • Produksi: <b>${m.produksi}/dtk</b></div>
+          </div>
+          ${isAktif ? '<span class="badge-aktif">AKTIF</span>' : `<button class="btn-sm btn-yellow" onclick="sewaManajer('${m.bagian}')">SEWA</button>`}
+        </div>`;
+      }).join('');
+    }
+
+    async function sewaManajer(bagian) {
+      const btn = event.target;
+      btn.disabled = true;
+      const res = await apiCall('sewaManajer', { bagian });
+      btn.disabled = false;
+      if (res.ok) {
+        playSfx('upgrade');
+        toast('Manajer berhasil disewa!', 'success');
+        if (res.data) {
+          if (res.data.saldo_koin !== undefined) saldoKoin = res.data.saldo_koin;
+          if (res.data.manajer) manajerAktif = res.data.manajer;
+          hitungProduksi();
+          updateUI();
+        }
+        closeModal('sewaManajer');
+        openModal('sewaManajer');
+      } else {
+        playSfx('error');
+        toast(res.message || 'Gagal menyewa', 'error');
+      }
+    }
+
+    // =============================================
+    // MODAL: UPGRADE
+    // =============================================
+    const BAGIAN_LIST = ['Semprot', 'Sabun', 'Bilas', 'Kering', 'Poles', 'Kompresor'];
+    const BAGIAN_DASAR = { Semprot: 1, Sabun: 5, Bilas: 25, Kering: 100, Poles: 500, Kompresor: 2500 };
+    const BAGIAN_HARGA_DASAR = { Semprot: 200, Sabun: 2000, Bilas: 20000, Kering: 200000, Poles: 2000000, Kompresor: 20000000 };
+
+    async function loadUpgrade() {
+      const el = document.getElementById('upgradeContent');
+      el.innerHTML = '<p style="text-align:center;color:#888">Memuat...</p>';
+      const res = await apiCall('getProfile');
+      const levels = res.ok ? (res.data.bagian_level || {}) : bagianLevel;
+      el.innerHTML = BAGIAN_LIST.map(b => {
+        const lv = levels[b] || 0;
+        const hargaNext = Math.floor(BAGIAN_HARGA_DASAR[b] * Math.pow(2.5, lv));
+        const produksi = BAGIAN_DASAR[b] * Math.pow(2, lv);
+        return `<div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">${b}</div>
+            <div class="modal-item-sub">Level <b>${lv}</b> • Produksi: <b>${formatNumber(produksi)}/dtk</b><br>Upgrade: <b>${formatNumber(hargaNext)} koin</b></div>
+          </div>
+          <button class="btn-sm btn-yellow" onclick="upgradeBagian('${b}')">UPGRADE</button>
+        </div>`;
+      }).join('');
+    }
+
+    async function upgradeBagian(bagian) {
+      const btn = event.target;
+      btn.disabled = true;
+      const res = await apiCall('upgradeBagian', { bagian });
+      btn.disabled = false;
+      if (res.ok) {
+        playSfx('upgrade');
+        toast('Upgrade berhasil!', 'success');
+        if (res.data) {
+          if (res.data.saldo_koin !== undefined) saldoKoin = res.data.saldo_koin;
+          if (res.data.bagian_level) bagianLevel = res.data.bagian_level;
+          hitungProduksi();
+          updateUI();
+        }
+        closeModal('upgrade');
+        openModal('upgrade');
+      } else {
+        playSfx('error');
+        toast(res.message || 'Upgrade gagal', 'error');
+      }
+    }
+
+    // =============================================
+    // MODAL: BUKA CABANG
+    // =============================================
+    async function loadBukaCabang() {
+      const el = document.getElementById('bukaCabangContent');
+      el.innerHTML = '<p style="text-align:center;color:#888">Memuat...</p>';
+      const res = await apiCall('getProfile');
+      const cabang = res.ok ? (res.data.cabang || [1]) : [1];
+      const nextCabang = Math.max(...cabang) + 1;
+      el.innerHTML = cabang.map(c => `
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Cabang #${c}</div>
+            <div class="modal-item-sub">${c === cabangAktif ? 'Sedang aktif' : 'Tidak aktif'}</div>
+          </div>
+          ${c === cabangAktif ? '<span class="badge-aktif">AKTIF</span>' : ''}
+        </div>
+      `).join('') + `
+        <button class="btn-sm btn-green btn-full" style="margin-top:12px" onclick="bukaCabang(${nextCabang})">BUKA CABANG BARU (#${nextCabang})</button>
+      `;
+    }
+
+    async function bukaCabang(nomor) {
+      const btn = event.target;
+      btn.disabled = true;
+      const res = await apiCall('bukaCabang', { nomor_cabang: nomor });
+      btn.disabled = false;
+      if (res.ok) {
+        playSfx('upgrade');
+        toast('Cabang baru dibuka!', 'success');
+        if (res.data) {
+          if (res.data.saldo_koin !== undefined) saldoKoin = res.data.saldo_koin;
+          if (res.data.cabang_aktif) cabangAktif = res.data.cabang_aktif;
+          updateUI();
+        }
+        closeModal('bukaCabang');
+        openModal('bukaCabang');
+      } else {
+        playSfx('error');
+        toast(res.message || 'Gagal buka cabang', 'error');
+      }
+    }
+
+    // =============================================
+    // MODAL: PINDAH CABANG
+    // =============================================
+    async function loadPindahCabang() {
+      const el = document.getElementById('pindahCabangContent');
+      el.innerHTML = '<p style="text-align:center;color:#888">Memuat...</p>';
+      const res = await apiCall('getProfile');
+      const cabang = res.ok ? (res.data.cabang || [1]) : [1];
+      el.innerHTML = cabang.map(c => `
+        <div class="modal-item" onclick="pindahCabang(${c})" style="cursor:pointer">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Cabang #${c}</div>
+            <div class="modal-item-sub">${c === cabangAktif ? 'Sedang aktif' : 'Klik untuk pindah'}</div>
+          </div>
+          ${c === cabangAktif ? '<span class="badge-aktif">AKTIF</span>' : ''}
+        </div>
+      `).join('');
+    }
+
+    async function pindahCabang(nomor) {
+      const res = await apiCall('pindahCabang', { nomor_cabang: nomor });
+      if (res.ok) {
+        playSfx('coin');
+        toast('Berhasil pindah ke Cabang #' + nomor, 'success');
+        cabangAktif = nomor;
+        if (res.data && res.data.saldo_koin !== undefined) saldoKoin = res.data.saldo_koin;
+        updateUI();
+        closeModal('pindahCabang');
+      } else {
+        playSfx('error');
+        toast(res.message || 'Gagal pindah', 'error');
+      }
+    }
+
+    // =============================================
+    // MODAL: CONVERT
+    // =============================================
+    function renderConvert() {
+      const el = document.getElementById('convertContent');
+      el.innerHTML = `
+        <div class="form-group">
+          <label>Jumlah Koin (min 10.000)</label>
+          <input type="number" id="convertJumlah" placeholder="10000" min="10000" oninput="updateConvertPreview()">
+        </div>
+        <div class="form-group">
+          <label>Metode Biaya</label>
+          <select id="convertMetode" onchange="updateConvertPreview()">
+            <option value="potong">Potong 10%</option>
+            <option value="iklan">Nonton Iklan (Gratis)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Preview Rupiah</label>
+          <input type="text" id="convertPreview" readonly value="Rp 0" style="color:#2ecc71;font-weight:700">
+        </div>
+        <button class="btn-sm btn-green btn-full" onclick="convertKoin()">CONVERT</button>
+      `;
+    }
+
+    function updateConvertPreview() {
+      const jumlah = parseInt(document.getElementById('convertJumlah').value) || 0;
+      const metode = document.getElementById('convertMetode').value;
+      let rupiah = (jumlah / 1000) * 100;
+      if (metode === 'potong') rupiah *= 0.9;
+      document.getElementById('convertPreview').value = formatRupiah(rupiah);
+    }
+
+    async function convertKoin() {
+      const jumlah = parseInt(document.getElementById('convertJumlah').value) || 0;
+      const metode = document.getElementById('convertMetode').value;
+      if (jumlah < 10000) {
+        playSfx('error');
+        toast('Minimal 10.000 koin', 'error');
+        return;
+      }
+      const btn = event.target;
+      btn.disabled = true;
+      const res = await apiCall('convertKoin', { jumlah_koin: jumlah, metode_biaya: metode });
+      btn.disabled = false;
+      if (res.ok) {
+        playSfx('coin');
+        toast('Convert berhasil!', 'success');
+        if (res.data) {
+          if (res.data.saldo_koin !== undefined) saldoKoin = res.data.saldo_koin;
+          if (res.data.saldo_rupiah !== undefined) saldoRupiah = res.data.saldo_rupiah;
+          updateUI();
+        }
+        closeModal('convert');
+      } else {
+        playSfx('error');
+        toast(res.message || 'Convert gagal', 'error');
+      }
+    }
+
+    // =============================================
+    // MODAL: TOKO
+    // =============================================
+    async function loadToko() {
+      const el = document.getElementById('tokoContent');
+      el.innerHTML = '<p style="text-align:center;color:#888">Memuat...</p>';
+      const res = await apiCall('getToko');
+      if (!res.ok) {
+        el.innerHTML = '<p style="text-align:center;color:#e74c3c">Gagal memuat toko</p>';
+        return;
+      }
+      const items = res.data.items || [];
+      if (!items.length) {
+        el.innerHTML = '<p style="text-align:center;color:#888">Toko kosong</p>';
+        return;
+      }
+      el.innerHTML = items.map(it => `
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">${it.nama}</div>
+            <div class="modal-item-sub">${it.deskripsi || ''}<br>Harga: <b>${it.harga_koin ? formatNumber(it.harga_koin) + ' koin' : ''} ${it.harga_rupiah ? formatRupiah(it.harga_rupiah) : ''}</b></div>
+          </div>
+          <button class="btn-sm btn-yellow" onclick="beliItem('${it.id}', '${it.harga_koin ? 'koin' : 'rupiah'}')">BELI</button>
+        </div>
+      `).join('');
+    }
+
+    async function beliItem(itemId, metode) {
+      const btn = event.target;
+      btn.disabled = true;
+      const res = await apiCall('beliItem', { item_id: itemId, metode_bayar: metode });
+      btn.disabled = false;
+      if (res.ok) {
+        playSfx('coin');
+        toast('Pembelian berhasil!', 'success');
+        if (res.data) {
+          if (res.data.saldo_koin !== undefined) saldoKoin = res.data.saldo_koin;
+          if (res.data.saldo_rupiah !== undefined) saldoRupiah = res.data.saldo_rupiah;
+          updateUI();
+        }
+        closeModal('toko');
+      } else {
+        playSfx('error');
+        toast(res.message || 'Pembelian gagal', 'error');
+      }
+    }
+
+    // =============================================
+    // MODAL: VOUCHER
+    // =============================================
+    function renderVoucher() {
+      const el = document.getElementById('voucherContent');
+      el.innerHTML = `
+        <div class="form-group">
+          <label>Metode Bayar</label>
+          <select id="voucherMetode">
+            <option value="koin">70.000 Koin</option>
+            <option value="rupiah">Rp 7.000</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nomor Konfirmasi (harus sama dengan nomor HP)</label>
+          <input type="tel" id="voucherNomor" placeholder="08xxxxxxxxxx" maxlength="13" inputmode="numeric">
+        </div>
+        <button class="btn-sm btn-yellow btn-full" onclick="tukarVoucher()">TUKAR VOUCHER</button>
+        <div id="voucherResult"></div>
+      `;
+    }
+
+    async function tukarVoucher() {
+      const metode = document.getElementById('voucherMetode').value;
+      const nomor = document.getElementById('voucherNomor').value.trim();
+      if (!nomor) {
+        playSfx('error');
+        toast('Isi nomor konfirmasi', 'error');
+        return;
+      }
+      const btn = event.target;
+      btn.disabled = true;
+      const res = await apiCall('tukarVoucher', { metode_bayar: metode, nomor_konfirmasi: nomor });
+      btn.disabled = false;
+      if (res.ok) {
+        playSfx('coin');
+        toast('Voucher berhasil ditukar!', 'success');
+        if (res.data && res.data.kode) {
+          document.getElementById('voucherResult').innerHTML = `
+            <div class="voucher-code">${res.data.kode}</div>
+            <button class="btn-sm btn-blue btn-full" onclick="copyVoucher('${res.data.kode}')">COPY KODE</button>
+          `;
+        }
+        if (res.data) {
+          if (res.data.saldo_koin !== undefined) saldoKoin = res.data.saldo_koin;
+          if (res.data.saldo_rupiah !== undefined) saldoRupiah = res.data.saldo_rupiah;
+          updateUI();
+        }
+      } else {
+        playSfx('error');
+        toast(res.message || 'Gagal tukar voucher', 'error');
+      }
+    }
+
+    function copyVoucher(kode) {
+      navigator.clipboard.writeText(kode).then(() => {
+        playSfx('coin');
+        toast('Kode disalin!', 'success');
+      }).catch(() => {
+        toast('Gagal menyalin', 'error');
+      });
+    }
+
+    // =============================================
+    // MODAL: TOPUP
+    // =============================================
+    function renderTopup() {
+      const el = document.getElementById('topupContent');
+      el.innerHTML = `
+        <div class="form-group">
+          <label>Jenis Topup</label>
+          <select id="topupJenis">
+            <option value="koin">Koin</option>
+            <option value="rupiah">Rupiah</option>
+            <option value="kristal">Kristal</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Paket</label>
+          <select id="topupPaket">
+            <option value="5000">Rp 5.000</option>
+            <option value="10000">Rp 10.000</option>
+            <option value="25000">Rp 25.000</option>
+            <option value="50000">Rp 50.000</option>
+            <option value="100000">Rp 100.000</option>
+          </select>
+        </div>
+        <div class="qris-box">
+          <img src="asset/qris.png" alt="QRIS" onerror="this.style.display='none';document.getElementById('qris-fallback').style.display='block';">
+          <div class="qris-fallback" id="qris-fallback">
+            <b>QRIS tidak tersedia</b><br>
+            NMID: ID1024361914749<br>
+            Silakan transfer manual ke rekening yang tertera, lalu upload bukti.
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Upload Bukti Pembayaran</label>
+          <input type="file" id="topupBukti" accept="image/*" onchange="compressImage(this)">
+        </div>
+        <div id="topupPreview" style="text-align:center;margin-bottom:12px"></div>
+        <button class="btn-sm btn-yellow btn-full" onclick="ajukanTopup()">KIRIM TOPUP</button>
+      `;
+    }
+
+    let compressedBase64 = '';
+
+    function compressImage(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width, h = img.height;
+          const maxW = 1280;
+          if (w > maxW) { h = h * maxW / w; w = maxW; }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          let quality = 0.8;
+          let dataUrl = canvas.toDataURL('image/jpeg', quality);
+          while (dataUrl.length > 1.3e6 && quality > 0.3) {
+            quality -= 0.1;
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+          }
+          compressedBase64 = dataUrl;
+          document.getElementById('topupPreview').innerHTML =
+            `<img src="${dataUrl}" style="max-width:100%;max-height:150px;border-radius:8px;border:1px solid rgba(255,215,0,0.3)">`;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function ajukanTopup() {
+      const jenis = document.getElementById('topupJenis').value;
+      const paket = parseInt(document.getElementById('topupPaket').value);
+      if (!compressedBase64) {
+        playSfx('error');
+        toast('Upload bukti pembayaran dulu', 'error');
+        return;
+      }
+      const btn = event.target;
+      btn.disabled = true;
+      const res = await apiCall('ajukanTopup', {
+        jenis, paket, jumlah_bayar: paket, bukti_base64: compressedBase64
+      });
+      btn.disabled = false;
+      if (res.ok) {
+        playSfx('coin');
+        toast('Topup berhasil diajukan!', 'success');
+        closeModal('topup');
+      } else {
+        playSfx('error');
+        toast(res.message || 'Gagal ajukan topup', 'error');
+      }
+    }
+
+    // =============================================
+    // MODAL: CERITA
+    // =============================================
+    async function loadCerita() {
+      const el = document.getElementById('ceritaContent');
+      el.innerHTML = '<p style="text-align:center;color:#888">Memuat...</p>';
+      const res = await apiCall('getCerita');
+      if (!res.ok) {
+        el.innerHTML = '<p style="text-align:center;color:#e74c3c">Gagal memuat cerita</p>';
+        return;
+      }
+      const bab = res.data.bab || [];
+      if (!bab.length) {
+        el.innerHTML = '<p style="text-align:center;color:#888">Belum ada cerita</p>';
+        return;
+      }
+      el.innerHTML = bab.map(b => `
+        <div class="modal-item" onclick="bacaCerita(${b.bab})" style="cursor:pointer">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Bab ${b.bab}: ${b.judul}</div>
+            <div class="modal-item-sub">${b.terkunci ? '🔒 Terkunci' : 'Klik untuk baca'}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function bacaCerita(bab) {
+      const res = await apiCall('bacaCerita', { bab });
+      if (res.ok) {
+        playSfx('coin');
+        const el = document.getElementById('ceritaContent');
+        el.innerHTML = `
+          <div style="margin-bottom:12px">
+            <button class="btn-sm btn-blue" onclick="loadCerita()">← Kembali</button>
+          </div>
+          <h4 style="color:#FFD700;font-family:Orbitron;font-size:14px;margin-bottom:8px">${res.data.judul || 'Bab ' + bab}</h4>
+          <div style="font-size:14px;line-height:1.8;color:#ccc">${(res.data.dialog || []).map(d => `<p style="margin-bottom:8px">${d}</p>`).join('')}</div>
+        `;
+      } else {
+        playSfx('error');
+        toast(res.message || 'Gagal baca cerita', 'error');
+      }
+    }
+
+    // =============================================
+    // MODAL: PENGATURAN
+    // =============================================
+    function renderPengaturan() {
+      const el = document.getElementById('pengaturanContent');
+      el.innerHTML = `
+        <div class="modal-item" style="justify-content:space-between">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Musik Latar (BGM)</div>
+            <div class="modal-item-sub">${isBgmOn() ? 'Aktif' : 'Nonaktif'}</div>
+          </div>
+          <button class="btn-sm ${isBgmOn() ? 'btn-green' : 'btn-red'}" onclick="toggleBgmSetting()">${isBgmOn() ? 'ON' : 'OFF'}</button>
+        </div>
+        <div class="modal-item" style="justify-content:space-between;margin-top:8px">
+          <div class="modal-item-info">
+            <div class="modal-item-title">Efek Suara (SFX)</div>
+            <div class="modal-item-sub">${isSfxOn() ? 'Aktif' : 'Nonaktif'}</div>
+          </div>
+          <button class="btn-sm ${isSfxOn() ? 'btn-green' : 'btn-red'}" onclick="toggleSfxSetting()">${isSfxOn() ? 'ON' : 'OFF'}</button>
+        </div>
+        <div style="margin-top:12px">
+          <button class="btn-sm btn-yellow btn-full" onclick="syncProgress().then(()=>toast('Sinkron selesai','success'))">SINKRON SEKARANG</button>
+        </div>
+        <div style="margin-top:8px">
+          <button class="btn-sm btn-red btn-full" onclick="handleLogout()">LOGOUT</button>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:#666;text-align:center">
+          Device ID: <span style="color:#FFD700">${getDeviceId()}</span>
+        </div>
+      `;
+    }
+
+    function toggleBgmSetting() {
+      const current = localStorage.getItem('mp7000_bgm') !== 'off';
+      localStorage.setItem('mp7000_bgm', current ? 'off' : 'on');
+      if (current) stopBgm(); else playBgm();
+      renderPengaturan();
+    }
+    function toggleSfxSetting() {
+      const current = localStorage.getItem('mp7000_sfx') !== 'off';
+      localStorage.setItem('mp7000_sfx', current ? 'off' : 'on');
+      renderPengaturan();
+    }
+
+    // =============================================
+    // LOGOUT
+    // =============================================
+    function handleLogout() {
+      syncProgress();
+      localStorage.removeItem('mp7000_token');
+      localStorage.removeItem('mp7000_user');
+      localStorage.removeItem('mp7000_is_admin');
+      stopBgm();
+      window.location.href = 'index.html';
+    }
+
+    // =============================================
+    // ADMIN PANEL
+    // =============================================
+    function switchMainTab(tab) {
+      document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.main-tab-btn').forEach(b => {
+        if (b.textContent === tab.toUpperCase()) b.classList.add('active');
+      });
+      document.getElementById('gamePanel').style.display = tab === 'game' ? 'flex' : 'none';
+      document.getElementById('adminPanel').classList.toggle('show', tab === 'admin');
+      if (tab === 'admin') loadAdminContent('pemain');
+    }
+
+    function switchSubTab(tab) {
+      document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.sub-tab-btn').forEach(b => {
+        if (b.textContent === tab.toUpperCase()) b.classList.add('active');
+      });
+      loadAdminContent(tab);
+    }
+
+    async function loadAdminContent(tab) {
+      const el = document.getElementById('adminContent');
+      el.innerHTML = '<p style="text-align:center;color:#888;padding:20px">Memuat...</p>';
+      let res;
+      switch (tab) {
+        case 'pemain':
+          res = await apiCall('adminGetPemain');
+          if (res.ok) renderAdminPemain(res.data);
+          else el.innerHTML = '<p style="color:#e74c3c;text-align:center">' + (res.message || 'Gagal') + '</p>';
+          break;
+        case 'topup':
+          res = await apiCall('adminGetAll', { tipe: 'topup' });
+          if (res.ok) renderAdminTopup(res.data);
+          else el.innerHTML = '<p style="color:#e74c3c;text-align:center">' + (res.message || 'Gagal') + '</p>';
+          break;
+        case 'voucher':
+          res = await apiCall('adminGetAll', { tipe: 'voucher' });
+          if (res.ok) renderAdminVoucher(res.data);
+          else el.innerHTML = '<p style="color:#e74c3c;text-align:center">' + (res.message || 'Gagal') + '</p>';
+          break;
+        case 'log':
+          res = await apiCall('adminLog');
+          if (res.ok) renderAdminLog(res.data);
+          else el.innerHTML = '<p style="color:#e74c3c;text-align:center">' + (res.message || 'Gagal') + '</p>';
+          break;
+        case 'export':
+          el.innerHTML = '<button class="btn-sm btn-yellow btn-full" onclick="exportCSV()">EXPORT CSV</button>';
+          break;
+        case 'config':
+          res = await apiCall('adminKelolaConfig', { aksi: 'get' });
+          if (res.ok) renderAdminConfig(res.data);
+          else el.innerHTML = '<p style="color:#e74c3c;text-align:center">' + (res.message || 'Gagal') + '</p>';
+          break;
+        case 'hadiah':
+          renderAdminHadiah();
+          break;
+        default:
+          el.innerHTML = '<p style="text-align:center;color:#888">Fitur admin: ' + tab + '</p>';
+      }
+    }
+
+    function renderAdminPemain(data) {
+      const el = document.getElementById('adminContent');
+      const users = data.pemain || [];
+      el.innerHTML = `
+        <table class="admin-table">
+          <thead><tr><th>Nama</th><th>HP</th><th>Koin</th><th>Level</th><th>Aksi</th></tr></thead>
+          <tbody>
+            ${users.map(u => `<tr>
+              <td>${u.nama}</td>
+              <td>${u.nomor_hp}</td>
+              <td>${formatNumber(u.saldo_koin || 0)}</td>
+              <td>${u.level || 1}</td>
+              <td><div class="admin-actions">
+                <button class="btn-yellow" onclick="adminEditSaldo('${u.id}')">Edit</button>
+                <button class="btn-blue" onclick="adminSetLevel('${u.id}')">Level</button>
+                <button class="btn-red" onclick="adminBan('${u.id}')">Ban</button>
+              </div></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function adminEditSaldo(id) {
+      const koin = prompt('Masukkan saldo koin baru:');
+      if (koin === null) return;
+      const res = await apiCall('adminEditSaldo', { user_id: id, saldo_koin: parseInt(koin) || 0 });
+      if (res.ok) { playSfx('coin'); toast('Saldo diupdate', 'success'); loadAdminContent('pemain'); }
+      else { playSfx('error'); toast(res.message || 'Gagal', 'error'); }
+    }
+
+    async function adminSetLevel(id) {
+      const lv = prompt('Masukkan level baru:');
+      if (lv === null) return;
+      const res = await apiCall('adminSetLevel', { user_id: id, level: parseInt(lv) || 1 });
+      if (res.ok) { playSfx('coin'); toast('Level diupdate', 'success'); loadAdminContent('pemain'); }
+      else { playSfx('error'); toast(res.message || 'Gagal', 'error'); }
+    }
+
+    async function adminBan(id) {
+      if (!confirm('Yakin ban user ini?')) return;
+      const res = await apiCall('adminBanPemain', { user_id: id });
+      if (res.ok) { playSfx('coin'); toast('User diban', 'success'); loadAdminContent('pemain'); }
+      else { playSfx('error'); toast(res.message || 'Gagal', 'error'); }
+    }
+
+    function renderAdminTopup(data) {
+      const el = document.getElementById('adminContent');
+      const list = data.topup || [];
+      el.innerHTML = list.length ? list.map(t => `
+        <div class="modal-item">
+          <div class="modal-item-info">
+            <div class="modal-item-title">${t.user_nama || t.user_id} — ${t.jenis} Rp ${formatNumber(t.jumlah_bayar)}</div>
+            <div class="modal-item-sub">Status: ${t.status} • ${t.waktu || ''}</div>
+            ${t.bukti_base64 ? `<img src="${t.bukti_base64}" style="max-width:100%;max-height:100px;border-radius:6px;margin-top:6px" onclick="window.open('${t.bukti_base64}')">` : ''}
+          </div>
+          <div class="admin-actions" style="flex-direction:column">
+            <button class="btn-sm btn-green" onclick="adminApproveTopup('${t.id}')">Approve</button>
+            <button class="btn-sm btn-red" onclick="adminRejectTopup('${t.id}')">Reject</button>
+          </div>
+        </div>
+      `).join('') : '<p style="text-align:center;color:#888">Tidak ada topup pending</p>';
+    }
+
+    async function adminApproveTopup(id) {
+      const res = await apiCall('adminApproveTopup', { topup_id: id });
+      if (res.ok) { playSfx('coin'); toast('Topup disetujui', 'success'); loadAdminContent('topup'); }
+      else { playSfx('error'); toast(res.message || 'Gagal', 'error'); }
+    }
+    async function adminRejectTopup(id) {
+      const res = await apiCall('adminRejectTopup', { topup_id: id });
+      if (res.ok) { playSfx('coin'); toast('Topup ditolak', 'success'); loadAdminContent('topup'); }
+      else { playSfx('error'); toast(res.message || 'Gagal', 'error'); }
+    }
+
+    function renderAdminVoucher(data) {
+      const el = document.getElementById('adminContent');
+      el.innerHTML = `
+        <div class="form-group">
+          <label>Verifikasi Kode Voucher</label>
+          <input type="text" id="adminVoucherKode" placeholder="MP7K-XXXXXX">
+        </div>
+        <button class="btn-sm btn-yellow btn-full" onclick="adminVerifikasiVoucher()">VERIFIKASI</button>
+        <button class="btn-sm btn-green btn-full" style="margin-top:8px" onclick="adminPakaiVoucher()">PAKAI VOUCHER</button>
+        <div id="adminVoucherResult" style="margin-top:12px"></div>
+      `;
+    }
+
+    async function adminVerifikasiVoucher() {
+      const kode = document.getElementById('adminVoucherKode').value.trim();
+      const res = await apiCall('adminVerifikasiVoucher', { kode });
+      if (res.ok) { playSfx('coin'); toast('Voucher valid', 'success'); document.getElementById('adminVoucherResult').innerHTML = '<p style="color:#2ecc71">Voucher valid: ' + JSON.stringify(res.data) + '</p>'; }
+      else { playSfx('error'); toast(res.message || 'Voucher tidak valid', 'error'); }
+    }
+    async function adminPakaiVoucher() {
+      const kode = document.getElementById('adminVoucherKode').value.trim();
+      const res = await apiCall('adminPakaiVoucher', { kode });
+      if (res.ok) { playSfx('coin'); toast('Voucher digunakan', 'success'); }
+      else { playSfx('error'); toast(res.message || 'Gagal', 'error'); }
+    }
+
+    function renderAdminLog(data) {
+      const el = document.getElementById('adminContent');
+      const logs = data.log || [];
+      el.innerHTML = `<div class="admin-log">${logs.map(l => `<div>[${l.waktu}] ${l.aksi} — ${l.detail || ''}</div>`).join('') || 'Tidak ada log'}</div>`;
+    }
+
+    function renderAdminConfig(data) {
+      const el = document.getElementById('adminContent');
+      const cfg = data.config || {};
+      el.innerHTML = Object.keys(cfg).map(k => `
+        <div class="form-group">
+          <label>${k}</label>
+          <input type="text" id="cfg-${k}" value="${cfg[k]}">
+        </div>
+      `).join('') + `<button class="btn-sm btn-yellow btn-full" onclick="adminSaveConfig()">SIMPAN CONFIG</button>`;
+    }
+
+    async function adminSaveConfig() {
+      const inputs = document.querySelectorAll('#adminContent input');
+      const config = {};
+      inputs.forEach(inp => { config[inp.id.replace('cfg-', '')] = inp.value; });
+      const res = await apiCall('adminKelolaConfig', { aksi: 'set', config });
+      if (res.ok) { playSfx('coin'); toast('Config disimpan', 'success'); }
+      else { playSfx('error'); toast(res.message || 'Gagal', 'error'); }
+    }
+
+    function renderAdminHadiah() {
+      const el = document.getElementById('adminContent');
+      el.innerHTML = `
+        <div class="form-group">
+          <label>Jumlah Koin Hadiah Massal</label>
+          <input type="number" id="hadiahKoin" placeholder="1000">
+        </div>
+        <div class="form-group">
+          <label>Pesan</label>
+          <input type="text" id="hadiahPesan" placeholder="Hadiah spesial!">
+        </div>
+        <button class="btn-sm btn-green btn-full" onclick="adminKirimHadiah()">KIRIM HADIAH MASSAL</button>
+      `;
+    }
+
+    async function adminKirimHadiah() {
+      const koin = parseInt(document.getElementById('hadiahKoin').value) || 0;
+      const pesan = document.getElementById('hadiahPesan').value;
+      const res = await apiCall('adminKirimHadiahMassal', { koin, pesan });
+      if (res.ok) { playSfx('coin'); toast('Hadiah terkirim', 'success'); }
+      else { playSfx('error'); toast(res.message || 'Gagal', 'error'); }
+    }
+
+    async function exportCSV() {
+      const res = await apiCall('adminExportCSV');
+      if (res.ok && res.data.csv) {
+        const blob = new Blob([res.data.csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'mp7000_export.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+        playSfx('coin');
+        toast('Export berhasil', 'success');
+      } else {
+        playSfx('error');
+        toast(res.message || 'Gagal export', 'error');
+      }
+    }
+
+    // =============================================
+    // START
+    // =============================================
+    init();
+  </script>
 </body>
 </html>
