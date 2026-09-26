@@ -12,17 +12,17 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
     }
-    body {
-      background: linear-gradient(145deg, #fff5f5 0%, #fce4e4 40%, #fff0f0 100%);
+
+    html, body {
+      width: 100%;
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(145deg, #8B0000 0%, #C8102E 30%, #FAFAFA 70%, #FFFFFF 100%);
+      background-attachment: fixed;
+      overflow-x: hidden;
     }
+
     #app {
       position: relative;
       width: 100%;
@@ -31,1086 +31,1219 @@
       align-items: center;
       justify-content: center;
     }
+
     #hujanCanvas {
       position: fixed;
       inset: 0;
-      width: 100%;
-      height: 100%;
       z-index: 0;
       pointer-events: none;
     }
-    /* background image opsional via assets */
-    .bg-layer {
-      position: fixed;
-      inset: 0;
-      background-image: url('assets/steam-bg.png');
-      background-size: cover;
-      background-position: center;
-      z-index: 0;
-      opacity: 0.15;
-      pointer-events: none;
-      mix-blend-mode: overlay;
-    }
+
     .login-wrap {
       position: relative;
-      z-index: 10;
+      z-index: 2;
       width: 100%;
-      max-width: 400px;
-      padding: 16px 20px 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      max-width: 420px;
+      padding: 20px 18px 30px;
+      margin: 0 auto;
     }
+
     .brand {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
+
     .logo {
-      width: 90px;
-      height: 90px;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 12px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 25%, #e63946, #9e1a2b);
-      color: #F59E0B;
-      font-weight: 800;
-      font-size: 2.6rem;
+      background: radial-gradient(circle at 30% 30%, #E63946, #C8102E 60%, #8B0000);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 14px;
-      box-shadow: 0 0 35px rgba(200, 16, 46, 0.6), 0 0 10px rgba(245, 158, 11, 0.4);
-      letter-spacing: 2px;
-      cursor: pointer;
+      font-size: 28px;
+      font-weight: 800;
+      color: #F59E0B;
+      text-shadow: 0 0 18px rgba(245, 158, 11, 0.8);
+      box-shadow: 0 0 30px rgba(200, 16, 46, 0.6), 0 0 60px rgba(200, 16, 46, 0.35), inset 0 -4px 10px rgba(0,0,0,0.25);
+      border: 3px solid #F59E0B;
       user-select: none;
-      transition: transform 0.1s;
-      border: 2px solid rgba(245, 158, 11, 0.5);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      letter-spacing: 1px;
     }
+
     .logo:active {
       transform: scale(0.95);
     }
+
     .brand h1 {
-      font-size: 1.5rem;
+      font-size: 22px;
       font-weight: 700;
-      color: #7a1a2b;
-      text-shadow: 0 2px 6px rgba(200, 16, 46, 0.15);
-      letter-spacing: -0.5px;
+      color: #FFFFFF;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6), 0 0 20px rgba(200, 16, 46, 0.5);
+      letter-spacing: 0.5px;
     }
+
     .tagline {
-      font-size: 0.7rem;
-      color: #a14b5a;
+      font-size: 11px;
       font-weight: 500;
+      color: #F59E0B;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+      margin-top: 4px;
       letter-spacing: 0.3px;
-      margin-top: 6px;
-      background: rgba(255, 255, 255, 0.5);
-      backdrop-filter: blur(2px);
-      padding: 4px 12px;
-      border-radius: 30px;
-      display: inline-block;
-      border: 1px solid rgba(245, 158, 11, 0.3);
     }
+
     .kartu {
-      background: #ffffff;
-      width: 100%;
-      border-radius: 26px;
+      background: #FAFAFA;
+      border-radius: 18px;
       padding: 24px 20px 22px;
-      box-shadow: 0 18px 40px -10px rgba(150, 20, 40, 0.25), 0 0 0 1px rgba(245, 158, 11, 0.25);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      backdrop-filter: blur(2px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.35), 0 2px 8px rgba(200,16,46,0.2);
+      border: 1.5px solid rgba(245, 158, 11, 0.5);
     }
+
     .toggle {
       display: flex;
-      gap: 12px;
-      margin-bottom: 26px;
-      background: #f6f3f3;
-      padding: 5px;
-      border-radius: 40px;
+      gap: 8px;
+      margin-bottom: 20px;
+      background: #F0F0F0;
+      border-radius: 12px;
+      padding: 4px;
     }
+
     .toggle button {
       flex: 1;
-      padding: 12px 0;
+      padding: 10px 8px;
       border: none;
-      border-radius: 30px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      background: transparent;
-      color: #7a5b5b;
-      transition: 0.2s;
-      cursor: pointer;
+      border-radius: 10px;
       font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      background: transparent;
+      color: #666;
     }
+
     .toggle button.aktif {
       background: linear-gradient(135deg, #C8102E, #8B0000);
-      color: white;
-      box-shadow: 0 6px 14px rgba(200, 16, 46, 0.35);
+      color: #FFFFFF;
+      box-shadow: 0 3px 10px rgba(200,16,46,0.4);
     }
+
     .toggle button:not(.aktif):hover {
-      background: #e8dede;
-      color: #4a2c2c;
+      background: #E5E5E5;
     }
+
     form {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
+
     input {
       width: 100%;
-      padding: 15px 16px;
-      border-radius: 14px;
-      border: 1.8px solid #e2d6d6;
-      font-size: 0.95rem;
-      font-weight: 500;
-      background: #fefafa;
-      transition: 0.2s;
-      color: #2d1e1e;
+      padding: 12px 14px;
+      border: 1.5px solid #DDD;
+      border-radius: 10px;
       font-family: 'Poppins', sans-serif;
-    }
-    input:focus {
+      font-size: 14px;
+      background: #FFFFFF;
+      color: #333;
+      transition: border-color 0.2s, box-shadow 0.2s;
       outline: none;
+    }
+
+    input:focus {
       border-color: #C8102E;
-      background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(200, 16, 46, 0.08);
+      box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.12);
     }
+
     input::placeholder {
-      color: #b9a6a6;
-      font-weight: 400;
-      font-size: 0.85rem;
+      color: #AAA;
+      font-size: 13px;
     }
+
     .input-pw {
       position: relative;
       width: 100%;
     }
+
     .input-pw input {
-      padding-right: 52px;
+      padding-right: 44px;
     }
+
     .toggle-pw {
       position: absolute;
-      right: 14px;
+      right: 4px;
       top: 50%;
       transform: translateY(-50%);
-      background: transparent;
+      background: none;
       border: none;
-      font-size: 1.3rem;
+      font-size: 18px;
       cursor: pointer;
-      color: #9b7e7e;
-      padding: 6px;
+      padding: 8px 10px;
       line-height: 1;
-      border-radius: 50%;
+      color: #888;
+      transition: color 0.2s;
+      user-select: none;
     }
+
     .toggle-pw:hover {
       color: #C8102E;
     }
+
     .btn-primary {
-      background: linear-gradient(145deg, #C8102E, #8B0000);
-      color: white;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 16px 0;
+      width: 100%;
+      padding: 13px;
       border: none;
-      border-radius: 16px;
-      margin-top: 8px;
-      letter-spacing: 0.8px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #C8102E 0%, #8B0000 100%);
+      color: #FFFFFF;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
       cursor: pointer;
-      transition: 0.2s;
-      box-shadow: 0 10px 20px -8px rgba(200, 16, 46, 0.5);
+      transition: transform 0.15s, box-shadow 0.25s, opacity 0.2s;
+      box-shadow: 0 4px 14px rgba(200,16,46,0.4);
+      margin-top: 4px;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      font-family: 'Poppins', sans-serif;
-      border: 1px solid rgba(245, 158, 11, 0.3);
+      min-height: 48px;
     }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 22px rgba(200,16,46,0.55);
+      transform: translateY(-1px);
+    }
+
     .btn-primary:active {
-      transform: scale(0.98);
-      box-shadow: 0 6px 12px -6px rgba(200, 16, 46, 0.6);
+      transform: translateY(0);
     }
+
     .btn-primary:disabled {
-      opacity: 0.75;
+      opacity: 0.7;
       cursor: not-allowed;
+      transform: none;
     }
+
     .btn-outline {
-      background: transparent;
-      border: 2px solid #d4b6b6;
-      color: #7a4b4b;
-      font-weight: 600;
-      padding: 12px 0;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: 0.2s;
+      padding: 11px 18px;
+      border: 1.5px solid #CCC;
+      border-radius: 10px;
+      background: #FFFFFF;
+      color: #555;
       font-family: 'Poppins', sans-serif;
-      font-size: 0.9rem;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
     }
+
     .btn-outline:hover {
-      background: #f5eaea;
-      border-color: #C8102E;
-      color: #C8102E;
+      background: #F5F5F5;
+      border-color: #AAA;
     }
+
     .pesan-error {
-      margin-top: 18px;
-      font-size: 0.78rem;
-      color: #b91c1c;
-      background: #fff0f0;
-      border-left: 4px solid #DC2626;
-      border-radius: 12px;
+      margin-top: 14px;
       padding: 10px 14px;
-      display: none;
+      border-radius: 8px;
+      background: #FEF2F2;
+      border: 1.5px solid #DC2626;
+      color: #DC2626;
+      font-size: 12.5px;
       font-weight: 500;
       line-height: 1.4;
-      border: 1px solid #fecaca;
-      border-left-width: 5px;
+      display: none;
+      word-break: break-word;
     }
+
     .pesan-error.tampil {
       display: block;
+      animation: shakeIn 0.3s ease;
     }
+
+    @keyframes shakeIn {
+      0% { transform: translateX(-6px); opacity: 0; }
+      25% { transform: translateX(5px); }
+      50% { transform: translateX(-3px); }
+      75% { transform: translateX(2px); }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+
     .btn-musik {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 30;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(245, 158, 11, 0.5);
-      width: 50px;
-      height: 50px;
+      top: 16px;
+      right: 16px;
+      z-index: 50;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      font-size: 1.5rem;
+      border: 2px solid #F59E0B;
+      background: rgba(200, 16, 46, 0.85);
+      color: #FFFFFF;
+      font-size: 20px;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-      transition: 0.2s;
-      color: #C8102E;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      transition: transform 0.2s, background 0.2s;
+      backdrop-filter: blur(4px);
+      user-select: none;
     }
+
     .btn-musik:hover {
-      background: white;
-      box-shadow: 0 8px 20px rgba(200, 16, 46, 0.2);
+      transform: scale(1.08);
+      background: rgba(200, 16, 46, 1);
     }
-    /* toast */
+
+    .btn-musik.mati {
+      background: rgba(120, 120, 120, 0.7);
+      border-color: #999;
+    }
+
     #toastBox {
       position: fixed;
-      bottom: 30px;
+      top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 100;
+      z-index: 999;
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 8px;
+      width: 92%;
+      max-width: 400px;
       pointer-events: none;
-      width: 90%;
-      max-width: 360px;
     }
+
     .toast {
-      padding: 14px 22px;
-      border-radius: 40px;
-      color: white;
-      font-weight: 500;
-      font-size: 0.85rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      animation: toastIn 0.25s ease;
+      padding: 12px 18px;
+      border-radius: 12px;
+      color: #FFFFFF;
+      font-size: 13.5px;
+      font-weight: 600;
       text-align: center;
-      width: fit-content;
-      max-width: 100%;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+      animation: toastIn 0.35s cubic-bezier(0.21, 1.02, 0.73, 1);
       pointer-events: auto;
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      word-break: break-word;
+      line-height: 1.35;
     }
+
     .toast.sukses { background: #059669; }
     .toast.error { background: #DC2626; }
     .toast.warning { background: #D97706; }
     .toast.info { background: #2563EB; }
+
     @keyframes toastIn {
-      0% { opacity: 0; transform: translateY(12px); }
-      100% { opacity: 1; transform: translateY(0); }
+      0% { transform: translateY(-20px) scale(0.9); opacity: 0; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
     }
-    /* modal admin */
+
+    .toast.keluar {
+      animation: toastOut 0.3s ease forwards;
+    }
+
+    @keyframes toastOut {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-16px); opacity: 0; }
+    }
+
     #modalAdmin {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(5px);
-      z-index: 50;
+      z-index: 200;
+      background: rgba(0,0,0,0.55);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      backdrop-filter: blur(3px);
     }
+
     .modal {
-      background: #ffffff;
-      border-radius: 32px;
-      padding: 30px 24px 26px;
+      background: #FAFAFA;
+      border-radius: 18px;
+      padding: 26px 22px 22px;
       width: 100%;
       max-width: 340px;
-      box-shadow: 0 30px 60px rgba(80, 0, 0, 0.4);
-      border: 1px solid #F59E0B;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 1.5px solid #F59E0B;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
+
     .modal h3 {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #7a1a2b;
-      margin-bottom: 22px;
       text-align: center;
+      color: #C8102E;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
     }
+
     .modal input {
-      margin-bottom: 16px;
-      background: #fcf7f7;
+      padding: 11px 14px;
+      font-size: 14px;
     }
+
     .btn-row {
       display: flex;
-      gap: 12px;
-      margin-top: 12px;
+      gap: 10px;
+      margin-top: 6px;
     }
-    .btn-row button {
+
+    .btn-row .btn-outline,
+    .btn-row .btn-primary {
       flex: 1;
+      min-height: 44px;
+      font-size: 14px;
+      padding: 11px;
     }
+
     .spinner {
-      display: inline-block;
       width: 18px;
       height: 18px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
+      border: 2.5px solid rgba(255,255,255,0.3);
+      border-top-color: #FFFFFF;
       border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 0.7s linear infinite;
+      animation: spin 0.65s linear infinite;
+      display: inline-block;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    /* riak / efek tambahan */
-    .riak {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 90px;
-      background: radial-gradient(ellipse at 50% 100%, rgba(200,16,46,0.08), transparent 70%);
-      pointer-events: none;
-      z-index: 2;
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 380px) {
+      .brand h1 { font-size: 19px; }
+      .tagline { font-size: 10px; }
+      .kartu { padding: 20px 16px 18px; }
+      .logo { width: 68px; height: 68px; font-size: 24px; }
     }
   </style>
 </head>
 <body>
-<div id="app">
-  <canvas id="hujanCanvas"></canvas>
-  <div class="bg-layer"></div>
-  <div class="riak"></div>
+  <div id="app">
+    <canvas id="hujanCanvas"></canvas>
 
-  <div class="login-wrap">
-    <div class="brand">
-      <div class="logo" id="logoMP">MP</div>
-      <h1>Steam MP 7000 Tycoon</h1>
-      <div class="tagline">Jujur • Disiplin • Tanggung Jawab • Harga Mati</div>
-    </div>
-    <div class="kartu">
-      <div class="toggle">
-        <button data-mode="login" class="aktif">Masuk</button>
-        <button data-mode="register">Daftar</button>
+    <div class="login-wrap">
+      <div class="brand">
+        <div class="logo" id="logoMP">MP</div>
+        <h1>Steam MP 7000 Tycoon</h1>
+        <div class="tagline">Jujur • Disiplin • Tanggung Jawab • Harga Mati</div>
       </div>
-      <form id="formLogin">
-        <input id="loginNomor" placeholder="Nomor HP (08xxxxxxxxxx)" inputmode="numeric" autocomplete="off">
-        <div class="input-pw">
-          <input id="loginPassword" type="password" placeholder="Password" autocomplete="off">
-          <button type="button" class="toggle-pw" data-target="loginPassword">👁</button>
+
+      <div class="kartu">
+        <div class="toggle">
+          <button data-mode="login" class="aktif" id="btnModeLogin">Masuk</button>
+          <button data-mode="register" id="btnModeRegister">Daftar</button>
         </div>
-        <button type="submit" class="btn-primary" id="btnLoginSubmit">MASUK</button>
-      </form>
-      <form id="formRegister" style="display:none">
-        <input id="regNama" placeholder="Nama lengkap" autocomplete="off">
-        <input id="regNomor" placeholder="Nomor HP (08xxxxxxxxxx)" inputmode="numeric" autocomplete="off">
-        <div class="input-pw">
-          <input id="regPassword" type="password" placeholder="Password (min 6)" autocomplete="off">
-          <button type="button" class="toggle-pw" data-target="regPassword">👁</button>
-        </div>
-        <button type="submit" class="btn-primary" id="btnRegisterSubmit">DAFTAR</button>
-      </form>
-      <div id="pesanError" class="pesan-error"></div>
-    </div>
-  </div>
 
-  <button id="btnMusik" class="btn-musik">🎵</button>
+        <form id="formLogin">
+          <input id="loginNomor" placeholder="Nomor HP (08xxxxxxxxxx)" inputmode="numeric" autocomplete="off" maxlength="13">
+          <div class="input-pw">
+            <input id="loginPassword" type="password" placeholder="Password" autocomplete="off">
+            <button type="button" class="toggle-pw" data-target="loginPassword">👁</button>
+          </div>
+          <button type="submit" class="btn-primary" id="btnLogin">MASUK</button>
+        </form>
 
-  <div id="toastBox"></div>
+        <form id="formRegister" style="display:none">
+          <input id="regNama" placeholder="Nama lengkap" autocomplete="off">
+          <input id="regNomor" placeholder="Nomor HP (08xxxxxxxxxx)" inputmode="numeric" autocomplete="off" maxlength="13">
+          <div class="input-pw">
+            <input id="regPassword" type="password" placeholder="Password (min 6)" autocomplete="off">
+            <button type="button" class="toggle-pw" data-target="regPassword">👁</button>
+          </div>
+          <button type="submit" class="btn-primary" id="btnRegister">DAFTAR</button>
+        </form>
 
-  <div id="modalAdmin" style="display:none">
-    <div class="modal">
-      <h3>Login Admin</h3>
-      <input id="adminId" placeholder="Admin ID" autocomplete="off">
-      <input id="adminPassword" type="password" placeholder="Password" autocomplete="off">
-      <div class="btn-row">
-        <button type="button" id="btnAdminBatal" class="btn-outline">Batal</button>
-        <button type="button" id="btnAdminLogin" class="btn-primary">Masuk</button>
+        <div id="pesanError" class="pesan-error"></div>
       </div>
     </div>
+
+    <button id="btnMusik" class="btn-musik">🎵</button>
+
+    <div id="toastBox"></div>
+
+    <div id="modalAdmin" style="display:none">
+      <div class="modal">
+        <h3>🔐 Login Admin</h3>
+        <input id="adminId" placeholder="Admin ID" autocomplete="off">
+        <input id="adminPassword" type="password" placeholder="Password" autocomplete="off">
+        <div class="btn-row">
+          <button type="button" id="btnAdminBatal" class="btn-outline">Batal</button>
+          <button type="button" id="btnAdminLogin" class="btn-primary">Masuk</button>
+        </div>
+      </div>
+    </div>
+
+    <audio id="musik" src="assets/musik-latar.mp3" loop preload="auto"></audio>
   </div>
 
-  <audio id="musik" src="assets/musik-latar.mp3" loop preload="auto"></audio>
-</div>
+  <script>
+    (function() {
+      'use strict';
 
-<script>
-(function(){
-  "use strict";
+      // ==================== KONFIGURASI ====================
+      const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxANi_x0tXyAqC2a6L10p5Uu4TNGvhQV4UsI8k-7rogvuzSl_o4TuECRsDCOXDjcvIA/exec';
+      const TOKEN = 'steam-mp-7000-2026';
 
-  // ===================== KONFIGURASI =====================
-  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxANi_x0tXyAqC2a6L10p5Uu4TNGvhQV4UsI8k-7rogvuzSl_o4TuECRsDCOXDjcvIA/exec';
-  const TOKEN = 'steam-mp-7000-2026';
-
-  // ===================== DEVICE ID =====================
-  function getDeviceId() {
-    let deviceId = localStorage.getItem('smp7k_device');
-    if (!deviceId) {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      let rand = '';
-      for (let i = 0; i < 16; i++) rand += chars.charAt(Math.floor(Math.random() * chars.length));
-      deviceId = 'dev_' + rand;
-      localStorage.setItem('smp7k_device', deviceId);
-    }
-    return deviceId;
-  }
-  const DEVICE_ID = getDeviceId();
-
-  // ===================== FUNGSI FETCH =====================
-  async function apiCall(payload) {
-    try {
-      const response = await fetch(BACKEND_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ token: TOKEN, ...payload }),
-        redirect: 'follow'
-      });
-      const text = await response.text();
-      try {
-        return JSON.parse(text);
-      } catch (e) {
-        console.warn('Respons bukan JSON:', text);
-        return { ok: false, pesan: 'Respons tidak valid', data: null };
-      }
-    } catch (e) {
-      console.error(e);
-      return { ok: false, pesan: 'Gagal terhubung ke server', data: null };
-    }
-  }
-
-  // ===================== TOAST =====================
-  function tampilToast(pesan, tipe = 'info', durasi = 3000) {
-    const box = document.getElementById('toastBox');
-    if (!box) return;
-    const toast = document.createElement('div');
-    toast.className = `toast ${tipe}`;
-    toast.textContent = pesan;
-    box.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transition = 'opacity 0.3s';
-      setTimeout(() => toast.remove(), 300);
-    }, durasi);
-  }
-
-  // ===================== PESAN ERROR DI FORM =====================
-  function tampilError(pesan) {
-    const el = document.getElementById('pesanError');
-    if (el) {
-      el.textContent = pesan;
-      el.classList.add('tampil');
-    }
-  }
-  function sembunyikanError() {
-    const el = document.getElementById('pesanError');
-    if (el) el.classList.remove('tampil');
-  }
-
-  // ===================== SPINNER DI TOMBOL =====================
-  function setLoading(button, isLoading, originalText) {
-    if (!button) return;
-    if (isLoading) {
-      if (!button.dataset.original) button.dataset.original = originalText || button.innerHTML;
-      button.disabled = true;
-      button.innerHTML = '<span class="spinner"></span>';
-    } else {
-      button.disabled = false;
-      button.innerHTML = button.dataset.original || originalText || 'SUBMIT';
-    }
-  }
-
-  // ===================== VALIDASI =====================
-  function validasiNomor(nomor) {
-    if (!/^\d+$/.test(nomor)) return { valid: false, pesan: 'Nomor HP harus diawali 08, 10-13 digit' };
-    if (!nomor.startsWith('08')) return { valid: false, pesan: 'Nomor HP harus diawali 08, 10-13 digit' };
-    if (nomor.length < 10 || nomor.length > 13) return { valid: false, pesan: 'Nomor HP harus diawali 08, 10-13 digit' };
-    return { valid: true };
-  }
-  function validasiPassword(pw) {
-    if (!pw || pw.length < 6) return { valid: false, pesan: 'Password minimal 6 karakter' };
-    return { valid: true };
-  }
-  function validasiNama(nama) {
-    if (!nama || nama.trim() === '') return { valid: false, pesan: 'Nama tidak boleh kosong' };
-    return { valid: true };
-  }
-
-  // ===================== TOGGLE FORM =====================
-  const toggleButtons = document.querySelectorAll('.toggle button');
-  const formLogin = document.getElementById('formLogin');
-  const formRegister = document.getElementById('formRegister');
-
-  toggleButtons.forEach(btn => {
-    btn.addEventListener('click', function() {
-      const mode = this.dataset.mode;
-      toggleButtons.forEach(b => b.classList.remove('aktif'));
-      this.classList.add('aktif');
-      if (mode === 'login') {
-        formLogin.style.display = 'flex';
-        formRegister.style.display = 'none';
-      } else {
-        formLogin.style.display = 'none';
-        formRegister.style.display = 'flex';
-      }
-      sembunyikanError();
-    });
-  });
-
-  // ===================== SHOW/HIDE PASSWORD =====================
-  document.querySelectorAll('.toggle-pw').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const targetId = this.dataset.target;
-      const input = document.getElementById(targetId);
-      if (input) {
-        input.type = input.type === 'password' ? 'text' : 'password';
-        this.textContent = input.type === 'password' ? '👁' : '👁‍🗨';
-      }
-    });
-  });
-
-  // ===================== GENERATE SESSION TOKEN =====================
-  function generateSessionToken() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let token = '';
-    for (let i = 0; i < 32; i++) token += chars.charAt(Math.floor(Math.random() * chars.length));
-    return token;
-  }
-
-  // ===================== FORMAT TANGGAL =====================
-  function tanggalSekarang() {
-    const d = new Date();
-    return d.toISOString().slice(0, 10);
-  }
-  function waktuSekarang() {
-    return new Date().toISOString();
-  }
-
-  // ===================== ALUR REGISTER =====================
-  async function handleRegister(e) {
-    e.preventDefault();
-    sembunyikanError();
-    const nama = document.getElementById('regNama').value.trim();
-    const nomor = document.getElementById('regNomor').value.trim();
-    const password = document.getElementById('regPassword').value;
-    const btnRegister = document.getElementById('btnRegisterSubmit');
-
-    const vNama = validasiNama(nama);
-    if (!vNama.valid) { tampilError(vNama.pesan); tampilToast(vNama.pesan, 'warning'); return; }
-    const vNomor = validasiNomor(nomor);
-    if (!vNomor.valid) { tampilError(vNomor.pesan); tampilToast(vNomor.pesan, 'warning'); return; }
-    const vPw = validasiPassword(password);
-    if (!vPw.valid) { tampilError(vPw.pesan); tampilToast(vPw.pesan, 'warning'); return; }
-
-    setLoading(btnRegister, true, 'DAFTAR');
-    try {
-      // 1. Baca sheet Users
-      const resBaca = await apiCall({ action: 'baca', sheet: 'Users' });
-      if (!resBaca.ok) {
-        tampilError(resBaca.pesan || 'Gagal membaca data pengguna');
-        tampilToast(resBaca.pesan || 'Gagal membaca data', 'error');
-        return;
-      }
-      const users = resBaca.data || [];
-
-      // 2. Cek nomor sudah terdaftar
-      const nomorAda = users.some(u => String(u.nomor).trim() === String(nomor).trim());
-      if (nomorAda) {
-        tampilError('Nomor sudah terdaftar, silakan login');
-        tampilToast('Nomor sudah terdaftar', 'warning');
-        return;
-      }
-
-      // 3. Cek device_id sudah terdaftar
-      const deviceAda = users.some(u => String(u.device_id).trim() === String(DEVICE_ID).trim());
-      if (deviceAda) {
-        tampilError('Device ini sudah terdaftar');
-        tampilToast('Device sudah terdaftar', 'warning');
-        return;
-      }
-
-      // 4. Generate ID internal
-      let maxNumber = 0;
-      const prefix = 'MP7000-';
-      users.forEach(u => {
-        const idStr = String(u.id || '').trim();
-        if (idStr.startsWith(prefix)) {
-          const num = parseInt(idStr.slice(prefix.length), 10);
-          if (!isNaN(num) && num > maxNumber) maxNumber = num;
+      // ==================== DEVICE ID ====================
+      function getDeviceId() {
+        let dev = localStorage.getItem('smp7k_device');
+        if (!dev) {
+          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+          let rand = '';
+          for (let i = 0; i < 16; i++) {
+            rand += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          dev = 'dev_' + rand;
+          localStorage.setItem('smp7k_device', dev);
         }
-      });
-      const newNumber = maxNumber + 1;
-      const newId = prefix + String(newNumber).padStart(4, '0');
-
-      // 5. Data user baru
-      const userData = {
-        id: newId,
-        nama: nama,
-        nomor: nomor,
-        password: password,
-        device_id: DEVICE_ID,
-        saldo_koin: 0,
-        saldo_rupiah: 0,
-        kristal: 0,
-        level: 1,
-        cabang_aktif: 1,
-        status: 'aktif',
-        last_login: '',
-        last_sync: '',
-        tanggal_daftar: tanggalSekarang()
-      };
-
-      // 6. Tulis ke sheet Users
-      const resTulis = await apiCall({ action: 'tulis', sheet: 'Users', data: userData });
-      if (!resTulis.ok) {
-        tampilError(resTulis.pesan || 'Gagal mendaftar');
-        tampilToast(resTulis.pesan || 'Gagal mendaftar', 'error');
-        return;
+        return dev;
       }
 
-      tampilToast('Pendaftaran berhasil! Silakan masuk', 'sukses');
-      // 7. Otomatis login: isi form login dan trigger login
-      document.getElementById('loginNomor').value = nomor;
-      document.getElementById('loginPassword').value = password;
-      // Pindah ke tab login
-      document.querySelector('.toggle button[data-mode="login"]').click();
-      // Trigger login
-      setTimeout(() => {
-        document.getElementById('formLogin').dispatchEvent(new Event('submit', { cancelable: true }));
-      }, 200);
-
-    } catch (err) {
-      console.error(err);
-      tampilError('Terjadi kesalahan, coba lagi');
-      tampilToast('Terjadi kesalahan', 'error');
-    } finally {
-      setLoading(btnRegister, false, 'DAFTAR');
-    }
-  }
-
-  // ===================== ALUR LOGIN =====================
-  async function handleLogin(e) {
-    e.preventDefault();
-    sembunyikanError();
-    const nomor = document.getElementById('loginNomor').value.trim();
-    const password = document.getElementById('loginPassword').value;
-    const btnLogin = document.getElementById('btnLoginSubmit');
-
-    const vNomor = validasiNomor(nomor);
-    if (!vNomor.valid) { tampilError(vNomor.pesan); tampilToast(vNomor.pesan, 'warning'); return; }
-    const vPw = validasiPassword(password);
-    if (!vPw.valid) { tampilError(vPw.pesan); tampilToast(vPw.pesan, 'warning'); return; }
-
-    setLoading(btnLogin, true, 'MASUK');
-    try {
-      const resBaca = await apiCall({ action: 'baca', sheet: 'Users' });
-      if (!resBaca.ok) {
-        tampilError(resBaca.pesan || 'Gagal membaca data pengguna');
-        tampilToast(resBaca.pesan || 'Gagal membaca data', 'error');
-        return;
-      }
-      const users = resBaca.data || [];
-
-      // Cari baris yang cocok
-      let foundRow = null;
-      let alasanGagal = '';
-
-      for (const u of users) {
-        const rowNomor = String(u.nomor || '').trim();
-        const rowPassword = String(u.password || '');
-        const rowDevice = String(u.device_id || '').trim();
-        const rowStatus = String(u.status || '').trim();
-
-        if (rowNomor === String(nomor).trim()) {
-          // nomor ketemu
-          if (rowPassword !== String(password)) {
-            alasanGagal = 'Password salah';
-            continue;
-          }
-          if (rowDevice !== String(DEVICE_ID).trim()) {
-            alasanGagal = 'Device tidak cocok';
-            continue;
-          }
-          if (rowStatus === 'banned') {
-            alasanGagal = 'Akun diblokir';
-            continue;
-          }
-          foundRow = u;
-          break;
-        }
+      // ==================== FETCH HELPER ====================
+      function apiCall(payload) {
+        return fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(Object.assign({ token: TOKEN }, payload)),
+          redirect: 'follow'
+        })
+        .then(function(r) { return r.text(); })
+        .then(function(t) {
+          try { return JSON.parse(t); }
+          catch(e) { return { ok: false, pesan: 'Respons tidak valid' }; }
+        })
+        .catch(function(e) { return { ok: false, pesan: 'Gagal terhubung ke server' }; });
       }
 
-      if (!foundRow) {
-        // Cek apakah nomor ada sama sekali
-        const nomorAda = users.some(u => String(u.nomor).trim() === String(nomor).trim());
-        if (!nomorAda) {
-          tampilError('Nomor belum terdaftar');
-          tampilToast('Nomor belum terdaftar', 'error');
-        } else if (alasanGagal) {
-          tampilError(alasanGagal);
-          tampilToast(alasanGagal, 'error');
+      // ==================== TOAST ====================
+      const toastBox = document.getElementById('toastBox');
+
+      function toast(pesan, tipe) {
+        tipe = tipe || 'info';
+        const el = document.createElement('div');
+        el.className = 'toast ' + tipe;
+        el.textContent = pesan;
+        toastBox.appendChild(el);
+        setTimeout(function() {
+          el.classList.add('keluar');
+          setTimeout(function() { el.remove(); }, 350);
+        }, 3000);
+      }
+
+      // ==================== ERROR MESSAGE ====================
+      const pesanError = document.getElementById('pesanError');
+
+      function tampilError(msg) {
+        pesanError.textContent = msg;
+        pesanError.classList.add('tampil');
+      }
+
+      function sembunyiError() {
+        pesanError.textContent = '';
+        pesanError.classList.remove('tampil');
+      }
+
+      // ==================== LOADING STATE ====================
+      function setLoading(btn, loading) {
+        if (!btn) return;
+        if (loading) {
+          btn.disabled = true;
+          btn.dataset.original = btn.innerHTML;
+          btn.innerHTML = '<span class="spinner"></span> Memproses...';
         } else {
-          tampilError('Login gagal, periksa kembali data Anda');
-          tampilToast('Login gagal', 'error');
+          btn.disabled = false;
+          if (btn.dataset.original) {
+            btn.innerHTML = btn.dataset.original;
+            delete btn.dataset.original;
+          }
         }
-        return;
       }
 
-      // Login sukses
-      const sessionToken = generateSessionToken();
-      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-      const createdAt = waktuSekarang();
-
-      // Tulis session
-      const resSession = await apiCall({
-        action: 'tulis',
-        sheet: 'Sessions',
-        data: {
-          token: sessionToken,
-          user_id: foundRow.id,
-          is_admin: false,
-          expires_at: expiresAt,
-          created_at: createdAt
+      // ==================== VALIDASI ====================
+      function validasiNomor(nomor) {
+        if (!/^08[0-9]{8,11}$/.test(nomor)) {
+          return 'Nomor HP harus diawali 08, 10-13 digit';
         }
-      });
-      if (!resSession.ok) {
-        tampilError(resSession.pesan || 'Gagal membuat sesi');
-        tampilToast('Gagal membuat sesi', 'error');
-        return;
+        return null;
       }
 
-      // Update last_login
-      await apiCall({
-        action: 'update',
-        sheet: 'Users',
-        row: foundRow._row,
-        data: { last_login: createdAt }
-      });
-
-      // Simpan localStorage
-      const sessionData = { token: sessionToken, user_id: foundRow.id, expires_at: expiresAt };
-      localStorage.setItem('smp7k_session', JSON.stringify(sessionData));
-      localStorage.setItem('smp7k_user', JSON.stringify({
-        id: foundRow.id,
-        nama: foundRow.nama,
-        nomor: foundRow.nomor,
-        saldo_koin: foundRow.saldo_koin || 0,
-        saldo_rupiah: foundRow.saldo_rupiah || 0,
-        kristal: foundRow.kristal || 0,
-        level: foundRow.level || 1,
-        cabang_aktif: foundRow.cabang_aktif || 1
-      }));
-
-      tampilToast('Login berhasil! Mengalihkan...', 'sukses');
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 600);
-
-    } catch (err) {
-      console.error(err);
-      tampilError('Terjadi kesalahan, coba lagi');
-      tampilToast('Terjadi kesalahan', 'error');
-    } finally {
-      setLoading(btnLogin, false, 'MASUK');
-    }
-  }
-
-  // ===================== LOGIN ADMIN TERSEMBUNYI =====================
-  let logoClickCount = 0;
-  let logoClickTimer = null;
-  const logoMP = document.getElementById('logoMP');
-  const modalAdmin = document.getElementById('modalAdmin');
-
-  logoMP.addEventListener('click', function() {
-    logoClickCount++;
-    if (logoClickTimer) clearTimeout(logoClickTimer);
-    if (logoClickCount >= 5) {
-      logoClickCount = 0;
-      modalAdmin.style.display = 'flex';
-      document.getElementById('adminId').value = '';
-      document.getElementById('adminPassword').value = '';
-    } else {
-      logoClickTimer = setTimeout(() => {
-        logoClickCount = 0;
-      }, 3000);
-    }
-  });
-
-  document.getElementById('btnAdminBatal').addEventListener('click', function() {
-    modalAdmin.style.display = 'none';
-  });
-
-  document.getElementById('btnAdminLogin').addEventListener('click', async function() {
-    const adminId = document.getElementById('adminId').value.trim();
-    const adminPassword = document.getElementById('adminPassword').value;
-    const btnAdmin = this;
-
-    if (!adminId || !adminPassword) {
-      tampilToast('Isi Admin ID dan password', 'warning');
-      return;
-    }
-
-    setLoading(btnAdmin, true, 'Masuk');
-    try {
-      const resBaca = await apiCall({ action: 'baca', sheet: 'Users' });
-      if (!resBaca.ok) {
-        tampilToast(resBaca.pesan || 'Gagal membaca data', 'error');
-        return;
-      }
-      const users = resBaca.data || [];
-      const adminUser = users.find(u => String(u.id).trim() === '1001');
-      if (!adminUser) {
-        tampilToast('Admin ID tidak ditemukan', 'error');
-        return;
-      }
-      if (String(adminUser.password) !== String(adminPassword)) {
-        tampilToast('Admin ID atau password salah', 'error');
-        return;
-      }
-
-      // Buat session admin
-      const sessionToken = generateSessionToken();
-      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-      const createdAt = waktuSekarang();
-
-      const resSession = await apiCall({
-        action: 'tulis',
-        sheet: 'Sessions',
-        data: {
-          token: sessionToken,
-          user_id: '1001',
-          is_admin: true,
-          expires_at: expiresAt,
-          created_at: createdAt
+      function validasiPassword(pw) {
+        if (pw.length < 6) {
+          return 'Password minimal 6 karakter';
         }
-      });
-      if (!resSession.ok) {
-        tampilToast('Gagal membuat sesi admin', 'error');
-        return;
+        return null;
       }
 
-      localStorage.setItem('smp7k_admin', JSON.stringify({ token: sessionToken, user_id: '1001' }));
-      modalAdmin.style.display = 'none';
-      tampilToast('Login admin berhasil', 'sukses');
-      setTimeout(() => {
-        window.location.href = 'dashboard.html?admin=1';
-      }, 600);
-    } catch (err) {
-      console.error(err);
-      tampilToast('Terjadi kesalahan', 'error');
-    } finally {
-      setLoading(btnAdmin, false, 'Masuk');
-    }
-  });
-
-  // ===================== EVENT SUBMIT =====================
-  formLogin.addEventListener('submit', handleLogin);
-  formRegister.addEventListener('submit', handleRegister);
-
-  // ===================== MUSIK =====================
-  const musik = document.getElementById('musik');
-  const btnMusik = document.getElementById('btnMusik');
-  const musicPref = localStorage.getItem('smp7k_music');
-  let musikAktif = musicPref !== 'off';
-
-  // Cek apakah file musik bisa dimuat
-  let musikTersedia = false;
-  musik.addEventListener('canplaythrough', () => { musikTersedia = true; }, { once: true });
-  musik.addEventListener('error', () => {
-    musikTersedia = false;
-    if (btnMusik) btnMusik.style.display = 'none';
-  });
-  // Timeout fallback
-  setTimeout(() => {
-    if (!musikTersedia) {
-      if (btnMusik) btnMusik.style.display = 'none';
-    }
-  }, 2000);
-
-  if (btnMusik) {
-    btnMusik.addEventListener('click', function() {
-      if (!musikTersedia) return;
-      if (musik.paused) {
-        musik.play().then(() => {
-          musikAktif = true;
-          localStorage.setItem('smp7k_music', 'on');
-          btnMusik.textContent = '🎵';
-        }).catch(() => {});
-      } else {
-        musik.pause();
-        musikAktif = false;
-        localStorage.setItem('smp7k_music', 'off');
-        btnMusik.textContent = '🔇';
+      function validasiNama(nama) {
+        if (!nama || nama.trim() === '') {
+          return 'Nama tidak boleh kosong';
+        }
+        return null;
       }
-    });
-  }
 
-  // Autoplay attempt
-  window.addEventListener('load', function() {
-    if (!musik) return;
-    if (musikAktif && musikTersedia) {
-      musik.play().then(() => {
-        if (btnMusik) btnMusik.textContent = '🎵';
-      }).catch(() => {
-        if (btnMusik) btnMusik.textContent = '🔇';
-        musikAktif = false;
-      });
-    } else if (!musikAktif && btnMusik) {
-      btnMusik.textContent = '🔇';
-    }
-  });
+      // ==================== FORMAT TANGGAL ====================
+      function tanggalHariIni() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day;
+      }
 
-  // ===================== CANVAS HUJAN =====================
-  const canvas = document.getElementById('hujanCanvas');
-  const ctx = canvas.getContext('2d');
-  let W, H;
-  let droplets = [];
-  let ripples = [];
-  let clouds = [];
-  let lightning = { active: false, nextTime: 0, duration: 200 };
+      function sekarangISO() {
+        return new Date().toISOString();
+      }
 
-  function resizeCanvas() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-    initDroplets();
-    initClouds();
-  }
+      function expiredISO() {
+        const d = new Date();
+        d.setDate(d.getDate() + 7);
+        return d.toISOString();
+      }
 
-  function initDroplets() {
-    const count = Math.floor((W * H) / 22000);
-    droplets = [];
-    for (let i = 0; i < Math.min(count, 180); i++) {
-      droplets.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        len: 8 + Math.random() * 12,
-        speed: 0.6 + Math.random() * 1.2,
-        width: 0.8 + Math.random() * 1.2,
-        opacity: 0.15 + Math.random() * 0.25
-      });
-    }
-  }
+      // ==================== GENERATE TOKEN ====================
+      function generateToken(length) {
+        length = length || 32;
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let token = '';
+        for (let i = 0; i < length; i++) {
+          token += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return token;
+      }
 
-  function initClouds() {
-    clouds = [];
-    for (let i = 0; i < 5; i++) {
-      clouds.push({
-        x: Math.random() * W,
-        y: 20 + Math.random() * 120,
-        w: 150 + Math.random() * 300,
-        h: 40 + Math.random() * 60,
-        speed: 0.05 + Math.random() * 0.15,
-        opacity: 0.05 + Math.random() * 0.08
-      });
-    }
-  }
+      // ==================== GENERATE ID MP7000 ====================
+      function generateIdMP(users) {
+        let maxNum = 0;
+        let prefix = 'MP7000-';
+        for (let i = 0; i < users.length; i++) {
+          const id = String(users[i].id || '');
+          if (id.indexOf(prefix) === 0) {
+            const num = parseInt(id.replace(prefix, ''), 10);
+            if (!isNaN(num) && num > maxNum) maxNum = num;
+          }
+        }
+        const next = maxNum + 1;
+        return prefix + String(next).padStart(4, '0');
+      }
 
-  function drawClouds() {
-    clouds.forEach(c => {
-      ctx.beginPath();
-      ctx.ellipse(c.x, c.y, c.w/2, c.h/2, 0, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(80, 40, 60, ${c.opacity})`;
-      ctx.fill();
-      c.x += c.speed;
-      if (c.x > W + c.w) c.x = -c.w;
-    });
-  }
+      // ==================== SESSION & USER STORAGE ====================
+      function simpanSession(token, userId, expiresAt) {
+        localStorage.setItem('smp7k_session', JSON.stringify({
+          token: token,
+          user_id: userId,
+          expires_at: expiresAt
+        }));
+      }
 
-  function drawRain() {
-    // riak air di bawah
-    for (let i = ripples.length - 1; i >= 0; i--) {
-      const r = ripples[i];
-      ctx.beginPath();
-      ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(200, 16, 46, ${r.opacity})`;
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
-      r.radius += 0.5;
-      r.opacity -= 0.008;
-      if (r.opacity <= 0.01) ripples.splice(i, 1);
-    }
+      function simpanUser(user) {
+        localStorage.setItem('smp7k_user', JSON.stringify({
+          id: user.id,
+          nama: user.nama,
+          nomor: user.nomor,
+          saldo_koin: user.saldo_koin || 0,
+          saldo_rupiah: user.saldo_rupiah || 0,
+          kristal: user.kristal || 0,
+          level: user.level || 1,
+          cabang_aktif: user.cabang_aktif || 1,
+          story_unlocked: user.story_unlocked || 0
+        }));
+      }
 
-    droplets.forEach(d => {
-      ctx.beginPath();
-      ctx.moveTo(d.x, d.y);
-      ctx.lineTo(d.x, d.y + d.len);
-      ctx.strokeStyle = `rgba(200, 16, 46, ${d.opacity})`;
-      ctx.lineWidth = d.width;
-      ctx.stroke();
+      // ==================== REGISTER ====================
+      function prosesRegister(nama, nomor, password, btn) {
+        const deviceId = getDeviceId();
 
-      // kadang ada tetesan yang lebih besar (riak)
-      if (Math.random() < 0.002) {
-        ripples.push({
-          x: d.x,
-          y: H - 20 - Math.random() * 30,
-          radius: 2,
-          opacity: 0.3
+        setLoading(btn, true);
+        sembunyiError();
+
+        apiCall({ action: 'baca', sheet: 'Users' })
+          .then(function(res) {
+            if (!res.ok || !res.data) {
+              throw new Error(res.pesan || 'Gagal membaca data user');
+            }
+
+            const users = res.data;
+            const nomorBersih = String(nomor).trim();
+
+            // Cek nomor sudah terdaftar
+            for (let i = 0; i < users.length; i++) {
+              if (String(users[i].nomor).trim() === nomorBersih) {
+                throw new Error('Nomor sudah terdaftar, silakan login');
+              }
+            }
+
+            // Cek device sudah terdaftar
+            for (let i = 0; i < users.length; i++) {
+              if (String(users[i].device_id).trim() === deviceId) {
+                throw new Error('Device ini sudah terdaftar');
+              }
+            }
+
+            // Generate ID
+            const newId = generateIdMP(users);
+
+            const dataBaru = {
+              id: newId,
+              nama: nama.trim(),
+              nomor: nomorBersih,
+              password: password,
+              device_id: deviceId,
+              saldo_koin: 0,
+              saldo_rupiah: 0,
+              kristal: 0,
+              level: 1,
+              cabang_aktif: 1,
+              status: 'aktif',
+              last_login: '',
+              last_sync: '',
+              tanggal_daftar: tanggalHariIni(),
+              story_unlocked: 0
+            };
+
+            return apiCall({ action: 'tulis', sheet: 'Users', data: dataBaru });
+          })
+          .then(function(res) {
+            if (!res.ok) {
+              throw new Error(res.pesan || 'Gagal mendaftar');
+            }
+            toast('Pendaftaran berhasil! Silakan login...', 'sukses');
+            // Auto login
+            setTimeout(function() {
+              prosesLogin(nomor, password, document.getElementById('btnLogin'));
+            }, 600);
+          })
+          .catch(function(err) {
+            tampilError(err.message || 'Terjadi kesalahan');
+            toast(err.message || 'Gagal mendaftar', 'error');
+          })
+          .finally(function() {
+            setLoading(btn, false);
+          });
+      }
+
+      // ==================== LOGIN ====================
+      function prosesLogin(nomor, password, btn) {
+        const deviceId = getDeviceId();
+
+        setLoading(btn, true);
+        sembunyiError();
+
+        apiCall({ action: 'baca', sheet: 'Users' })
+          .then(function(res) {
+            if (!res.ok || !res.data) {
+              throw new Error(res.pesan || 'Gagal membaca data user');
+            }
+
+            const users = res.data;
+            const nomorBersih = String(nomor).trim();
+
+            let userDitemukan = null;
+            let nomorAda = false;
+            let passwordSalah = false;
+            let deviceSalah = false;
+            let banned = false;
+
+            for (let i = 0; i < users.length; i++) {
+              const u = users[i];
+              if (String(u.nomor).trim() === nomorBersih) {
+                nomorAda = true;
+                if (String(u.password) === String(password)) {
+                  if (String(u.device_id).trim() === deviceId) {
+                    if (String(u.status) !== 'banned') {
+                      userDitemukan = u;
+                      break;
+                    } else {
+                      banned = true;
+                    }
+                  } else {
+                    deviceSalah = true;
+                  }
+                } else {
+                  passwordSalah = true;
+                }
+              }
+            }
+
+            if (userDitemukan) {
+              // Buat session
+              const sessionToken = generateToken(32);
+              const expiresAt = expiredISO();
+              const now = sekarangISO();
+
+              const sessionData = {
+                token: sessionToken,
+                user_id: userDitemukan.id,
+                is_admin: false,
+                expires_at: expiresAt,
+                created_at: now
+              };
+
+              // Tulis session
+              return apiCall({ action: 'tulis', sheet: 'Sessions', data: sessionData })
+                .then(function(sessRes) {
+                  if (!sessRes.ok) {
+                    throw new Error('Gagal membuat session');
+                  }
+
+                  // Update last_login
+                  return apiCall({
+                    action: 'update',
+                    sheet: 'Users',
+                    row: userDitemukan._row,
+                    data: { last_login: now }
+                  });
+                })
+                .then(function(updRes) {
+                  // Simpan localStorage
+                  simpanSession(sessionToken, userDitemukan.id, expiresAt);
+                  simpanUser(userDitemukan);
+
+                  toast('Login berhasil! Mengalihkan...', 'sukses');
+                  setTimeout(function() {
+                    window.location.href = 'dashboard.html';
+                  }, 700);
+                });
+            } else {
+              // Tentukan error
+              if (!nomorAda) throw new Error('Nomor belum terdaftar');
+              if (banned) throw new Error('Akun diblokir');
+              if (passwordSalah) throw new Error('Password salah');
+              if (deviceSalah) throw new Error('Device tidak cocok');
+              throw new Error('Login gagal, periksa kembali data Anda');
+            }
+          })
+          .catch(function(err) {
+            tampilError(err.message || 'Terjadi kesalahan');
+            toast(err.message || 'Login gagal', 'error');
+          })
+          .finally(function() {
+            setLoading(btn, false);
+          });
+      }
+
+      // ==================== LOGIN ADMIN ====================
+      function prosesLoginAdmin(adminId, password, btn) {
+        setLoading(btn, true);
+
+        apiCall({ action: 'baca', sheet: 'Users' })
+          .then(function(res) {
+            if (!res.ok || !res.data) {
+              throw new Error(res.pesan || 'Gagal membaca data');
+            }
+
+            const users = res.data;
+            let adminUser = null;
+
+            for (let i = 0; i < users.length; i++) {
+              if (String(users[i].id).trim() === String(adminId).trim()) {
+                adminUser = users[i];
+                break;
+              }
+            }
+
+            if (!adminUser) {
+              throw new Error('Admin ID atau password salah');
+            }
+
+            // Cek apakah id 1001 (admin)
+            if (String(adminUser.id).trim() !== '1001') {
+              throw new Error('Admin ID atau password salah');
+            }
+
+            if (String(adminUser.password) !== String(password)) {
+              throw new Error('Admin ID atau password salah');
+            }
+
+            // Buat session admin
+            const sessionToken = generateToken(32);
+            const expiresAt = expiredISO();
+            const now = sekarangISO();
+
+            const sessionData = {
+              token: sessionToken,
+              user_id: '1001',
+              is_admin: true,
+              expires_at: expiresAt,
+              created_at: now
+            };
+
+            return apiCall({ action: 'tulis', sheet: 'Sessions', data: sessionData })
+              .then(function(sessRes) {
+                if (!sessRes.ok) {
+                  throw new Error('Gagal membuat session admin');
+                }
+
+                localStorage.setItem('smp7k_admin', JSON.stringify({
+                  token: sessionToken,
+                  user_id: '1001'
+                }));
+
+                toast('Login Admin berhasil!', 'sukses');
+                setTimeout(function() {
+                  window.location.href = 'dashboard.html?admin=1';
+                }, 700);
+              });
+          })
+          .catch(function(err) {
+            toast(err.message || 'Login admin gagal', 'error');
+          })
+          .finally(function() {
+            setLoading(btn, false);
+          });
+      }
+
+      // ==================== INISIALISASI UI ====================
+      document.addEventListener('DOMContentLoaded', function() {
+        // ----- Device ID -----
+        getDeviceId();
+
+        // ----- Toggle Mode Login/Register -----
+        const btnModeLogin = document.getElementById('btnModeLogin');
+        const btnModeRegister = document.getElementById('btnModeRegister');
+        const formLogin = document.getElementById('formLogin');
+        const formRegister = document.getElementById('formRegister');
+
+        btnModeLogin.addEventListener('click', function() {
+          btnModeLogin.classList.add('aktif');
+          btnModeRegister.classList.remove('aktif');
+          formLogin.style.display = 'flex';
+          formRegister.style.display = 'none';
+          sembunyiError();
         });
-      }
 
-      d.y += d.speed;
-      if (d.y > H + 10) {
-        d.y = -10;
-        d.x = Math.random() * W;
-      }
-    });
-  }
+        btnModeRegister.addEventListener('click', function() {
+          btnModeRegister.classList.add('aktif');
+          btnModeLogin.classList.remove('aktif');
+          formLogin.style.display = 'none';
+          formRegister.style.display = 'flex';
+          sembunyiError();
+        });
 
-  function drawLightning() {
-    const now = Date.now();
-    if (!lightning.active && now > lightning.nextTime) {
-      lightning.active = true;
-      lightning.nextTime = now + 30000;
-      setTimeout(() => { lightning.active = false; }, lightning.duration);
-    }
-    if (lightning.active) {
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
-      ctx.fillRect(0, 0, W, H);
-    }
-  }
+        // ----- Toggle Password Visibility -----
+        document.querySelectorAll('.toggle-pw').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const input = document.getElementById(targetId);
+            if (!input) return;
+            if (input.type === 'password') {
+              input.type = 'text';
+              this.textContent = '🙈';
+            } else {
+              input.type = 'password';
+              this.textContent = '👁';
+            }
+          });
+        });
 
-  function animate() {
-    ctx.clearRect(0, 0, W, H);
-    drawClouds();
-    drawRain();
-    drawLightning();
-    requestAnimationFrame(animate);
-  }
+        // ----- Form Login Submit -----
+        formLogin.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const nomor = document.getElementById('loginNomor').value.trim();
+          const password = document.getElementById('loginPassword').value;
 
-  // inisialisasi
-  resizeCanvas();
-  lightning.nextTime = Date.now() + 30000;
-  animate();
+          const errNomor = validasiNomor(nomor);
+          if (errNomor) { tampilError(errNomor); toast(errNomor, 'warning'); return; }
+          const errPw = validasiPassword(password);
+          if (errPw) { tampilError(errPw); toast(errPw, 'warning'); return; }
 
-  window.addEventListener('resize', resizeCanvas);
+          prosesLogin(nomor, password, document.getElementById('btnLogin'));
+        });
 
-  // ===================== CEK LOGIN (redirect jika sudah ada session) =====================
-  (function cekSession() {
-    const session = localStorage.getItem('smp7k_session');
-    if (session) {
-      try {
-        const data = JSON.parse(session);
-        if (data.token && new Date(data.expires_at) > new Date()) {
-          window.location.href = 'dashboard.html';
+        // ----- Form Register Submit -----
+        formRegister.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const nama = document.getElementById('regNama').value.trim();
+          const nomor = document.getElementById('regNomor').value.trim();
+          const password = document.getElementById('regPassword').value;
+
+          const errNama = validasiNama(nama);
+          if (errNama) { tampilError(errNama); toast(errNama, 'warning'); return; }
+          const errNomor = validasiNomor(nomor);
+          if (errNomor) { tampilError(errNomor); toast(errNomor, 'warning'); return; }
+          const errPw = validasiPassword(password);
+          if (errPw) { tampilError(errPw); toast(errPw, 'warning'); return; }
+
+          prosesRegister(nama, nomor, password, document.getElementById('btnRegister'));
+        });
+
+        // ----- LOGO MP TAP 5x (ADMIN) -----
+        const logoMP = document.getElementById('logoMP');
+        let tapCount = 0;
+        let tapTimer = null;
+        const modalAdmin = document.getElementById('modalAdmin');
+
+        logoMP.addEventListener('click', function() {
+          tapCount++;
+          if (tapTimer) clearTimeout(tapTimer);
+
+          if (tapCount >= 5) {
+            tapCount = 0;
+            modalAdmin.style.display = 'flex';
+            document.getElementById('adminId').value = '';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminId').focus();
+          } else {
+            tapTimer = setTimeout(function() {
+              tapCount = 0;
+            }, 3000);
+          }
+        });
+
+        // ----- Modal Admin Batal -----
+        document.getElementById('btnAdminBatal').addEventListener('click', function() {
+          modalAdmin.style.display = 'none';
+        });
+
+        // ----- Modal Admin Login -----
+        document.getElementById('btnAdminLogin').addEventListener('click', function() {
+          const adminId = document.getElementById('adminId').value.trim();
+          const password = document.getElementById('adminPassword').value;
+
+          if (!adminId || !password) {
+            toast('Isi Admin ID dan password', 'warning');
+            return;
+          }
+
+          prosesLoginAdmin(adminId, password, this);
+        });
+
+        // ----- MODAL ADMIN: Enter key -----
+        document.getElementById('adminPassword').addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('btnAdminLogin').click();
+          }
+        });
+
+        // ----- MUSIK -----
+        const musik = document.getElementById('musik');
+        const btnMusik = document.getElementById('btnMusik');
+        let musikTersedia = true;
+
+        musik.addEventListener('error', function() {
+          musikTersedia = false;
+          btnMusik.style.display = 'none';
+          console.log('File musik tidak ditemukan, tombol musik disembunyikan');
+        });
+
+        // Cek preferensi musik
+        const musikPref = localStorage.getItem('smp7k_music');
+        if (musikPref === 'off') {
+          musik.pause();
+          btnMusik.textContent = '🔇';
+          btnMusik.classList.add('mati');
         }
-      } catch (e) {}
-    }
-  })();
 
-  // ===================== PESAN ERROR HILANG SAAT INPUT =====================
-  ['loginNomor','loginPassword','regNama','regNomor','regPassword'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', sembunyikanError);
-  });
+        btnMusik.addEventListener('click', function() {
+          if (!musikTersedia) return;
 
-})();
-</script>
+          if (musik.paused) {
+            musik.play().then(function() {
+              btnMusik.textContent = '🎵';
+              btnMusik.classList.remove('mati');
+              localStorage.setItem('smp7k_music', 'on');
+            }).catch(function() {
+              // Autoplay diblokir
+              toast('Klik sekali lagi untuk memutar musik', 'info');
+            });
+          } else {
+            musik.pause();
+            btnMusik.textContent = '🔇';
+            btnMusik.classList.add('mati');
+            localStorage.setItem('smp7k_music', 'off');
+          }
+        });
+
+        // Autoplay attempt
+        if (musikPref !== 'off') {
+          const playPromise = musik.play();
+          if (playPromise !== undefined) {
+            playPromise.then(function() {
+              btnMusik.textContent = '🎵';
+            }).catch(function() {
+              // Autoplay diblokir browser, tunggu interaksi user
+              console.log('Autoplay diblokir, menunggu interaksi user');
+            });
+          }
+        }
+
+        // ----- CANVAS HUJAN -----
+        const canvas = document.getElementById('hujanCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let W, H;
+        let hujan = [];
+        let riak = [];
+        let awan = [];
+        let kilatAlpha = 0;
+        let lastKilat = Date.now();
+        const KILAT_INTERVAL = 30000; // 30 detik
+
+        function resizeCanvas() {
+          W = canvas.width = window.innerWidth;
+          H = canvas.height = window.innerHeight;
+          initHujan();
+          initAwan();
+        }
+
+        function initHujan() {
+          hujan = [];
+          const jumlah = Math.floor(W / 12);
+          for (let i = 0; i < jumlah; i++) {
+            hujan.push({
+              x: Math.random() * W,
+              y: Math.random() * H,
+              panjang: 8 + Math.random() * 14,
+              kecepatan: 0.8 + Math.random() * 1.2,
+              opacity: 0.08 + Math.random() * 0.15,
+              lebar: 0.5 + Math.random() * 1.2
+            });
+          }
+        }
+
+        function initAwan() {
+          awan = [];
+          const jumlahAwan = 5;
+          for (let i = 0; i < jumlahAwan; i++) {
+            awan.push({
+              x: Math.random() * W,
+              y: -40 + Math.random() * 100,
+              lebar: 180 + Math.random() * 260,
+              tinggi: 50 + Math.random() * 70,
+              kecepatan: 0.08 + Math.random() * 0.15,
+              opacity: 0.06 + Math.random() * 0.1
+            });
+          }
+        }
+
+        function gambarHujan() {
+          ctx.clearRect(0, 0, W, H);
+
+          // Awan gelap
+          for (let i = 0; i < awan.length; i++) {
+            const a = awan[i];
+            ctx.beginPath();
+            ctx.ellipse(a.x, a.y, a.lebar / 2, a.tinggi / 2, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(40, 40, 50, ' + a.opacity + ')';
+            ctx.fill();
+            a.x += a.kecepatan;
+            if (a.x - a.lebar > W) {
+              a.x = -a.lebar;
+              a.y = -40 + Math.random() * 100;
+            }
+          }
+
+          // Kilat
+          const now = Date.now();
+          if (now - lastKilat > KILAT_INTERVAL) {
+            kilatAlpha = 0.6;
+            lastKilat = now;
+            setTimeout(function() { kilatAlpha = 0; }, 200);
+          }
+          if (kilatAlpha > 0) {
+            ctx.fillStyle = 'rgba(255, 255, 240, ' + kilatAlpha * 0.35 + ')';
+            ctx.fillRect(0, 0, W, H);
+            kilatAlpha *= 0.85;
+          }
+
+          // Titik air hujan
+          for (let i = 0; i < hujan.length; i++) {
+            const t = hujan[i];
+            ctx.beginPath();
+            ctx.moveTo(t.x, t.y);
+            ctx.lineTo(t.x, t.y + t.panjang);
+            ctx.strokeStyle = 'rgba(200, 210, 230, ' + t.opacity + ')';
+            ctx.lineWidth = t.lebar;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            t.y += t.kecepatan;
+
+            if (t.y > H) {
+              // Buat riak di bawah
+              if (Math.random() < 0.3) {
+                riak.push({
+                  x: t.x,
+                  y: H - 2 - Math.random() * 15,
+                  radius: 1,
+                  maxRadius: 8 + Math.random() * 14,
+                  opacity: 0.15 + Math.random() * 0.1
+                });
+              }
+              t.y = -t.panjang;
+              t.x = Math.random() * W;
+            }
+          }
+
+          // Riak air
+          for (let i = riak.length - 1; i >= 0; i--) {
+            const r = riak[i];
+            ctx.beginPath();
+            ctx.ellipse(r.x, r.y, r.radius, r.radius * 0.35, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(180, 200, 220, ' + r.opacity + ')';
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+
+            r.radius += 0.25;
+            r.opacity -= 0.004;
+
+            if (r.radius > r.maxRadius || r.opacity <= 0) {
+              riak.splice(i, 1);
+            }
+          }
+        }
+
+        function loop() {
+          gambarHujan();
+          requestAnimationFrame(loop);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        loop();
+
+        // ----- CEK SESSION (jika sudah login, redirect) -----
+        const session = localStorage.getItem('smp7k_session');
+        const adminSession = localStorage.getItem('smp7k_admin');
+        if (session || adminSession) {
+          try {
+            if (session) {
+              const s = JSON.parse(session);
+              if (s && s.expires_at && new Date(s.expires_at) > new Date()) {
+                window.location.href = 'dashboard.html';
+                return;
+              }
+            }
+            if (adminSession) {
+              const a = JSON.parse(adminSession);
+              if (a && a.token) {
+                window.location.href = 'dashboard.html?admin=1';
+                return;
+              }
+            }
+          } catch(e) {
+            // ignore
+          }
+        }
+
+        // ----- PING test (optional) -----
+        console.log('Steam MP 7000 Tycoon v0.04 siap.');
+        console.log('Device ID:', getDeviceId());
+      });
+    })();
+  </script>
 </body>
 </html>
