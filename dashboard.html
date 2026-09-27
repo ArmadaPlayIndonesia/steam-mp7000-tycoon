@@ -56,19 +56,20 @@
       background: #1a1a2e;
     }
 
-    /* ===== CANVAS GAME ===== */
-    /* PENTING: fixed, top 80, bottom 70, left 0, right 0. TIDAK pakai margin auto / max-width */
+    /* ===== CANVAS GAME — FIX UTAMA =====
+       Pakai 100vw & calc(100vh - 150px) supaya selalu full area.
+       TIDAK pakai width:auto / height:auto / margin:auto / max-width. */
     #gameCanvas {
       position: fixed;
       top: 80px;
       bottom: 70px;
       left: 0;
       right: 0;
+      width: 100vw;
+      height: calc(100vh - 150px);
       z-index: 1;
       display: block;
       background: #87CEEB;
-      width: auto;
-      height: auto;
     }
 
     #cuacaCanvas {
@@ -77,11 +78,11 @@
       bottom: 70px;
       left: 0;
       right: 0;
+      width: 100vw;
+      height: calc(100vh - 150px);
       z-index: 2;
       display: block;
       pointer-events: none;
-      width: auto;
-      height: auto;
     }
 
     /* ===== HEADER ===== */
@@ -973,15 +974,6 @@
       .nav-item .nav-label { font-size: 8px; }
       .nav-item { min-width: 48px; }
     }
-
-    /* Desktop preview: bungkus app biar tidak terlalu lebar, TAPI canvas tetap 100% dari app */
-    @media (min-width: 500px) {
-      #app {
-        max-width: 500px;
-        margin: 0 auto;
-        box-shadow: 0 0 50px rgba(0,0,0,0.3);
-      }
-    }
   </style>
 </head>
 <body>
@@ -1050,7 +1042,7 @@
   var cuacaOverlayAlpha = 0;
   var hujanArray = [];
 
-  // ====== GAMBAR STEAM BG (sesuai permintaan) ======
+  // Gambar steam-bg
   var bgImage = new Image();
   var gambarSiap = false;
   var renderFrameCount = 0;
@@ -1059,7 +1051,6 @@
   var gameLoopRunning = false;
   var produksiLoopRunning = false;
   var syncLoopRunning = false;
-  var lastSyncTime = Date.now();
 
   // Redirect flag
   window.__redirecting = false;
@@ -1266,7 +1257,7 @@
   }
 
   // ============================================================
-  // ============ LOAD STEAM-BG.PNG (SESUAI PERMINTAAN) =========
+  // ============ LOAD STEAM-BG.PNG ==============================
   // ============================================================
   function loadBackground() {
     console.log('steam-bg.png: loading');
@@ -1275,12 +1266,11 @@
       console.log('steam-bg.png: loaded,', bgImage.width + 'x' + bgImage.height);
       imageCache['bg'] = bgImage;
       gambarSiap = true;
-      // Pastikan render loop jalan
       if (!gameLoopRunning) startGameLoop();
     };
     bgImage.onerror = function(e) {
       console.error('steam-bg.png: error', e);
-      gambarSiap = true; // tetap render dengan fallback
+      gambarSiap = true;
       if (!gameLoopRunning) startGameLoop();
     };
     bgImage.src = 'assets/steam-bg.png';
@@ -1394,7 +1384,7 @@
   }
 
   // ============================================================
-  // ============ CANVAS SETUP (PERBAIKAN UTAMA) =================
+  // ============ CANVAS SETUP — FIX UTAMA =======================
   // ============================================================
   function setupCanvas() {
     canvas = document.getElementById('gameCanvas');
@@ -1402,29 +1392,8 @@
     cuacaCanvas = document.getElementById('cuacaCanvas');
     cuacaCtx = cuacaCanvas.getContext('2d');
 
-    // Coba set ukuran
-    if (!trySetCanvasSize()) {
-      // Jika 0x0, tunggu dan coba lagi
-      var attempts = 0;
-      var retry = setInterval(function() {
-        attempts++;
-        if (trySetCanvasSize()) {
-          clearInterval(retry);
-          initParkiranSlots();
-          console.log('Canvas: ukuran', canvasW + ' x ' + canvasH);
-        } else if (attempts > 20) {
-          clearInterval(retry);
-          console.warn('Canvas: gagal mendapatkan ukuran setelah 20 percobaan');
-          // Pakai fallback ukuran
-          canvasW = window.innerWidth;
-          canvasH = window.innerHeight - 150;
-          applyCanvasSize();
-          initParkiranSlots();
-        }
-      }, 100);
-    } else {
-      initParkiranSlots();
-    }
+    trySetCanvasSize();
+    initParkiranSlots();
 
     window.addEventListener('resize', onResize);
     window.addEventListener('orientationchange', function() {
@@ -1433,17 +1402,19 @@
   }
 
   function trySetCanvasSize() {
-    // Ambil ukuran dari clientWidth/clientHeight (CSS yang sudah di-set fixed)
-    var cw = canvas.clientWidth;
-    var ch = canvas.clientHeight;
-    if (cw > 0 && ch > 0) {
-      canvasW = cw;
-      canvasH = ch;
-      applyCanvasSize();
-      console.log('Canvas: ukuran', canvasW + ' x ' + canvasH);
-      return true;
-    }
-    return false;
+    // Pakai window.innerWidth/innerHeight karena canvas pakai 100vw & calc(100vh - 150px)
+    var cw = window.innerWidth;
+    var ch = window.innerHeight - 150; // header 80 + nav 70
+
+    // Fallback kalau sangat kecil
+    if (cw < 100) cw = 360;
+    if (ch < 100) ch = 600;
+
+    canvasW = cw;
+    canvasH = ch;
+    applyCanvasSize();
+    console.log('Canvas: ukuran', canvasW + ' x ' + canvasH);
+    return true;
   }
 
   function applyCanvasSize() {
@@ -1459,15 +1430,15 @@
 
   function onResize() {
     if (!canvas) return;
-    var cw = canvas.clientWidth;
-    var ch = canvas.clientHeight;
-    if (cw > 0 && ch > 0) {
-      canvasW = cw;
-      canvasH = ch;
-      applyCanvasSize();
-      initParkiranSlots();
-      console.log('Canvas: resize', canvasW + ' x ' + canvasH);
-    }
+    var cw = window.innerWidth;
+    var ch = window.innerHeight - 150;
+    if (cw < 100) cw = 360;
+    if (ch < 100) ch = 600;
+    canvasW = cw;
+    canvasH = ch;
+    applyCanvasSize();
+    initParkiranSlots();
+    console.log('Canvas: resize', canvasW + ' x ' + canvasH);
   }
 
   // ============================================================
@@ -1739,7 +1710,7 @@
   }
 
   // ============================================================
-  // ============ RENDER GAME (PERBAIKAN UTAMA) =================
+  // ============ RENDER GAME ====================================
   // ============================================================
   var lastFrameTime = 0;
 
@@ -1751,21 +1722,18 @@
     lastFrameTime = timestamp;
     if (dt > 0.1) dt = 0.1;
 
-    // Update logic
     updateMotors(dt);
     updatePartikel(dt);
     updateKoinTerbang(dt);
     updateCuaca(dt);
 
-    // Render
     if (ctx && canvasW > 0 && canvasH > 0) {
       ctx.clearRect(0, 0, canvasW, canvasH);
 
-      // Background dengan cek complete & naturalWidth
+      // Background steam-bg.png
       if (bgImage && bgImage.complete && bgImage.naturalWidth > 0) {
         ctx.drawImage(bgImage, 0, 0, canvasW, canvasH);
       } else {
-        // Fallback gradient merah putih
         var grad = ctx.createLinearGradient(0, 0, 0, canvasH);
         grad.addColorStop(0, '#C8102E');
         grad.addColorStop(1, '#FAFAFA');
@@ -1773,7 +1741,7 @@
         ctx.fillRect(0, 0, canvasW, canvasH);
       }
 
-      // Jalan raya
+      // Jalan raya (0-12% dari tinggi canvas)
       ctx.fillStyle = 'rgba(60,60,60,0.5)';
       ctx.fillRect(0, 0, canvasW, canvasH * 0.12);
       ctx.strokeStyle = 'rgba(255,255,0,0.6)';
@@ -1817,15 +1785,11 @@
         ctx.restore();
       }
 
-      // Cuaca
       renderCuaca();
     }
 
-    // Log setiap 60 frame
     renderFrameCount++;
-    if (renderFrameCount % 60 === 0) {
-      console.log('Render frame:', renderFrameCount);
-    }
+    if (renderFrameCount % 60 === 0) console.log('Render frame:', renderFrameCount);
 
     requestAnimationFrame(renderLoop);
   }
@@ -1957,9 +1921,7 @@
     var total = 0;
     var upgradeProduksi = [1, 5, 25, 100, 500, 2500];
     for (var i = 0; i < 6; i++) {
-      if (upgradeLevels[i] > 0) {
-        total += upgradeProduksi[i] * Math.pow(2, upgradeLevels[i] - 1);
-      }
+      if (upgradeLevels[i] > 0) total += upgradeProduksi[i] * Math.pow(2, upgradeLevels[i] - 1);
     }
     var manajerProduksi = {
       'Pak Budi': 1, 'Bu Siti': 5, 'Pak Andi': 25,
@@ -2402,7 +2364,6 @@
       var produksiSekarang = Math.floor(u.produksi * Math.pow(2, lvl));
       var bisaBeli = saldo.koin >= hargaSekarang;
       var maxed = lvl >= 10;
-
       html += '<div class="upgrade-card' + (maxed ? ' maxed' : '') + '">' +
         '<div class="upgrade-icon">' + u.icon + '</div>' +
         '<div class="upgrade-info">' +
@@ -3251,20 +3212,15 @@
     showLoading('Memuat game...');
 
     try {
-      // Setup canvas — tunggu layout selesai
+      // Beri kesempatan browser untuk layout dulu
+      await new Promise(function(resolve) { setTimeout(resolve, 50); });
+
       setupCanvas();
-
-      // Load background steam-bg.png dengan proper handler
       loadBackground();
-
-      // Load gambar lain (paralel, tidak blokir render)
       loadSemuaGambar();
-
-      // Load story & quest
       await loadStory();
       await loadQuests();
 
-      // Load user data
       var ok = await loadUserData();
       if (!ok) {
         showToast('Gagal memuat data pemain. Coba lagi.', 'error');
@@ -3289,26 +3245,21 @@
       renderHeader();
       renderBottomNav();
 
-      // Start loops
       startGameLoop();
       startProduksiLoop();
       startSyncLoop();
 
-      // Spawn motor berkala
       setInterval(function() {
         if (!session) return;
-        var interval = cuacaSekarang === 'panas' ? 2000 : 6000;
         if (Math.random() < 0.8) spawnMotor();
       }, 2000);
 
-      // Ganti cuaca random 1-3 menit
       setInterval(function() { gantiCuaca(); }, (60 + Math.random() * 120) * 1000);
       gantiCuaca();
 
       initMusik();
       initAudio();
 
-      // Tap handler
       canvas.addEventListener('touchstart', function(e) {
         e.preventDefault();
         initAudio();
@@ -3334,7 +3285,6 @@
       hideLoading();
       console.log('Dashboard: render selesai');
 
-      // Cek level up
       setInterval(function() {
         if (!userData) return;
         var levelBaru = Math.floor(totalKoinPernah / 10000) + 1;
@@ -3361,7 +3311,6 @@
   // ============================================================
   // ============ MULAI — TUNGGU LAYOUT SELESAI ==================
   // ============================================================
-  // Tunggu window load supaya layout selesai, canvas punya ukuran
   if (document.readyState === 'complete') {
     init();
   } else {
