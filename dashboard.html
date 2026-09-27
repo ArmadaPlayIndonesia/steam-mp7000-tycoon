@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    /* ============ RESET & BASE ============ */
     * {
       margin: 0;
       padding: 0;
@@ -15,108 +16,117 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #1a1a1a;
-      overflow: hidden;
-      width: 100vw;
-      height: 100vh;
-      position: fixed;
-      color: #FAFAFA;
-    }
-    #app {
+
+    html, body {
       width: 100%;
       height: 100%;
-      position: relative;
       overflow: hidden;
-      background: #111;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #1a1a1a;
+      color: #FAFAFA;
+      touch-action: manipulation;
+      position: fixed;
     }
-    /* ===== HEADER ===== */
+
+    :root {
+      --merah: #C8102E;
+      --merah-gelap: #9a0c23;
+      --emas: #F59E0B;
+      --emas-terang: #fbbf24;
+      --putih: #FAFAFA;
+      --abu: #2a2a2a;
+      --abu-terang: #3a3a3a;
+      --hijau: #22c55e;
+      --biru: #3b82f6;
+      --ungu: #8b5cf6;
+      --header-h: 80px;
+      --nav-h: 70px;
+    }
+
+    /* ============ HEADER ============ */
     #header {
       position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 80px;
-      background: linear-gradient(135deg, #C8102E 0%, #a00d24 100%);
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-h);
+      background: linear-gradient(135deg, var(--merah) 0%, var(--merah-gelap) 100%);
       z-index: 100;
       display: flex;
-      align-items: center;
-      padding: 0 8px;
-      box-shadow: 0 2px 12px rgba(200,16,46,0.5);
-      border-bottom: 2px solid #F59E0B;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4px 10px;
+      box-shadow: 0 4px 20px rgba(200, 16, 46, 0.5);
+      border-bottom: 2px solid var(--emas);
     }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
     .header-left {
       display: flex;
       align-items: center;
       gap: 6px;
-      flex: 1;
       min-width: 0;
+      flex: 1;
     }
+
     .logo-mp {
-      width: 38px; height: 38px;
-      background: #F59E0B;
-      border-radius: 10px;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--emas), #d97706);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 16px;
-      color: #C8102E;
+      font-size: 13px;
+      color: var(--merah-gelap);
       flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(245,158,11,0.5);
-      border: 2px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
+
     .header-info {
       min-width: 0;
       flex: 1;
     }
+
     .header-name {
       font-size: 12px;
       font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
       color: #fff;
+    }
+
+    .header-phone {
+      font-size: 9px;
+      opacity: 0.85;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       line-height: 1.2;
     }
-    .header-hp {
-      font-size: 9px;
-      color: rgba(255,255,255,0.7);
-      line-height: 1.2;
-    }
-    .header-saldo {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      margin-top: 2px;
-      flex-wrap: wrap;
-    }
-    .saldo-item {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      font-size: 10px;
-      font-weight: 600;
-      color: #fff;
-      background: rgba(0,0,0,0.25);
-      padding: 1px 5px;
-      border-radius: 8px;
-      line-height: 1.4;
-    }
-    .saldo-item img {
-      width: 14px; height: 14px;
-      object-fit: contain;
-    }
-    .header-right {
+
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 4px;
       flex-shrink: 0;
     }
-    .header-btn {
-      width: 32px; height: 32px;
+
+    .hbtn {
+      width: 30px;
+      height: 30px;
       border-radius: 8px;
       background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25);
+      border: none;
       color: #fff;
       font-size: 15px;
       display: flex;
@@ -124,230 +134,357 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.2s;
-      position: relative;
+      backdrop-filter: blur(4px);
     }
-    .header-btn:active {
+
+    .hbtn:active {
       transform: scale(0.9);
       background: rgba(255,255,255,0.3);
     }
-    .header-btn.active {
-      background: #F59E0B;
-      border-color: #F59E0B;
+
+    .header-currencies {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      margin-top: 3px;
+      font-size: 10px;
+      font-weight: 600;
     }
-    .level-bar-wrap {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 4px;
-      background: rgba(0,0,0,0.3);
+
+    .currency-item {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(0,0,0,0.25);
+      padding: 2px 7px;
+      border-radius: 10px;
+      white-space: nowrap;
+      backdrop-filter: blur(4px);
     }
+
+    .currency-item .icon {
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .currency-item .val {
+      color: var(--emas-terang);
+      font-weight: 700;
+    }
+
+    .header-level {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 3px;
+    }
+
+    .level-badge {
+      background: linear-gradient(135deg, var(--emas), #d97706);
+      color: var(--merah-gelap);
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 7px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
     .level-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #F59E0B, #fbbf24);
-      width: 0%;
-      transition: width 0.5s;
-      border-radius: 0 2px 2px 0;
+      flex: 1;
+      height: 5px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 3px;
+      overflow: hidden;
     }
-    /* ===== CANVAS ===== */
+
+    .level-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--emas), var(--emas-terang));
+      border-radius: 3px;
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+
+    /* ============ CANVAS ============ */
     #gameCanvas {
       position: fixed;
-      top: 80px;
-      bottom: 70px;
+      top: var(--header-h);
+      bottom: var(--nav-h);
       left: 0;
       right: 0;
       width: 100%;
-      height: calc(100% - 150px);
-      display: block;
+      height: calc(100% - var(--header-h) - var(--nav-h));
       z-index: 1;
-      touch-action: manipulation;
+      display: block;
+      background: #1a1a1a;
     }
-    /* ===== BOTTOM NAV ===== */
+
+    /* ============ BOTTOM NAV ============ */
     #bottomNav {
       position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: 70px;
-      background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
-      border-top: 2px solid #C8102E;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-h);
+      background: linear-gradient(180deg, #1f1f1f 0%, #141414 100%);
+      border-top: 2px solid var(--emas);
       z-index: 100;
       display: flex;
       align-items: center;
       justify-content: space-around;
-      padding: 0 2px;
-      box-shadow: 0 -2px 12px rgba(0,0,0,0.5);
+      padding: 0 4px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
     }
-    .nav-btn {
+
+    .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 1px;
-      padding: 4px 6px;
-      border-radius: 10px;
+      flex: 1;
+      height: 100%;
       cursor: pointer;
       transition: all 0.2s;
-      min-width: 48px;
-      flex: 1;
-      max-width: 64px;
+      position: relative;
+      border-radius: 8px;
+      padding: 4px 0;
     }
-    .nav-btn:active {
-      transform: scale(0.9);
-    }
-    .nav-btn.active {
-      background: rgba(200,16,46,0.25);
-    }
-    .nav-btn .nav-icon {
+
+    .nav-item .nav-icon {
       font-size: 20px;
       line-height: 1;
+      transition: transform 0.2s;
     }
-    .nav-btn .nav-label {
+
+    .nav-item .nav-label {
       font-size: 9px;
       font-weight: 600;
-      color: rgba(255,255,255,0.7);
-      line-height: 1;
+      color: #aaa;
+      transition: color 0.2s;
+      white-space: nowrap;
     }
-    .nav-btn.active .nav-label {
-      color: #F59E0B;
+
+    .nav-item.active .nav-icon {
+      transform: scale(1.15);
     }
-    .nav-btn.more-btn .nav-icon {
-      font-size: 22px;
+
+    .nav-item.active .nav-label {
+      color: var(--emas);
     }
-    /* ===== PANEL ===== */
-    .panel {
+
+    .nav-item.active::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 3px;
+      background: var(--emas);
+      border-radius: 2px;
+    }
+
+    .nav-item:active {
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    /* ============ PANEL SLIDE-UP ============ */
+    #panelOverlay {
       position: fixed;
-      bottom: 70px; left: 0; right: 0;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      bottom: var(--nav-h);
+      background: rgba(0,0,0,0.5);
+      z-index: 89;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    #panelOverlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #panel {
+      position: fixed;
+      bottom: var(--nav-h);
+      left: 0;
+      right: 0;
       max-height: 70vh;
-      background: #FAFAFA;
-      color: #1a1a1a;
+      background: linear-gradient(180deg, #1f1f1f, #141414);
+      border-top: 3px solid var(--emas);
       border-radius: 20px 20px 0 0;
       z-index: 90;
       overflow-y: auto;
-      padding: 16px 14px 90px;
-      transform: translateY(110%);
+      overflow-x: hidden;
+      padding: 16px 14px 90px 14px;
+      transform: translateY(100%);
       transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 -8px 30px rgba(0,0,0,0.3);
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.6);
+      -webkit-overflow-scrolling: touch;
     }
-    .panel.open {
+
+    #panel.show {
       transform: translateY(0);
     }
+
     .panel-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
-      position: sticky;
-      top: 0;
-      background: #FAFAFA;
-      padding-bottom: 8px;
-      z-index: 2;
-      border-bottom: 2px solid #C8102E;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.3);
     }
+
     .panel-title {
       font-size: 16px;
-      font-weight: 700;
-      color: #C8102E;
+      font-weight: 800;
+      color: var(--emas);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+
     .panel-close {
-      width: 32px; height: 32px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      background: #C8102E;
-      color: #fff;
+      background: rgba(200, 16, 46, 0.8);
       border: none;
+      color: #fff;
       font-size: 16px;
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       transition: all 0.2s;
     }
+
     .panel-close:active {
-      transform: scale(0.85);
+      transform: scale(0.9) rotate(90deg);
     }
-    /* ===== LIST ITEMS ===== */
+
+    /* ============ LIST ITEMS ============ */
     .list-item {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 12px;
-      background: #fff;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
       border-radius: 12px;
       margin-bottom: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      border: 1px solid #eee;
+      border: 1px solid rgba(255,255,255,0.08);
       transition: all 0.2s;
     }
+
     .list-item:active {
+      background: rgba(245, 158, 11, 0.1);
       transform: scale(0.98);
     }
-    .list-icon {
-      width: 42px; height: 42px;
+
+    .list-item .li-icon {
+      width: 42px;
+      height: 42px;
       border-radius: 10px;
-      background: linear-gradient(135deg, #C8102E, #e63946);
+      background: linear-gradient(135deg, rgba(200,16,46,0.3), rgba(245,158,11,0.3));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
-      color: #fff;
+      font-size: 22px;
       flex-shrink: 0;
     }
-    .list-icon.gold {
-      background: linear-gradient(135deg, #F59E0B, #fbbf24);
-    }
-    .list-body {
+
+    .list-item .li-info {
       flex: 1;
       min-width: 0;
     }
-    .list-name {
+
+    .list-item .li-title {
       font-size: 13px;
       font-weight: 700;
-      color: #1a1a1a;
+      color: #fff;
+      margin-bottom: 2px;
     }
-    .list-desc {
+
+    .list-item .li-desc {
       font-size: 10px;
-      color: #666;
-      margin-top: 1px;
+      color: #aaa;
+      line-height: 1.3;
     }
-    .list-action {
-      flex-shrink: 0;
+
+    .list-item .li-cost {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--emas);
+      margin-top: 2px;
     }
-    .btn {
-      padding: 6px 14px;
-      border-radius: 8px;
+
+    .list-item .li-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
       border: none;
       font-family: 'Poppins', sans-serif;
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
+      flex-shrink: 0;
       white-space: nowrap;
     }
-    .btn:active {
-      transform: scale(0.92);
+
+    .li-btn.buy {
+      background: linear-gradient(135deg, var(--emas), #d97706);
+      color: var(--merah-gelap);
     }
-    .btn-merah {
-      background: #C8102E;
+
+    .li-btn.buy:active {
+      transform: scale(0.93);
+    }
+
+    .li-btn.buy:disabled {
+      background: #444;
+      color: #888;
+      cursor: not-allowed;
+    }
+
+    .li-btn.claim {
+      background: linear-gradient(135deg, var(--hijau), #16a34a);
       color: #fff;
     }
-    .btn-emas {
-      background: #F59E0B;
-      color: #1a1a1a;
+
+    .li-btn.claim:disabled {
+      background: #444;
+      color: #888;
     }
-    .btn-outline {
-      background: transparent;
-      border: 2px solid #C8102E;
-      color: #C8102E;
+
+    .li-btn.done {
+      background: #444;
+      color: #888;
     }
-    .btn-hijau {
-      background: #10b981;
-      color: #fff;
+
+    /* ============ PROGRESS BAR ============ */
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 4px;
     }
-    .btn-abu {
-      background: #e5e7eb;
-      color: #999;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--emas), var(--emas-terang));
+      border-radius: 3px;
+      transition: width 0.5s ease;
     }
-    .btn:disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-    /* ===== TOAST ===== */
+
+    /* ============ TOAST ============ */
     #toastContainer {
       position: fixed;
       top: 90px;
@@ -357,38 +494,41 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      align-items: center;
       pointer-events: none;
       width: 90%;
       max-width: 340px;
     }
+
     .toast {
-      background: rgba(26,26,46,0.95);
+      background: rgba(30, 30, 30, 0.95);
       color: #fff;
-      padding: 10px 16px;
+      padding: 10px 18px;
       border-radius: 12px;
       font-size: 12px;
       font-weight: 600;
+      border: 1px solid var(--emas);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      animation: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      backdrop-filter: blur(10px);
       text-align: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-      border-left: 4px solid #F59E0B;
-      animation: toastIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      backdrop-filter: blur(8px);
+      width: 100%;
     }
+
+    .toast.success { border-color: var(--hijau); }
+    .toast.error { border-color: var(--merah); }
+    .toast.info { border-color: var(--biru); }
+
     @keyframes toastIn {
       from { opacity: 0; transform: translateY(-20px) scale(0.9); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
-    .toast.out {
-      animation: toastOut 0.3s forwards;
-    }
-    @keyframes toastOut {
-      to { opacity: 0; transform: translateY(-20px) scale(0.9); }
-    }
-    /* ===== MODAL ===== */
+
+    /* ============ MODAL ============ */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.8);
       z-index: 300;
       display: flex;
       align-items: center;
@@ -399,1932 +539,1964 @@
       transition: opacity 0.3s;
       backdrop-filter: blur(4px);
     }
-    .modal-overlay.open {
+
+    .modal-overlay.show {
       opacity: 1;
       pointer-events: auto;
     }
+
     .modal-box {
-      background: #fff;
+      background: linear-gradient(180deg, #1f1f1f, #141414);
+      border: 3px solid var(--emas);
       border-radius: 20px;
       padding: 20px;
       max-width: 340px;
       width: 100%;
+      text-align: center;
+      animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 60px rgba(245, 158, 11, 0.4);
       max-height: 80vh;
       overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-      border: 3px solid #F59E0B;
-      transform: scale(0.9);
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      color: #1a1a1a;
     }
-    .modal-overlay.open .modal-box {
-      transform: scale(1);
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.8) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
+
+    .modal-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--emas);
+      margin: 0 auto 12px;
+      object-fit: cover;
+      background: rgba(245, 158, 11, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      overflow: hidden;
+    }
+
+    .modal-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     .modal-title {
       font-size: 18px;
       font-weight: 800;
-      color: #C8102E;
+      color: var(--emas);
       margin-bottom: 8px;
-      text-align: center;
     }
+
     .modal-text {
-      font-size: 13px;
-      color: #333;
+      font-size: 12px;
+      color: #ccc;
       line-height: 1.6;
-      margin-bottom: 12px;
-      text-align: center;
+      margin-bottom: 16px;
     }
-    .modal-btns {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    /* ===== STORY MODAL ===== */
-    .story-box {
-      background: linear-gradient(135deg, #fff 0%, #fef3c7 100%);
-      border: 3px solid #F59E0B;
-    }
-    .story-avatar {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #F59E0B;
-      margin: 0 auto 10px;
-      display: block;
-      background: #f0f0f0;
-    }
-    /* ===== ADMIN ===== */
-    #adminPanel {
-      position: fixed;
-      inset: 0;
-      background: #FAFAFA;
-      z-index: 500;
-      display: none;
-      flex-direction: column;
-      color: #1a1a1a;
-    }
-    #adminPanel.open {
-      display: flex;
-    }
-    .admin-header {
-      background: #C8102E;
-      color: #fff;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-weight: 700;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-    .admin-tabs {
-      display: flex;
-      overflow-x: auto;
-      background: #fff;
-      border-bottom: 2px solid #eee;
-      flex-shrink: 0;
-      scrollbar-width: none;
-    }
-    .admin-tabs::-webkit-scrollbar { display: none; }
-    .admin-tab {
-      padding: 10px 14px;
-      font-size: 11px;
-      font-weight: 600;
-      color: #666;
-      white-space: nowrap;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-    }
-    .admin-tab.active {
-      color: #C8102E;
-      border-bottom-color: #C8102E;
-    }
-    .admin-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px;
-    }
-    .admin-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 11px;
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .admin-table th {
-      background: #C8102E;
-      color: #fff;
-      padding: 6px 8px;
-      text-align: left;
-      font-weight: 600;
-    }
-    .admin-table td {
-      padding: 5px 8px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    /* ===== MISC ===== */
-    .hidden { display: none !important; }
-    .text-center { text-align: center; }
-    .mt-8 { margin-top: 8px; }
-    .mt-12 { margin-top: 12px; }
-    .mb-8 { margin-bottom: 8px; }
-    .gap-8 { gap: 8px; }
-    .flex { display: flex; }
-    .flex-col { flex-direction: column; }
-    .items-center { align-items: center; }
-    .justify-between { justify-content: space-between; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .section-title {
+
+    .modal-btn {
+      padding: 12px 24px;
+      border-radius: 12px;
+      border: none;
+      font-family: 'Poppins', sans-serif;
       font-size: 13px;
       font-weight: 700;
-      color: #C8102E;
-      margin: 12px 0 6px;
-      padding-bottom: 4px;
-      border-bottom: 2px solid #F59E0B;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: linear-gradient(135deg, var(--emas), #d97706);
+      color: var(--merah-gelap);
+      width: 100%;
+      margin-top: 6px;
     }
-    .progress-bar {
-      height: 6px;
-      background: #e5e7eb;
-      border-radius: 3px;
-      overflow: hidden;
-      margin-top: 4px;
+
+    .modal-btn:active {
+      transform: scale(0.95);
     }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #C8102E, #F59E0B);
-      border-radius: 3px;
-      transition: width 0.3s;
+
+    .modal-btn.secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
     }
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 9px;
-      font-weight: 700;
-    }
-    .badge-merah { background: #C8102E; color: #fff; }
-    .badge-emas { background: #F59E0B; color: #1a1a1a; }
-    .badge-hijau { background: #10b981; color: #fff; }
-    .loading-overlay {
+
+    /* ============ LOADING ============ */
+    #loadingOverlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 1000;
+      background: rgba(0,0,0,0.7);
+      z-index: 400;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
       gap: 12px;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s;
+      backdrop-filter: blur(4px);
     }
-    .loading-overlay.show {
+
+    #loadingOverlay.show {
       opacity: 1;
       pointer-events: auto;
     }
+
     .spinner {
-      width: 40px; height: 40px;
-      border: 4px solid rgba(255,255,255,0.3);
-      border-top-color: #F59E0B;
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(245, 158, 11, 0.2);
+      border-top-color: var(--emas);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     .loading-text {
-      color: #fff;
       font-size: 12px;
+      color: var(--emas);
       font-weight: 600;
     }
-    /* ===== SCROLLBAR ===== */
-    .panel::-webkit-scrollbar,
-    .admin-content::-webkit-scrollbar,
-    .modal-box::-webkit-scrollbar {
+
+    /* ============ LAINNYA PANEL ============ */
+    .more-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .more-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 16px 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .more-btn:active {
+      background: rgba(245, 158, 11, 0.15);
+      transform: scale(0.96);
+    }
+
+    .more-btn .mb-icon {
+      font-size: 28px;
+    }
+
+    .more-btn .mb-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ddd;
+    }
+
+    /* ============ SECTION TITLE ============ */
+    .section-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--emas);
+      margin: 14px 0 8px;
+      padding-left: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ============ EMPTY STATE ============ */
+    .empty-state {
+      text-align: center;
+      padding: 30px 20px;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .empty-state .emoji {
+      font-size: 40px;
+      margin-bottom: 8px;
+    }
+
+    /* ============ SCROLLBAR ============ */
+    #panel::-webkit-scrollbar {
       width: 4px;
     }
-    .panel::-webkit-scrollbar-thumb,
-    .admin-content::-webkit-scrollbar-thumb,
-    .modal-box::-webkit-scrollbar-thumb {
-      background: #C8102E;
+
+    #panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #panel::-webkit-scrollbar-thumb {
+      background: var(--emas);
       border-radius: 2px;
     }
-    /* ===== RIPPLE ===== */
-    .ripple {
-      position: relative;
-      overflow: hidden;
-    }
-    .ripple::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle, rgba(255,255,255,0.4) 10%, transparent 70%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-    .ripple:active::after {
-      opacity: 1;
-    }
-    /* ===== RESPONSIVE ===== */
-    @media (max-height: 600px) {
-      #header { height: 70px; }
-      #gameCanvas { top: 70px; height: calc(100% - 140px); }
-      #bottomNav { height: 60px; }
-      .panel { bottom: 60px; }
-    }
+
+    /* ============ RESPONSIVE ============ */
     @media (min-width: 500px) {
-      #app {
-        max-width: 420px;
-        margin: 0 auto;
-        border-left: 2px solid #333;
-        border-right: 2px solid #333;
+      #header, #bottomNav, #panel, #panelOverlay {
+        max-width: 480px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      #gameCanvas {
+        max-width: 480px;
+        left: 50%;
+        transform: translateX(-50%);
       }
     }
+
+    /* ============ ANIMASI ============ */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
+      50% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.7); }
+    }
+
+    .glow-effect {
+      animation: glow 2s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .float-effect {
+      animation: float 2s ease-in-out infinite;
+    }
+
+    /* ============ BADGE ============ */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .badge.harian { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+    .badge.mingguan { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+    .badge.spesial { background: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
   </style>
 </head>
 <body>
-<div id="app">
-  <!-- HEADER -->
+
+  <!-- ============ HEADER ============ -->
   <header id="header">
-    <div class="header-left">
-      <div class="logo-mp">MP</div>
-      <div class="header-info">
-        <div class="header-name" id="hName">Memuat...</div>
-        <div class="header-hp" id="hHp">-</div>
-        <div class="header-saldo">
-          <div class="saldo-item"><img id="imgKoin" src="assets/koin.png" alt="k" onerror="this.style.display='none'"><span id="hKoin">0</span></div>
-          <div class="saldo-item"><img id="imgRupiah" src="assets/rupiah.png" alt="r" onerror="this.style.display='none'"><span id="hRupiah">0</span></div>
-          <div class="saldo-item"><img id="imgKristal" src="assets/kristal.png" alt="kr" onerror="this.style.display='none'"><span id="hKristal">0</span></div>
+    <div class="header-top">
+      <div class="header-left">
+        <div class="logo-mp">MP</div>
+        <div class="header-info">
+          <div class="header-name" id="headerName">Memuat...</div>
+          <div class="header-phone" id="headerPhone">-</div>
         </div>
       </div>
+      <div class="header-actions">
+        <button class="hbtn" id="btnWeather" title="Cuaca">☀️</button>
+        <button class="hbtn" id="btnMusic" title="Musik">🔊</button>
+        <button class="hbtn" id="btnMenu" title="Menu">☰</button>
+        <button class="hbtn" id="btnLogout" title="Keluar">🚪</button>
+      </div>
     </div>
-    <div class="header-right">
-      <div class="header-btn" id="btnCuaca" title="Cuaca">☀️</div>
-      <div class="header-btn" id="btnMusik" title="Musik">🔊</div>
-      <div class="header-btn" id="btnMenu" title="Menu">☰</div>
+    <div class="header-currencies">
+      <div class="currency-item">
+        <span class="icon">🪙</span>
+        <span class="val" id="headerKoin">0</span>
+      </div>
+      <div class="currency-item">
+        <span class="icon">💵</span>
+        <span class="val" id="headerRupiah">Rp 0</span>
+      </div>
+      <div class="currency-item">
+        <span class="icon">💎</span>
+        <span class="val" id="headerKristal">0</span>
+      </div>
     </div>
-    <div class="level-bar-wrap"><div class="level-bar" id="levelBar"></div></div>
+    <div class="header-level">
+      <span class="level-badge" id="headerLevel">Lv.1</span>
+      <div class="level-bar">
+        <div class="level-fill" id="headerLevelFill"></div>
+      </div>
+    </div>
   </header>
 
-  <!-- CANVAS -->
+  <!-- ============ CANVAS ============ -->
   <canvas id="gameCanvas"></canvas>
 
-  <!-- BOTTOM NAV -->
+  <!-- ============ BOTTOM NAV ============ -->
   <nav id="bottomNav">
-    <div class="nav-btn active" data-tab="game"><span class="nav-icon">🎮</span><span class="nav-label">Game</span></div>
-    <div class="nav-btn" data-tab="manajer"><span class="nav-icon">👔</span><span class="nav-label">Manajer</span></div>
-    <div class="nav-btn" data-tab="toko"><span class="nav-icon">🛒</span><span class="nav-label">Toko</span></div>
-    <div class="nav-btn" data-tab="quest"><span class="nav-icon">📋</span><span class="nav-label">Quest</span></div>
-    <div class="nav-btn" data-tab="profil"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></div>
-    <div class="nav-btn more-btn" id="btnMore"><span class="nav-icon">⋯</span><span class="nav-label">Lainnya</span></div>
+    <div class="nav-item active" data-tab="game">
+      <span class="nav-icon">🎮</span>
+      <span class="nav-label">Game</span>
+    </div>
+    <div class="nav-item" data-tab="manajer">
+      <span class="nav-icon">👔</span>
+      <span class="nav-label">Manajer</span>
+    </div>
+    <div class="nav-item" data-tab="toko">
+      <span class="nav-icon">🛒</span>
+      <span class="nav-label">Toko</span>
+    </div>
+    <div class="nav-item" data-tab="quest">
+      <span class="nav-icon">📋</span>
+      <span class="nav-label">Quest</span>
+    </div>
+    <div class="nav-item" data-tab="profil">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Profil</span>
+    </div>
+    <div class="nav-item" data-tab="lainnya">
+      <span class="nav-icon">⋯</span>
+      <span class="nav-label">Lainnya</span>
+    </div>
   </nav>
 
-  <!-- PANEL SLIDE-UP -->
-  <div class="panel" id="panel">
+  <!-- ============ PANEL OVERLAY ============ -->
+  <div id="panelOverlay"></div>
+
+  <!-- ============ PANEL ============ -->
+  <div id="panel">
     <div class="panel-header">
-      <div class="panel-title" id="panelTitle">Menu</div>
+      <div class="panel-title" id="panelTitle">🎮 Game</div>
       <button class="panel-close" id="panelClose">✕</button>
     </div>
     <div id="panelContent"></div>
   </div>
 
-  <!-- TOAST -->
+  <!-- ============ TOAST ============ -->
   <div id="toastContainer"></div>
 
-  <!-- LOADING -->
-  <div class="loading-overlay" id="loadingOverlay">
+  <!-- ============ MODAL ============ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box" id="modalBox"></div>
+  </div>
+
+  <!-- ============ LOADING ============ -->
+  <div id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-text" id="loadingText">Memuat...</div>
   </div>
 
-  <!-- MODAL -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal-box" id="modalBox">
-      <div id="modalContent"></div>
-    </div>
-  </div>
+  <!-- ============ AUDIO ============ -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="assets/musik-latar.mp3" type="audio/mpeg">
+  </audio>
 
-  <!-- ADMIN PANEL -->
-  <div id="adminPanel">
-    <div class="admin-header">
-      <span>🔧 ADMIN PANEL</span>
-      <button class="btn btn-outline" style="color:#fff;border-color:#fff;padding:4px 10px;font-size:10px" id="adminClose">Keluar Admin</button>
-    </div>
-    <div class="admin-tabs" id="adminTabs">
-      <div class="admin-tab active" data-atab="dashboard">Dashboard</div>
-      <div class="admin-tab" data-atab="pemain">Pemain</div>
-      <div class="admin-tab" data-atab="topup">Topup</div>
-      <div class="admin-tab" data-atab="voucher">Voucher</div>
-      <div class="admin-tab" data-atab="toko">Toko</div>
-      <div class="admin-tab" data-atab="manajer">Manajer</div>
-      <div class="admin-tab" data-atab="cabang">Cabang</div>
-      <div class="admin-tab" data-atab="cerita">Cerita</div>
-      <div class="admin-tab" data-atab="quest">Quest</div>
-      <div class="admin-tab" data-atab="config">Config</div>
-      <div class="admin-tab" data-atab="log">Log</div>
-    </div>
-    <div class="admin-content" id="adminContent"></div>
-  </div>
-</div>
+  <script>
+  (function() {
+    'use strict';
 
-<script>
-// ===================================================================
-// KONFIGURASI
-// ===================================================================
-var API_URL = 'https://script.google.com/macros/s/AKfycbysHvNR2JwLFuNu6poci5wIleJBnc8IGNMq-ULxUV1NyMxoorEcBj0c8oBh4b8JiL3m/exec';
-var TOKEN = 'steam-mp-7000-2026';
+    // ============================================================
+    // KONFIGURASI
+    // ============================================================
+    var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbysHvNR2JwLFuNu6poci5wIleJBnc8IGNMq-ULxUV1NyMxoorEcBj0c8oBh4b8JiL3m/exec';
+    var TOKEN = 'steam-mp-7000-2026';
+    var SHEET_USERS = 'Users';
 
-// ===================================================================
-// STATE GLOBAL
-// ===================================================================
-var state = {
-  user: null,
-  koin: 0,
-  rupiah: 0,
-  kristal: 0,
-  level: 1,
-  exp: 0,
-  pendingProduction: 0,
-  lastSync: 0,
-  cuaca: 'panas',
-  cuacaTimer: 0,
-  musikOn: false,
-  admin: false,
-  storyUnlocked: 0,
-  totalCuci: 0,
-  manajer: {},
-  cabang: 1,
-  upgrade: {},
-  questProgress: {},
-  voucherLast: 0,
-  lastTapTime: 0
-};
+    // ============================================================
+    // FETCH TIMEOUT
+    // ============================================================
+    function fetchTimeout(url, options, ms) {
+      return Promise.race([
+        fetch(url, options),
+        new Promise(function(_, reject) {
+          setTimeout(function() { reject(new Error('Timeout')); }, ms || 15000);
+        })
+      ]);
+    }
 
-var motors = [];
-var motorIdCounter = 0;
-var imageCache = {};
-var canvas, ctx;
-var animFrame;
-var isGameActive = false;
-var lastSpawnTime = 0;
-var spawnInterval = 2000;
-var weatherOverlayAlpha = 0;
-var weatherTargetAlpha = 0;
-var rainDrops = [];
-var pendingSyncTimer = null;
-var syncInProgress = false;
-var storyModalShown = false;
-
-// ===================================================================
-// DEBUG LOG
-// ===================================================================
-function log() {
-  var args = Array.prototype.slice.call(arguments);
-  args.unshift('[SMP7K]');
-  console.log.apply(console, args);
-}
-
-// ===================================================================
-// UTIL
-// ===================================================================
-function $(id) { return document.getElementById(id); }
-function rupiahFormat(n) {
-  if (n === undefined || n === null) n = 0;
-  return 'Rp ' + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-function angkaFormat(n) {
-  if (n === undefined || n === null) n = 0;
-  if (n >= 1000000000) return (n/1000000000).toFixed(1) + 'M';
-  if (n >= 1000000) return (n/1000000).toFixed(1) + 'jt';
-  if (n >= 1000) return (n/1000).toFixed(1) + 'rb';
-  return Math.floor(n).toString();
-}
-function acak(min, max) { return Math.random() * (max - min) + min; }
-function acakInt(min, max) { return Math.floor(acak(min, max + 1)); }
-function pilihAcak(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-function sensorHP(hp) {
-  if (!hp) return '-';
-  var s = String(hp);
-  if (s.length <= 4) return s;
-  return s.substring(0, 4) + '****' + s.substring(s.length - 2);
-}
-
-// ===================================================================
-// FETCH TIMEOUT
-// ===================================================================
-function fetchTimeout(url, options, ms) {
-  return Promise.race([
-    fetch(url, options),
-    new Promise(function(_, reject) {
-      setTimeout(function() { reject(new Error('Timeout')); }, ms || 15000);
-    })
-  ]);
-}
-
-// ===================================================================
-// API CALL
-// ===================================================================
-function apiCall(action, params) {
-  var body = Object.assign({ action: action, token: TOKEN }, params || {});
-  return fetchTimeout(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify(body)
-  }, 15000)
-  .then(function(res) { return res.json(); })
-  .then(function(json) {
-    if (!json.ok) throw new Error(json.pesan || 'Gagal');
-    return json;
-  });
-}
-
-// ===================================================================
-// HILANGKAN BACKGROUND PUTIH
-// ===================================================================
-function hilangkanBackgroundPutih(imgSrc, toleransi, callback) {
-  var img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.onload = function() {
-    var c = document.createElement('canvas');
-    c.width = img.width; c.height = img.height;
-    var cx = c.getContext('2d');
-    cx.drawImage(img, 0, 0);
-    try {
-      var d = cx.getImageData(0, 0, c.width, c.height);
-      var p = d.data;
-      var tol = toleransi || 40;
-      for (var i = 0; i < p.length; i += 4) {
-        if (p[i] > 255 - tol && p[i+1] > 255 - tol && p[i+2] > 255 - tol) p[i+3] = 0;
+    // ============================================================
+    // API CALL
+    // ============================================================
+    function apiCall(action, payload) {
+      var body = { action: action, token: TOKEN };
+      if (payload) {
+        for (var k in payload) {
+          if (payload.hasOwnProperty(k)) body[k] = payload[k];
+        }
       }
-      cx.putImageData(d, 0, 0);
-      callback(c.toDataURL('image/png'));
-    } catch(e) { callback(imgSrc); }
-  };
-  img.onerror = function() { callback(null); };
-  img.src = imgSrc;
-}
+      return fetchTimeout(BACKEND_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(body)
+      }, 15000).then(function(res) {
+        return res.json();
+      });
+    }
 
-// ===================================================================
-// LOAD ASSETS
-// ===================================================================
-function loadAssets() {
-  // Background tanpa hilangkanBackgroundPutih
-  var bg = new Image();
-  bg.onload = function() {
-    imageCache['steam-bg'] = bg;
-    log('Gambar steam-bg: loaded ' + bg.width + 'x' + bg.height);
-  };
-  bg.onerror = function() { log('Gambar steam-bg: gagal'); };
-  bg.src = 'assets/steam-bg.png';
+    // ============================================================
+    // HAPUS BACKGROUND PUTIH
+    // ============================================================
+    function hilangkanBackgroundPutih(imgSrc, toleransi, callback) {
+      var img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function() {
+        var c = document.createElement('canvas');
+        c.width = img.width;
+        c.height = img.height;
+        var cx = c.getContext('2d');
+        cx.drawImage(img, 0, 0);
+        try {
+          var d = cx.getImageData(0, 0, c.width, c.height);
+          var p = d.data;
+          var tol = toleransi || 40;
+          for (var i = 0; i < p.length; i += 4) {
+            if (p[i] > 255 - tol && p[i+1] > 255 - tol && p[i+2] > 255 - tol) {
+              p[i+3] = 0;
+            }
+          }
+          cx.putImageData(d, 0, 0);
+          callback(c.toDataURL('image/png'));
+        } catch(e) {
+          callback(imgSrc);
+        }
+      };
+      img.onerror = function() { callback(null); };
+      img.src = imgSrc;
+    }
 
-  var qris = new Image();
-  qris.onload = function() { imageCache['qris'] = qris; };
-  qris.src = 'assets/qris.png';
+    // ============================================================
+    // STATE
+    // ============================================================
+    var state = {
+      user: null,
+      koin: 0,
+      rupiah: 0,
+      kristal: 0,
+      level: 1,
+      exp: 0,
+      pendingProduction: 0,
+      lastSync: 0,
+      weather: 'panas',
+      weatherTimer: 0,
+      musikOn: true,
+      tab: 'game',
+      motors: [],
+      motorIdCounter: 0,
+      imageCache: {},
+      storyUnlocked: 0,
+      quests: [],
+      questProgress: [],
+      managers: [],
+      branches: 1,
+      totalCuci: 0,
+      upgrades: {},
+      tokoItems: [],
+      config: {},
+      adminMode: false,
+      redirecting: false,
+      produksiLoop: false
+    };
 
-  // Pakai hilangkanBackgroundPutih
-  var assets = [
-    { key: 'koin', src: 'assets/koin.png', tol: 30 },
-    { key: 'kristal', src: 'assets/kristal.png', tol: 20 },
-    { key: 'rupiah', src: 'assets/rupiah.png', tol: 25 },
-    { key: 'pak-aldi', src: 'assets/pak-aldi.png', tol: 40 },
-    { key: 'motor-bebek-kotor', src: 'assets/motor-bebek-kotor.png', tol: 40 },
-    { key: 'motor-bebek-bersih', src: 'assets/motor-bebek-bersih.png', tol: 40 },
-    { key: 'motor-moge-kotor', src: 'assets/motor-moge-kotor.png', tol: 40 },
-    { key: 'motor-moge-bersih', src: 'assets/motor-moge-bersih.png', tol: 40 }
-  ];
-  assets.forEach(function(a) {
-    hilangkanBackgroundPutih(a.src, a.tol, function(dataUrl) {
-      if (dataUrl) {
+    // ============================================================
+    // LOCAL STORAGE
+    // ============================================================
+    function saveUser(u) {
+      try { localStorage.setItem('smp7k_user', JSON.stringify(u)); } catch(e) {}
+    }
+
+    function loadUser() {
+      try {
+        var s = localStorage.getItem('smp7k_user');
+        return s ? JSON.parse(s) : null;
+      } catch(e) { return null; }
+    }
+
+    function saveExtra(extra) {
+      try { localStorage.setItem('smp7k_extra', JSON.stringify(extra)); } catch(e) {}
+    }
+
+    function loadExtra() {
+      try {
+        var s = localStorage.getItem('smp7k_extra');
+        return s ? JSON.parse(s) : {};
+      } catch(e) { return {}; }
+    }
+
+    function clearSession() {
+      try {
+        localStorage.removeItem('smp7k_user');
+        localStorage.removeItem('smp7k_extra');
+        localStorage.removeItem('smp7k_admin');
+      } catch(e) {}
+    }
+
+    // ============================================================
+    // FORMAT RUPIAH
+    // ============================================================
+    function formatRupiah(n) {
+      n = Math.floor(n || 0);
+      return 'Rp ' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    function formatNumber(n) {
+      n = Math.floor(n || 0);
+      if (n >= 1000000000) return (n/1000000000).toFixed(1) + 'M';
+      if (n >= 1000000) return (n/1000000).toFixed(1) + 'jt';
+      if (n >= 1000) return (n/1000).toFixed(1) + 'rb';
+      return n.toString();
+    }
+
+    // ============================================================
+    // TOAST
+    // ============================================================
+    function showToast(msg, type) {
+      var container = document.getElementById('toastContainer');
+      var toast = document.createElement('div');
+      toast.className = 'toast ' + (type || 'info');
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(function() {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-20px)';
+        toast.style.transition = 'all 0.3s';
+        setTimeout(function() { toast.remove(); }, 300);
+      }, 2500);
+    }
+
+    // ============================================================
+    // LOADING
+    // ============================================================
+    function showLoading(text) {
+      document.getElementById('loadingText').textContent = text || 'Memuat...';
+      document.getElementById('loadingOverlay').classList.add('show');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('show');
+    }
+
+    // ============================================================
+    // MODAL
+    // ============================================================
+    function showModal(html) {
+      document.getElementById('modalBox').innerHTML = html;
+      document.getElementById('modalOverlay').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('show');
+    }
+
+    window.closeModal = closeModal;
+
+    // ============================================================
+    // AUDIO (Web Audio API)
+    // ============================================================
+    var audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        try {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch(e) {}
+      }
+    }
+
+    function playSound(type) {
+      if (!audioCtx) return;
+      try {
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        var now = audioCtx.currentTime;
+        if (type === 'syuush') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, now);
+          osc.frequency.exponentialRampToValueAtTime(200, now + 0.3);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'ting') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1200, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        } else if (type === 'chime') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(600, now);
+          osc.frequency.setValueAtTime(900, now + 0.1);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } else if (type === 'buzz') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(150, now);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        }
+      } catch(e) {}
+    }
+
+    // ============================================================
+    // CANVAS
+    // ============================================================
+    var canvas = document.getElementById('gameCanvas');
+    var ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      var w = canvas.clientWidth;
+      var h = canvas.clientHeight;
+      canvas.width = w;
+      canvas.height = h;
+      console.log('Canvas: ' + w + 'x' + h);
+    }
+
+    window.addEventListener('resize', function() {
+      resizeCanvas();
+    });
+
+    // ============================================================
+    // IMAGE LOADING
+    // ============================================================
+    function loadImage(key, src, tolerance, useHilangkan) {
+      if (state.imageCache[key]) return;
+      if (useHilangkan) {
+        hilangkanBackgroundPutih(src, tolerance, function(result) {
+          if (result) {
+            var img = new Image();
+            img.onload = function() {
+              state.imageCache[key] = img;
+            };
+            img.src = result;
+          } else {
+            var img = new Image();
+            img.onload = function() { state.imageCache[key] = img; };
+            img.onerror = function() { state.imageCache[key] = null; };
+            img.src = src;
+          }
+        });
+      } else {
         var img = new Image();
-        img.onload = function() { imageCache[a.key] = img; };
-        img.src = dataUrl;
-      } else {
-        log('Asset ' + a.key + ': 404');
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+          state.imageCache[key] = img;
+          console.log(key + ': loaded ' + img.width + 'x' + img.height);
+        };
+        img.onerror = function() {
+          state.imageCache[key] = null;
+          console.log(key + ': 404');
+        };
+        img.src = src;
       }
-    });
-  });
-}
-
-// ===================================================================
-// AUDIO
-// ===================================================================
-var audioCtx = null;
-function initAudio() {
-  if (!audioCtx) {
-    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
-  }
-}
-function playSound(type) {
-  initAudio();
-  if (!audioCtx) return;
-  try {
-    var osc = audioCtx.createOscillator();
-    var gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    if (type === 'syuush') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.3);
-      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-      osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-    } else if (type === 'ting') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-      osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-    } else if (type === 'chime') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-      osc.frequency.setValueAtTime(1000, audioCtx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-      osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-    } else if (type === 'buzz') {
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-      osc.start(); osc.stop(audioCtx.currentTime + 0.2);
     }
-  } catch(e) {}
-}
 
-// ===================================================================
-// TOAST
-// ===================================================================
-function toast(msg, dur) {
-  dur = dur || 2500;
-  var c = $('toastContainer');
-  var t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  c.appendChild(t);
-  setTimeout(function() {
-    t.classList.add('out');
-    setTimeout(function() { t.remove(); }, 300);
-  }, dur);
-}
+    function getImage(key) {
+      return state.imageCache[key] || null;
+    }
 
-// ===================================================================
-// LOADING
-// ===================================================================
-function showLoading(txt) {
-  $('loadingText').textContent = txt || 'Memuat...';
-  $('loadingOverlay').classList.add('show');
-}
-function hideLoading() {
-  $('loadingOverlay').classList.remove('show');
-}
+    // ============================================================
+    // WEATHER
+    // ============================================================
+    function updateWeather() {
+      var now = Date.now();
+      if (now - state.weatherTimer > 60000) {
+        state.weatherTimer = now;
+        if (Math.random() < 0.5) {
+          state.weather = state.weather === 'panas' ? 'hujan' : 'panas';
+          document.getElementById('btnWeather').textContent = state.weather === 'panas' ? '☀️' : '🌧️';
+          showToast(state.weather === 'panas' ? '☀️ Cuaca panas!' : '🌧️ Cuaca hujan!', 'info');
+        }
+      }
+    }
 
-// ===================================================================
-// EXTRA STORAGE
-// ===================================================================
-function getExtra() {
-  try {
-    var raw = localStorage.getItem('smp7k_extra');
-    return raw ? JSON.parse(raw) : {};
-  } catch(e) { return {}; }
-}
-function setExtra(data) {
-  try {
-    localStorage.setItem('smp7k_extra', JSON.stringify(data));
-  } catch(e) {}
-}
-function updateExtra(key, val) {
-  var ex = getExtra();
-  ex[key] = val;
-  setExtra(ex);
-}
+    // ============================================================
+    // MOTOR
+    // ============================================================
+    function spawnMotor() {
+      var maxParkir = 12;
+      var parkirCount = 0;
+      for (var i = 0; i < state.motors.length; i++) {
+        if (state.motors[i].parked) parkirCount++;
+      }
+      if (parkirCount >= maxParkir) return;
 
-// ===================================================================
-// SESSION
-// ===================================================================
-function getUserSession() {
-  try {
-    var raw = localStorage.getItem('smp7k_user');
-    return raw ? JSON.parse(raw) : null;
-  } catch(e) { return null; }
-}
-function setUserSession(u) {
-  try { localStorage.setItem('smp7k_user', JSON.stringify(u)); } catch(e) {}
-}
-function clearUserSession() {
-  try { localStorage.removeItem('smp7k_user'); } catch(e) {}
-}
+      var isMoge = Math.random() < 0.125;
+      var isBebek = !isMoge && Math.random() < 0.333;
 
-// ===================================================================
-// INIT
-// ===================================================================
-function init() {
-  log('Dashboard: load');
-  canvas = $('gameCanvas');
-  ctx = canvas.getContext('2d');
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
+      var motor = {
+        id: ++state.motorIdCounter,
+        level: isMoge ? 2 : 1,
+        type: isMoge ? 'moge' : (isBebek ? 'bebek' : 'biasa'),
+        x: -80,
+        y: 0,
+        parked: false,
+        slot: -1,
+        row: -1,
+        col: -1,
+        tapCount: 0,
+        maxTap: isMoge ? 5 : 1,
+        pay: isMoge ? 500 : (isBebek ? 1 : 1),
+        dirty: true,
+        kaburTimer: 0,
+        kabur: false,
+        sparkle: isMoge,
+        adsWatched: false,
+        adsTimer: 0
+      };
 
-  var session = getUserSession();
-  if (!session || !session.nama) {
-    // Tampilkan pesan login
-    document.body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#1a1a1a;color:#fff;font-family:Poppins,sans-serif;padding:20px;text-align:center;">' +
-      '<div style="font-size:60px;margin-bottom:16px;">🔒</div>' +
-      '<h2 style="color:#C8102E;margin-bottom:8px;">Silakan Login Dulu</h2>' +
-      '<p style="color:#aaa;font-size:13px;margin-bottom:20px;">Anda belum login. Silakan kembali ke halaman login.</p>' +
-      '<a href="index.html" style="background:#C8102E;color:#fff;padding:12px 32px;border-radius:12px;text-decoration:none;font-weight:700;font-size:14px;box-shadow:0 4px 16px rgba(200,16,46,0.4);">Ke Halaman Login</a>' +
-      '</div>';
-    return;
-  }
+      if (parkirCount < maxParkir) {
+        motor.parked = true;
+        var row = Math.floor(parkirCount / 6);
+        var col = parkirCount % 6;
+        motor.row = row;
+        motor.col = col;
+        motor.slot = parkirCount;
+        motor.y = canvas.height * (row === 0 ? 0.55 : 0.70);
+        motor.x = canvas.width * (0.10 + col * 0.14);
+      } else {
+        motor.y = canvas.height * 0.06;
+      }
 
-  // BUG 6: Langsung tampilkan nama dari localStorage
-  state.user = session;
-  state.koin = parseInt(session.saldo_koin) || 0;
-  state.rupiah = parseInt(session.saldo_rupiah) || 0;
-  state.kristal = parseInt(session.kristal) || 0;
-  state.level = parseInt(session.level) || 1;
-  state.storyUnlocked = parseInt(session.story_unlocked) || 0;
+      state.motors.push(motor);
+      console.log('Spawn motor: level ' + motor.level + ', slot ' + motor.slot + ', x=' + Math.round(motor.x) + ', y=' + Math.round(motor.y));
+    }
 
-  // Load extra
-  var ex = getExtra();
-  state.exp = ex.exp || 0;
-  state.manajer = ex.manajer || {};
-  state.cabang = ex.cabang || 1;
-  state.upgrade = ex.upgrade || {};
-  state.questProgress = ex.questProgress || {};
-  state.totalCuci = ex.totalCuci || 0;
-  state.voucherLast = ex.voucherLast || 0;
+    // ============================================================
+    // UPDATE MOTOR
+    // ============================================================
+    function updateMotors(dt) {
+      for (var i = state.motors.length - 1; i >= 0; i--) {
+        var m = state.motors[i];
+        if (!m.parked) {
+          m.x += 80 * dt;
+          if (m.x > canvas.width + 100) {
+            state.motors.splice(i, 1);
+          }
+        }
+        if (m.parked && !m.kabur) {
+          m.kaburTimer += dt;
+          if (m.kaburTimer > 8) {
+            m.kabur = true;
+            showToast('Pelanggan kabur! 💢', 'error');
+            state.motors.splice(i, 1);
+          }
+        }
+      }
+    }
 
-  log('User dari localStorage: ' + session.nama);
-  updateHeader();
-  updateLevelBar();
+    // ============================================================
+    // DRAW
+    // ============================================================
+    function draw(timestamp) {
+      var w = canvas.width;
+      var h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
 
-  // Fetch user background
-  fetchUserData();
+      // Background
+      var bgImg = getImage('steam-bg');
+      if (bgImg) {
+        var scale = h / bgImg.height;
+        var bw = bgImg.width * scale;
+        var bx = (w - bw) / 2;
+        ctx.drawImage(bgImg, bx, 0, bw, h);
+        // Gradient kiri-kanan
+        var gradL = ctx.createLinearGradient(0, 0, bx, 0);
+        gradL.addColorStop(0, '#C8102E');
+        gradL.addColorStop(1, 'rgba(200,16,46,0)');
+        ctx.fillStyle = gradL;
+        ctx.fillRect(0, 0, bx, h);
+        var gradR = ctx.createLinearGradient(bx + bw, 0, w, 0);
+        gradR.addColorStop(0, 'rgba(200,16,46,0)');
+        gradR.addColorStop(1, '#C8102E');
+        ctx.fillStyle = gradR;
+        ctx.fillRect(bx + bw, 0, w - bx - bw, h);
+      } else {
+        // Fallback gradient
+        var grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, '#C8102E');
+        grad.addColorStop(0.5, '#9a0c23');
+        grad.addColorStop(1, '#1a1a1a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+      }
 
-  // Load assets
-  loadAssets();
+      // Overlay cuaca
+      if (state.weather === 'panas') {
+        ctx.fillStyle = 'rgba(255, 200, 50, 0.05)';
+        ctx.fillRect(0, 0, w, h);
+        // Matahari
+        ctx.font = '30px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('☀️', w - 50, 50);
+      } else {
+        ctx.fillStyle = 'rgba(50, 50, 100, 0.15)';
+        ctx.fillRect(0, 0, w, h);
+        // Hujan
+        ctx.strokeStyle = 'rgba(150, 200, 255, 0.4)';
+        ctx.lineWidth = 1;
+        for (var i = 0; i < 50; i++) {
+          var rx = (i * 37 + timestamp * 0.1) % w;
+          var ry = (i * 53 + timestamp * 0.5) % h;
+          ctx.beginPath();
+          ctx.moveTo(rx, ry);
+          ctx.lineTo(rx - 5, ry + 15);
+          ctx.stroke();
+        }
+        // Genangan
+        ctx.fillStyle = 'rgba(100, 150, 255, 0.1)';
+        ctx.fillRect(0, h * 0.85, w, h * 0.15);
+      }
 
-  // Init game
-  isGameActive = true;
-  startGameLoop();
-  startSyncLoop();
-  startWeatherLoop();
+      // Gambar motor
+      for (var i = 0; i < state.motors.length; i++) {
+        var m = state.motors[i];
+        var imgKey = '';
+        if (m.type === 'moge') {
+          imgKey = m.dirty ? 'motor-moge-kotor' : 'motor-moge-bersih';
+        } else if (m.type === 'bebek') {
+          imgKey = m.dirty ? 'motor-bebek-kotor' : 'motor-bebek-bersih';
+        }
+        var img = getImage(imgKey);
+        var mw = 60;
+        var mh = 80;
+        var mx = m.x - mw / 2;
+        var my = m.y - mh / 2;
 
-  // Event listeners
-  bindEvents();
+        ctx.save();
+        ctx.translate(m.x, m.y);
+        ctx.rotate(Math.PI);
+        if (img) {
+          ctx.drawImage(img, -mw/2, -mh/2, mw, mh);
+        } else {
+          ctx.font = '40px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(m.type === 'moge' ? '🏍️' : '🛵', 0, 0);
+        }
+        ctx.restore();
 
-  // Cek admin
-  if (new URLSearchParams(window.location.search).get('admin') === '1' &&
-      localStorage.getItem('smp7k_admin')) {
-    openAdmin();
-  }
+        // Efek moge VIP
+        if (m.type === 'moge' && m.parked && !m.dirty) {
+          ctx.save();
+          ctx.translate(m.x, m.y);
+          var gradient = ctx.createConicGradient(timestamp * 0.002, 0, 0);
+          gradient.addColorStop(0, 'rgba(245, 158, 11, 0.6)');
+          gradient.addColorStop(0.5, 'rgba(255, 215, 0, 0.2)');
+          gradient.addColorStop(1, 'rgba(245, 158, 11, 0.6)');
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(0, 0, 35, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.font = '20px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('✨', 0, -20);
+          ctx.restore();
+        }
 
-  // Cek cerita
-  setTimeout(function() { cekStory(); }, 2000);
-}
+        // Indikator tap
+        if (m.parked && m.dirty && !m.kabur) {
+          ctx.font = '16px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('💧', m.x, m.y - 45);
+        }
 
-// ===================================================================
-// FETCH USER
-// ===================================================================
-function fetchUserData() {
-  var session = getUserSession();
-  if (!session || !session.nomor) { log('Fetch user: tidak ada sesi'); return; }
-  showLoading('Sinkronisasi...');
-  apiCall('bacaSatu', { sheet: 'Users', kolom: 'nomor', nilai: String(session.nomor) })
-  .then(function(json) {
-    var u = json.data;
-    if (u) {
-      log('Fetch user: selesai');
+        // Kabur
+        if (m.parked && m.kaburTimer > 5 && !m.kabur) {
+          ctx.font = '20px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('💢', m.x + 20, m.y - 30);
+        }
+      }
+
+      // Partikel efek tap
+      for (var i = state.particles ? state.particles.length - 1 : -1; i >= 0; i--) {
+        var p = state.particles[i];
+        p.life -= 0.016;
+        p.y -= 20 * 0.016;
+        if (p.life <= 0) {
+          state.particles.splice(i, 1);
+          continue;
+        }
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = '#60a5fa';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      // Koin terbang
+      for (var i = state.coinFly ? state.coinFly.length - 1 : -1; i >= 0; i--) {
+        var c = state.coinFly[i];
+        c.t += 0.02;
+        c.x += (c.tx - c.x) * 0.08;
+        c.y += (c.ty - c.y) * 0.08;
+        if (c.t > 1) {
+          state.coinFly.splice(i, 1);
+          continue;
+        }
+        ctx.font = '20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.globalAlpha = 1 - c.t;
+        ctx.fillText('🪙', c.x, c.y);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // ============================================================
+    // GAME LOOP
+    // ============================================================
+    var lastTime = 0;
+    var spawnTimer = 0;
+
+    function gameLoop(timestamp) {
+      var dt = (timestamp - lastTime) / 1000;
+      lastTime = timestamp;
+
+      if (dt > 0.1) dt = 0.1;
+
+      // Spawn motor
+      spawnTimer += dt;
+      var interval = state.weather === 'panas' ? 2 : 6;
+      if (spawnTimer > interval) {
+        spawnTimer = 0;
+        spawnMotor();
+      }
+
+      updateMotors(dt);
+      updateWeather();
+
+      // Produksi manajer/upgrade
+      if (state.pendingProduction < 1000000) {
+        var prod = getProductionRate();
+        state.pendingProduction += prod * dt;
+        if (state.pendingProduction > 1000000) state.pendingProduction = 1000000;
+      }
+
+      draw(timestamp);
+      requestAnimationFrame(gameLoop);
+    }
+
+    // ============================================================
+    // PRODUKSI
+    // ============================================================
+    function getProductionRate() {
+      var total = 0;
+      var upgrades = state.upgrades || {};
+      var keys = ['tukang_semprot', 'tukang_sabun', 'tukang_bilas', 'tukang_kering', 'tukang_poles', 'kompresor'];
+      var baseRates = [1, 5, 25, 100, 500, 2500];
+      for (var i = 0; i < keys.length; i++) {
+        var lvl = upgrades[keys[i]] || 0;
+        if (lvl > 0) {
+          total += baseRates[i] * Math.pow(2, lvl - 1);
+        }
+      }
+      var managers = state.managers || [];
+      for (var i = 0; i < managers.length; i++) {
+        if (managers[i].aktif) {
+          total += managers[i].rate || 0;
+        }
+      }
+      return total;
+    }
+
+    // ============================================================
+    // TAP MOTOR
+    // ============================================================
+    function tapMotor(x, y) {
+      for (var i = state.motors.length - 1; i >= 0; i--) {
+        var m = state.motors[i];
+        if (!m.parked || m.kabur) continue;
+        var dist = Math.sqrt((x - m.x) * (x - m.x) + (y - m.y) * (y - m.y));
+        if (dist < 50) {
+          m.tapCount++;
+          console.log('Tap motor: ' + m.id + ', tapCount ' + m.tapCount);
+
+          if (m.type === 'moge' && !m.adsWatched) {
+            showMogeModal(m);
+            return;
+          }
+
+          // Efek air
+          if (!state.particles) state.particles = [];
+          for (var j = 0; j < 8; j++) {
+            state.particles.push({
+              x: m.x + (Math.random() - 0.5) * 40,
+              y: m.y + (Math.random() - 0.5) * 40,
+              size: 5 + Math.random() * 5,
+              life: 0.5
+            });
+          }
+          playSound('syuush');
+
+          if (m.tapCount >= m.maxTap) {
+            m.dirty = false;
+            state.koin += m.pay;
+            state.totalCuci++;
+            updateHeader();
+            showToast('+' + m.pay + ' koin! 🪙', 'success');
+            playSound('ting');
+
+            // Koin terbang
+            if (!state.coinFly) state.coinFly = [];
+            state.coinFly.push({ x: m.x, y: m.y, tx: 40, ty: 40, t: 0 });
+
+            // Hapus motor setelah 1 detik
+            setTimeout(function() {
+              for (var k = state.motors.length - 1; k >= 0; k--) {
+                if (state.motors[k].id === m.id) {
+                  state.motors.splice(k, 1);
+                  break;
+                }
+              }
+            }, 1000);
+          } else {
+            updateHeader();
+          }
+          return;
+        }
+      }
+    }
+
+    // ============================================================
+    // MOGE MODAL
+    // ============================================================
+    function showMogeModal(m) {
+      showModal(
+        '<div class="modal-avatar">🏍️</div>' +
+        '<div class="modal-title">Moge VIP!</div>' +
+        '<div class="modal-text">Tonton iklan untuk mencuci moge ini dan dapatkan 500 koin!</div>' +
+        '<button class="modal-btn" onclick="window.tontonIklan(' + m.id + ')">🎬 Tonton Iklan</button>' +
+        '<button class="modal-btn secondary" onclick="window.closeModal()">Nanti</button>'
+      );
+    }
+
+    window.tontonIklan = function(motorId) {
+      closeModal();
+      window.open('https://www.profitableratecpmnetwork.com/q9qnyhdf9c?key=56f60182ff2837aef7d8e65616a77746', '_blank');
+      setTimeout(function() {
+        window.open('https://omg10.com/4/11785165', '_blank');
+      }, 1000);
+
+      var motor = null;
+      for (var i = 0; i < state.motors.length; i++) {
+        if (state.motors[i].id === motorId) {
+          motor = state.motors[i];
+          break;
+        }
+      }
+      if (!motor) return;
+
+      showToast('Tonton iklan 30 detik...', 'info');
+      var timer = 30;
+      var interval = setInterval(function() {
+        timer--;
+        if (timer <= 0) {
+          clearInterval(interval);
+          motor.adsWatched = true;
+          motor.dirty = false;
+          state.koin += 500;
+          updateHeader();
+          showToast('+500 koin! 🪙', 'success');
+          playSound('chime');
+        }
+      }, 1000);
+
+      setTimeout(function() {
+        if (!motor.adsWatched) {
+          showToast('Moge VIP kabur! 💢', 'error');
+          for (var i = state.motors.length - 1; i >= 0; i--) {
+            if (state.motors[i].id === motorId) {
+              state.motors.splice(i, 1);
+              break;
+            }
+          }
+        }
+      }, 10000);
+    };
+
+    // ============================================================
+    // UPDATE HEADER
+    // ============================================================
+    function updateHeader() {
+      var u = state.user;
+      if (!u) return;
+      document.getElementById('headerName').textContent = u.nama || 'Pemain';
+      document.getElementById('headerPhone').textContent = u.nomor ? u.nomor.substring(0, 4) + '****' + u.nomor.substring(u.nomor.length - 4) : '-';
+      document.getElementById('headerKoin').textContent = formatNumber(state.koin + state.pendingProduction);
+      document.getElementById('headerRupiah').textContent = formatRupiah(state.rupiah);
+      document.getElementById('headerKristal').textContent = formatNumber(state.kristal);
+      document.getElementById('headerLevel').textContent = 'Lv.' + state.level;
+      var expNeed = state.level * 1000;
+      var expPct = Math.min(100, (state.exp / expNeed) * 100);
+      document.getElementById('headerLevelFill').style.width = expPct + '%';
+    }
+
+    // ============================================================
+    // SYNC
+    // ============================================================
+    function syncToServer() {
+      if (!state.user) return;
+      var u = state.user;
+      var payload = {
+        sheet: SHEET_USERS,
+        row: u._row,
+        data: {
+          id: u.id,
+          nama: u.nama,
+          nomor: u.nomor,
+          password: u.password,
+          device_id: u.device_id,
+          saldo_koin: state.koin,
+          saldo_rupiah: state.rupiah,
+          kristal: state.kristal,
+          level: state.level,
+          cabang_aktif: state.branches,
+          status: u.status,
+          last_login: u.last_login,
+          last_sync: new Date().toISOString(),
+          tanggal_daftar: u.tanggal_daftar,
+          story_unlocked: state.storyUnlocked
+        }
+      };
+
+      console.log('Sync: kirim=' + state.koin + ', pending=' + state.pendingProduction);
+
+      apiCall('update', payload).then(function(res) {
+        if (res && res.ok) {
+          state.koin = payload.data.saldo_koin;
+          state.pendingProduction = 0;
+          state.lastSync = Date.now();
+          updateHeader();
+          saveUser(state.user);
+        }
+      }).catch(function(err) {
+        console.log('Sync gagal:', err.message);
+      });
+    }
+
+    // ============================================================
+    // LOAD USER
+    // ============================================================
+    function loadUserData() {
+      var u = loadUser();
+      if (!u) {
+        showLoginPrompt();
+        return;
+      }
+
       state.user = u;
-      state.koin = parseInt(u.saldo_koin) || 0;
-      state.rupiah = parseInt(u.saldo_rupiah) || 0;
-      state.kristal = parseInt(u.kristal) || 0;
-      state.level = parseInt(u.level) || 1;
-      state.storyUnlocked = parseInt(u.story_unlocked) || 0;
-      setUserSession(u);
+      state.koin = u.saldo_koin || 0;
+      state.rupiah = u.saldo_rupiah || 0;
+      state.kristal = u.kristal || 0;
+      state.level = u.level || 1;
+      state.branches = u.cabang_aktif || 1;
+      state.storyUnlocked = u.story_unlocked || 0;
+
+      var extra = loadExtra();
+      state.exp = extra.exp || 0;
+      state.managers = extra.managers || [];
+      state.upgrades = extra.upgrades || {};
+      state.totalCuci = extra.totalCuci || 0;
+      state.tokoItems = extra.tokoItems || [];
+
       updateHeader();
-      updateLevelBar();
+      console.log('User: ' + u.nama);
+
+      // Fetch update background
+      setTimeout(function() {
+        apiCall('bacaSatu', { sheet: SHEET_USERS, kolom: 'nomor', nilai: u.nomor }).then(function(res) {
+          if (res && res.ok && res.data && res.data.length > 0) {
+            var fresh = res.data[0];
+            state.user = fresh;
+            state.koin = fresh.saldo_koin || 0;
+            state.rupiah = fresh.saldo_rupiah || 0;
+            state.kristal = fresh.kristal || 0;
+            state.level = fresh.level || 1;
+            state.storyUnlocked = fresh.story_unlocked || 0;
+            updateHeader();
+            saveUser(fresh);
+          }
+        }).catch(function() {});
+      }, 500);
     }
-  })
-  .catch(function(err) {
-    log('Fetch user: gagal - ' + err.message);
-  })
-  .finally(function() { hideLoading(); });
-}
 
-// ===================================================================
-// HEADER UPDATE
-// ===================================================================
-function updateHeader() {
-  if (!state.user) return;
-  $('hName').textContent = state.user.nama || 'Pemain';
-  $('hHp').textContent = sensorHP(state.user.nomor || '');
-  // BUG 2: Tampilkan state.koin + pendingProduction
-  $('hKoin').textContent = angkaFormat(state.koin + state.pendingProduction);
-  $('hRupiah').textContent = angkaFormat(state.rupiah);
-  $('hKristal').textContent = angkaFormat(state.kristal);
-}
-
-function updateLevelBar() {
-  var expNeeded = state.level * 1000;
-  var pct = Math.min(100, (state.exp / expNeeded) * 100);
-  $('levelBar').style.width = pct + '%';
-}
-
-// ===================================================================
-// CANVAS
-// ===================================================================
-function resizeCanvas() {
-  if (!canvas) return;
-  canvas.width = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
-  log('Canvas: ' + canvas.width + 'x' + canvas.height);
-}
-
-// ===================================================================
-// GAME LOOP
-// ===================================================================
-function startGameLoop() {
-  if (animFrame) cancelAnimationFrame(animFrame);
-  function loop(ts) {
-    if (!isGameActive) return;
-    updateGame(ts);
-    renderGame();
-    animFrame = requestAnimationFrame(loop);
-  }
-  animFrame = requestAnimationFrame(loop);
-}
-
-// ===================================================================
-// UPDATE GAME
-// ===================================================================
-function updateGame(ts) {
-  // Spawn motor
-  if (!lastSpawnTime) lastSpawnTime = ts;
-  var interval = state.cuaca === 'hujan' ? 6000 : 2000;
-  if (ts - lastSpawnTime > interval) {
-    spawnMotor();
-    lastSpawnTime = ts;
-  }
-
-  // Update motor
-  var now = Date.now();
-  for (var i = motors.length - 1; i >= 0; i--) {
-    var m = motors[i];
-    // Motor lewat
-    if (m.state === 'lewat') {
-      m.x += m.kecepatan;
-      if (m.x > canvas.width + 100) {
-        motors.splice(i, 1);
-      }
-      continue;
+    function showLoginPrompt() {
+      showModal(
+        '<div class="modal-avatar">🔐</div>' +
+        '<div class="modal-title">Belum Login</div>' +
+        '<div class="modal-text">Silakan login terlebih dahulu untuk memainkan game.</div>' +
+        '<button class="modal-btn" onclick="window.location.href=\'login.html\'">Ke Halaman Login</button>'
+      );
     }
-    // Motor parkir
-    if (m.state === 'parkir') {
-      var elapsed = (now - m.waktuMasuk) / 1000;
-      // Pelanggan kabur
-      if (elapsed > 8 && !m.kabur) {
-        m.kabur = true;
-        toast('Pelanggan kabur! 💨');
-        motors.splice(i, 1);
-        continue;
+
+    // ============================================================
+    // PANEL
+    // ============================================================
+    function openPanel(tab) {
+      state.tab = tab;
+      var panel = document.getElementById('panel');
+      var overlay = document.getElementById('panelOverlay');
+      var title = document.getElementById('panelTitle');
+      var content = document.getElementById('panelContent');
+
+      overlay.classList.add('show');
+      panel.classList.add('show');
+
+      // Update nav active
+      var items = document.querySelectorAll('.nav-item');
+      for (var i = 0; i < items.length; i++) {
+        items[i].classList.toggle('active', items[i].getAttribute('data-tab') === tab);
       }
-      if (elapsed > 5) {
-        m.marah = true;
-      }
-      // Moge kabur kalau tidak nonton iklan
-      if (m.isMoge && m.sudahNontonIklan === false && elapsed > 10 && !m.kabur) {
-        m.kabur = true;
-        toast('Moge VIP kabur! 🏍️💨');
-        motors.splice(i, 1);
-        continue;
+
+      if (tab === 'game') {
+        title.innerHTML = '🎮 Upgrade';
+        renderUpgradePanel(content);
+      } else if (tab === 'manajer') {
+        title.innerHTML = '👔 Manajer';
+        renderManajerPanel(content);
+      } else if (tab === 'toko') {
+        title.innerHTML = '🛒 Toko';
+        renderTokoPanel(content);
+      } else if (tab === 'quest') {
+        title.innerHTML = '📋 Quest';
+        renderQuestPanel(content);
+      } else if (tab === 'profil') {
+        title.innerHTML = '👤 Profil';
+        renderProfilPanel(content);
+      } else if (tab === 'lainnya') {
+        title.innerHTML = '⋯ Lainnya';
+        renderLainnyaPanel(content);
+      } else if (tab === 'cabang') {
+        title.innerHTML = '🏢 Cabang';
+        renderCabangPanel(content);
+      } else if (tab === 'convert') {
+        title.innerHTML = '💱 Convert';
+        renderConvertPanel(content);
+      } else if (tab === 'topup') {
+        title.innerHTML = '💰 Topup';
+        renderTopupPanel(content);
+      } else if (tab === 'voucher') {
+        title.innerHTML = '🎫 Voucher';
+        renderVoucherPanel(content);
+      } else if (tab === 'cerita') {
+        title.innerHTML = '📖 Cerita';
+        renderCeritaPanel(content);
       }
     }
-  }
-}
 
-// ===================================================================
-// SPAWN MOTOR
-// ===================================================================
-function spawnMotor() {
-  // Hitung motor parkir
-  var parkirCount = motors.filter(function(m) { return m.state === 'parkir'; }).length;
-  if (parkirCount >= 18) {
-    // Parkiran penuh, semua lewat
-    spawnMotorLewat();
-    return;
-  }
-
-  // Tentukan level motor
-  var isMoge = Math.random() < (1/8);
-  var level = isMoge ? 2 : 1;
-
-  // Cari slot kosong
-  var slot = cariSlotKosong();
-  if (slot === -1) {
-    spawnMotorLewat();
-    return;
-  }
-
-  var baris = Math.floor(slot / 6);
-  var kolom = slot % 6;
-  var y = canvas.height * (0.42 + baris * 0.10);
-  var x = canvas.width * (0.10 + kolom * 0.14);
-
-  var motor = {
-    id: ++motorIdCounter,
-    x: x,
-    y: y,
-    arah: 'turun',
-    state: 'parkir',
-    level: level,
-    kotor: 1.0,
-    tapCount: 0,
-    maxTap: isMoge ? 5 : 1,
-    waktuMasuk: Date.now(),
-    isMoge: isMoge,
-    sudahNontonIklan: !isMoge,
-    slotTarget: slot,
-    rotasi: Math.PI,
-    marah: false,
-    kabur: false,
-    bayar: isMoge ? 500 : 1,
-    kecepatan: 0
-  };
-  motors.push(motor);
-  log('Spawn motor ke-' + motor.id + ': level ' + level + ', x=' + x.toFixed(0) + ', y=' + y.toFixed(0));
-}
-
-function spawnMotorLewat() {
-  var isMoge = Math.random() < (1/8);
-  var motor = {
-    id: ++motorIdCounter,
-    x: -80,
-    y: canvas.height * 0.06,
-    arah: 'kanan',
-    state: 'lewat',
-    level: isMoge ? 2 : 1,
-    kotor: 1.0,
-    tapCount: 0,
-    maxTap: isMoge ? 5 : 1,
-    waktuMasuk: Date.now(),
-    isMoge: isMoge,
-    sudahNontonIklan: true,
-    slotTarget: -1,
-    rotasi: 0,
-    marah: false,
-    kabur: false,
-    bayar: 0,
-    kecepatan: acak(1.5, 3)
-  };
-  motors.push(motor);
-}
-
-function cariSlotKosong() {
-  var terisi = {};
-  motors.forEach(function(m) {
-    if (m.state === 'parkir' && m.slotTarget >= 0) terisi[m.slotTarget] = true;
-  });
-  var kosong = [];
-  for (var i = 0; i < 18; i++) {
-    if (!terisi[i]) kosong.push(i);
-  }
-  if (kosong.length === 0) return -1;
-  return pilihAcak(kosong);
-}
-
-// ===================================================================
-// RENDER GAME
-// ===================================================================
-function renderGame() {
-  if (!ctx || !canvas) return;
-  var w = canvas.width;
-  var h = canvas.height;
-  ctx.clearRect(0, 0, w, h);
-
-  // Latar: SCALE-Y
-  var bg = imageCache['steam-bg'];
-  if (bg && bg.width > 0) {
-    var scale = h / bg.height;
-    var bw = bg.width * scale;
-    var bh = h;
-    var bx = (w - bw) / 2;
-    // Gradient merah putih di kiri-kanan
-    var grad = ctx.createLinearGradient(0, 0, w, 0);
-    grad.addColorStop(0, '#C8102E');
-    grad.addColorStop(0.3, '#FAFAFA');
-    grad.addColorStop(0.7, '#FAFAFA');
-    grad.addColorStop(1, '#C8102E');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, h);
-    ctx.drawImage(bg, bx, 0, bw, bh);
-    log('Render latar: scale=' + scale.toFixed(2) + ', x=' + bx.toFixed(0));
-  } else {
-    // Fallback gradient
-    var g2 = ctx.createLinearGradient(0, 0, 0, h);
-    g2.addColorStop(0, '#C8102E');
-    g2.addColorStop(0.5, '#FAFAFA');
-    g2.addColorStop(1, '#C8102E');
-    ctx.fillStyle = g2;
-    ctx.fillRect(0, 0, w, h);
-  }
-
-  // Cuaca overlay
-  if (state.cuaca === 'panas') {
-    ctx.fillStyle = 'rgba(255, 200, 0, ' + weatherOverlayAlpha * 0.15 + ')';
-    ctx.fillRect(0, 0, w, h);
-  } else if (state.cuaca === 'hujan') {
-    ctx.fillStyle = 'rgba(100, 150, 255, ' + weatherOverlayAlpha * 0.12 + ')';
-    ctx.fillRect(0, 0, w, h);
-    // Hujan
-    ctx.strokeStyle = 'rgba(150, 200, 255, 0.4)';
-    ctx.lineWidth = 1;
-    rainDrops.forEach(function(d) {
-      ctx.beginPath();
-      ctx.moveTo(d.x, d.y);
-      ctx.lineTo(d.x - 1, d.y + 8);
-      ctx.stroke();
-    });
-  }
-
-  // Render motor
-  motors.forEach(function(m) {
-    renderMotor(m);
-  });
-}
-
-function renderMotor(m) {
-  var img = null;
-  if (m.isMoge) {
-    img = m.kotor > 0.5 ? imageCache['motor-moge-kotor'] : imageCache['motor-moge-bersih'];
-  } else {
-    img = m.kotor > 0.5 ? imageCache['motor-bebek-kotor'] : imageCache['motor-bebek-bersih'];
-  }
-
-  ctx.save();
-  ctx.translate(m.x + 30, m.y + 40);
-  ctx.rotate(m.rotasi || 0);
-
-  // Glow moge
-  if (m.isMoge && m.kotor <= 0.5) {
-    ctx.shadowColor = '#F59E0B';
-    ctx.shadowBlur = 15;
-  }
-
-  if (img && img.width > 0) {
-    ctx.drawImage(img, -30, -40, 60, 80);
-  } else {
-    // Fallback emoji
-    ctx.font = '40px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(m.isMoge ? '🏍️' : '🛵', 0, 0);
-  }
-  ctx.restore();
-
-  // Sparkle moge
-  if (m.isMoge && m.kotor <= 0.5) {
-    ctx.font = '14px sans-serif';
-    ctx.fillText('✨', m.x + 45, m.y + 10);
-    ctx.fillText('✨', m.x + 10, m.y + 5);
-  }
-
-  // Emoji marah
-  if (m.marah && m.state === 'parkir') {
-    ctx.font = '20px sans-serif';
-    ctx.fillText('💢', m.x + 45, m.y - 5);
-  }
-
-  // Ikon nonton untuk moge
-  if (m.isMoge && !m.sudahNontonIklan && m.state === 'parkir') {
-    ctx.font = '22px sans-serif';
-    ctx.fillText('🎬', m.x + 50, m.y - 10);
-  }
-
-  // Koin terbang
-  if (m.koinTerbang) {
-    var t = (Date.now() - m.koinTerbang.start) / 800;
-    if (t < 1) {
-      var kx = m.koinTerbang.x + (m.koinTerbang.tx - m.koinTerbang.x) * t;
-      var ky = m.koinTerbang.y + (m.koinTerbang.ty - m.koinTerbang.y) * t;
-      ctx.font = '20px sans-serif';
-      ctx.fillText('🪙', kx, ky);
+    function closePanel() {
+      document.getElementById('panel').classList.remove('show');
+      document.getElementById('panelOverlay').classList.remove('show');
     }
-  }
-}
 
-// ===================================================================
-// TAP MOTOR
-// ===================================================================
-function handleCanvasTap(e) {
-  if (!isGameActive) return;
-  var rect = canvas.getBoundingClientRect();
-  var touch = e.touches ? e.touches[0] : e;
-  var tapX = touch.clientX - rect.left;
-  var tapY = touch.clientY - rect.top;
+    // ============================================================
+    // RENDER PANELS
+    // ============================================================
+    function renderUpgradePanel(container) {
+      var html = '';
+      var upgrades = [
+        { key: 'tukang_semprot', name: 'Tukang Semprot', cost: 100, rate: 1, icon: '🧹' },
+        { key: 'tukang_sabun', name: 'Tukang Sabun', cost: 1000, rate: 5, icon: '🧼' },
+        { key: 'tukang_bilas', name: 'Tukang Bilas', cost: 10000, rate: 25, icon: '💧' },
+        { key: 'tukang_kering', name: 'Tukang Kering', cost: 100000, rate: 100, icon: '💨' },
+        { key: 'tukang_poles', name: 'Tukang Poles', cost: 1000000, rate: 500, icon: '✨' },
+        { key: 'kompresor', name: 'Kompresor', cost: 10000000, rate: 2500, icon: '⚙️' }
+      ];
 
-  for (var i = motors.length - 1; i >= 0; i--) {
-    var m = motors[i];
-    if (m.state !== 'parkir') continue;
+      for (var i = 0; i < upgrades.length; i++) {
+        var u = upgrades[i];
+        var lvl = state.upgrades[u.key] || 0;
+        var cost = Math.floor(u.cost * Math.pow(2.5, lvl));
+        var rate = u.rate * Math.pow(2, lvl);
+        var canBuy = state.koin >= cost;
 
-    // Hit area motor
-    var mx = m.x + 30;
-    var my = m.y + 40;
-    var dx = tapX - mx;
-    var dy = tapY - my;
-    if (Math.abs(dx) < 45 && Math.abs(dy) < 55) {
-      tapMotor(m);
-      return;
-    }
-  }
-}
-
-function tapMotor(m) {
-  if (m.state !== 'parkir') return;
-
-  // Moge wajib nonton iklan
-  if (m.isMoge && !m.sudahNontonIklan) {
-    showModalIklan(m);
-    return;
-  }
-
-  m.tapCount++;
-  log('Tap motor: ' + m.id + ', tapCount ' + m.tapCount);
-
-  // Efek tap
-  playSound('syuush');
-  spawnPartikelAir(m.x + 30, m.y + 40);
-
-  // Kurangi kotor
-  m.kotor = Math.max(0, m.kotor - (1 / m.maxTap));
-
-  // Cek selesai
-  if (m.tapCount >= m.maxTap) {
-    m.kotor = 0;
-    selesaikanCuci(m);
-  } else {
-    // Setengah bersih
-    if (m.kotor <= 0.5 && m.kotor > 0) {
-      m.kotor = 0.5;
-    }
-  }
-}
-
-function selesaikanCuci(m) {
-  // Tambah koin
-  var bayar = m.bayar;
-  state.koin += bayar;
-
-  // Koin terbang
-  m.koinTerbang = {
-    start: Date.now(),
-    x: m.x + 30,
-    y: m.y + 40,
-    tx: canvas.width - 60,
-    ty: 40
-  };
-
-  // Update header
-  updateHeader();
-
-  // Total cuci
-  state.totalCuci++;
-  updateExtra('totalCuci', state.totalCuci);
-
-  // Efek suara
-  playSound('ting');
-  setTimeout(function() { playSound('chime'); }, 150);
-
-  // Hapus motor
-  var idx = motors.indexOf(m);
-  if (idx >= 0) {
-    setTimeout(function() {
-      motors.splice(idx, 1);
-    }, 400);
-  }
-
-  // Cek story
-  cekStory();
-}
-
-// ===================================================================
-// PARTIKEL AIR
-// ===================================================================
-var partikels = [];
-function spawnPartikelAir(x, y) {
-  for (var i = 0; i < 8; i++) {
-    partikels.push({
-      x: x + acak(-20, 20),
-      y: y + acak(-20, 20),
-      vx: acak(-2, 2),
-      vy: acak(-3, -1),
-      life: 500,
-      start: Date.now()
-    });
-  }
-}
-
-function updatePartikels() {
-  var now = Date.now();
-  for (var i = partikels.length - 1; i >= 0; i--) {
-    var p = partikels[i];
-    var elapsed = now - p.start;
-    if (elapsed > p.life) {
-      partikels.splice(i, 1);
-      continue;
-    }
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vy += 0.1;
-  }
-}
-
-function renderPartikels() {
-  var now = Date.now();
-  partikels.forEach(function(p) {
-    var alpha = 1 - (now - p.start) / p.life;
-    ctx.fillStyle = 'rgba(150, 200, 255, ' + alpha * 0.6 + ')';
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-    ctx.fill();
-  });
-}
-
-// ===================================================================
-// SYNC LOOP
-// ===================================================================
-function startSyncLoop() {
-  if (pendingSyncTimer) clearInterval(pendingSyncTimer);
-  pendingSyncTimer = setInterval(function() {
-    syncKeServer();
-  }, 10000);
-}
-
-function syncKeServer() {
-  if (syncInProgress) return;
-  if (!state.user || !state.user._row) return;
-  syncInProgress = true;
-
-  // Hitung total
-  var kirim = state.koin + state.pendingProduction;
-  if (kirim <= 0) { syncInProgress = false; return; }
-
-  // Cap max 1.000.000
-  var cap = Math.min(kirim, 1000000);
-
-  log('Sync: kirim=' + cap + ', pending=' + state.pendingProduction);
-
-  apiCall('update', {
-    sheet: 'Users',
-    row: state.user._row,
-    data: {
-      saldo_koin: cap,
-      saldo_rupiah: state.rupiah,
-      kristal: state.kristal,
-      level: state.level,
-      last_sync: new Date().toISOString()
-    }
-  })
-  .then(function(json) {
-    if (json.ok) {
-      log('Sync sukses, pending reset');
-      state.koin = cap;
-      state.pendingProduction = 0;
-      updateHeader();
-      // Update session
-      if (state.user) {
-        state.user.saldo_koin = cap;
-        setUserSession(state.user);
-      }
-    }
-  })
-  .catch(function(err) {
-    log('Sync gagal: ' + err.message);
-    // Jangan reset pendingProduction
-  })
-  .finally(function() {
-    syncInProgress = false;
-  });
-}
-
-// ===================================================================
-// WEATHER LOOP
-// ===================================================================
-function startWeatherLoop() {
-  setInterval(function() {
-    // Ganti cuaca random 1-3 menit
-    var r = Math.random();
-    var newWeather = r < 0.5 ? 'panas' : 'hujan';
-    if (newWeather !== state.cuaca) {
-      state.cuaca = newWeather;
-      $('btnCuaca').textContent = newWeather === 'panas' ? '☀️' : '🌧️';
-      toast(newWeather === 'panas' ? '☀️ Cuaca panas!' : '🌧️ Cuaca hujan!');
-      // Fade
-      weatherTargetAlpha = 1;
-      setTimeout(function() { weatherTargetAlpha = 0; }, 3000);
-    }
-  }, acakInt(60000, 180000));
-}
-
-// ===================================================================
-// STORY
-// ===================================================================
-function cekStory() {
-  if (storyModalShown) return;
-  var unlocked = state.storyUnlocked;
-  var next = unlocked + 1;
-  if (next > 7) return;
-
-  var bisa = false;
-  if (next === 1) bisa = true;
-  else if (next === 2 && state.totalCuci >= 5) bisa = true;
-  else if (next === 3 && state.koin >= 10000) bisa = true;
-  else if (next === 4 && Object.keys(state.manajer).length >= 1) bisa = true;
-  else if (next === 5 && state.koin >= 1000000) bisa = true;
-  else if (next === 6 && Object.keys(state.manajer).length >= 3) bisa = true;
-  else if (next === 7 && state.koin >= 1000000000) bisa = true;
-
-  if (bisa) {
-    storyModalShown = true;
-    tampilkanStory(next);
-  }
-}
-
-function tampilkanStory(bab) {
-  var judul = [
-    'Bab 1: Awal Mula',
-    'Bab 2: Cucian Pertama',
-    'Bab 3: Modal Bertambah',
-    'Bab 4: Karyawan Pertama',
-    'Bab 5: Jutawan',
-    'Bab 6: Tim Solid',
-    'Bab 7: Raja Steam'
-  ][bab - 1] || 'Bab ' + bab;
-
-  var dialog = [
-    'Pak Aldi: "Selamat datang di Steam MP 7000! Cuci motor, kumpulkan koin, dan bangun kerajaan steammu!"',
-    'Pak Aldi: "Bagus! Kamu sudah mencuci 5 motor. Terus semangat!"',
-    'Pak Aldi: "Koinmu sudah 10.000! Saatnya beli upgrade atau manajer."',
-    'Pak Aldi: "Kamu sudah punya manajer! Mereka akan menghasilkan koin otomatis."',
-    'Pak Aldi: "1 juta koin! Kamu luar biasa. Terus berkembang!"',
-    'Pak Aldi: "3 manajer! Timmu solid. Ayo kejar 1 miliar koin!"',
-    'Pak Aldi: "1 miliar koin! Kamu adalah Raja Steam MP 7000! 🏆"'
-  ][bab - 1] || '...';
-
-  var html = '<div class="story-box">' +
-    '<img class="story-avatar" src="assets/pak-aldi.png" alt="Pak Aldi" onerror="this.style.display=\'none\'">' +
-    '<div class="modal-title">' + judul + '</div>' +
-    '<div class="modal-text">' + dialog + '</div>' +
-    '<div class="modal-btns">' +
-    '<button class="btn btn-emas" id="storyLanjut">' + (bab < 7 ? 'Lanjut ➡️' : 'Selesai ✅') + '</button>' +
-    '</div></div>';
-
-  $('modalContent').innerHTML = html;
-  $('modalOverlay').classList.add('open');
-
-  $('storyLanjut').onclick = function() {
-    $('modalOverlay').classList.remove('open');
-    state.storyUnlocked = bab;
-    updateExtra('storyUnlocked', bab);
-    // Update server
-    if (state.user && state.user._row) {
-      apiCall('update', {
-        sheet: 'Users',
-        row: state.user._row,
-        data: { story_unlocked: bab }
-      }).catch(function() {});
-    }
-    setTimeout(function() { storyModalShown = false; cekStory(); }, 500);
-  };
-}
-
-// ===================================================================
-// MODAL IKLAN
-// ===================================================================
-function showModalIklan(m) {
-  var html = '<div class="modal-title">🎬 Tonton Iklan</div>' +
-    '<div class="modal-text">Tonton iklan 30 detik untuk mencuci Moge VIP ini.</div>' +
-    '<div class="modal-text" style="font-size:24px">🏍️✨</div>' +
-    '<div class="modal-btns">' +
-    '<button class="btn btn-emas" id="btnTonton">Tonton Iklan</button>' +
-    '<button class="btn btn-outline" id="btnBatalIklan">Batal</button>' +
-    '</div>' +
-    '<div id="iklanTimer" class="modal-text" style="margin-top:8px;font-weight:700"></div>';
-
-  $('modalContent').innerHTML = html;
-  $('modalOverlay').classList.add('open');
-
-  var timerEl = $('iklanTimer');
-  var countdown = 30;
-  var timerInt = null;
-  var iklanDibuka = false;
-
-  $('btnTonton').onclick = function() {
-    iklanDibuka = true;
-    playSound('ting');
-    window.open('https://www.profitableratecpmnetwork.com/q9qnyhdf9c?key=56f60182ff2837aef7d8e65616a77746', '_blank');
-    // Backup
-    setTimeout(function() {
-      window.open('https://omg10.com/4/11785165', '_blank');
-    }, 1000);
-
-    countdown = 30;
-    timerEl.textContent = '⏳ ' + countdown + ' detik';
-    if (timerInt) clearInterval(timerInt);
-    timerInt = setInterval(function() {
-      countdown--;
-      if (countdown <= 0) {
-        clearInterval(timerInt);
-        timerEl.textContent = '✅ Iklan selesai!';
-        m.sudahNontonIklan = true;
-        toast('Iklan selesai! Sekarang tap Moge VIP.');
-        setTimeout(function() {
-          $('modalOverlay').classList.remove('open');
-          tapMotor(m);
-        }, 800);
-      } else {
-        timerEl.textContent = '⏳ ' + countdown + ' detik';
-      }
-    }, 1000);
-  };
-
-  $('btnBatalIklan').onclick = function() {
-    if (timerInt) clearInterval(timerInt);
-    $('modalOverlay').classList.remove('open');
-  };
-
-  // Kalau tidak nonton dalam 10 detik, moge kabur
-  setTimeout(function() {
-    if (!iklanDibuka && m.state === 'parkir') {
-      m.kabur = true;
-      toast('Moge VIP kabur karena tidak ditonton! 🏍️💨');
-      var idx = motors.indexOf(m);
-      if (idx >= 0) motors.splice(idx, 1);
-      $('modalOverlay').classList.remove('open');
-    }
-  }, 10000);
-}
-
-// ===================================================================
-// PANEL
-// ===================================================================
-function openPanel(tab) {
-  log('Nav klik: ' + tab);
-  $('panel').classList.add('open');
-  $('panelTitle').textContent = tab.charAt(0).toUpperCase() + tab.slice(1);
-  renderPanelContent(tab);
-}
-
-function closePanel() {
-  $('panel').classList.remove('open');
-}
-
-function renderPanelContent(tab) {
-  var html = '';
-  if (tab === 'game') {
-    html = renderGamePanel();
-  } else if (tab === 'manajer') {
-    html = renderManajerPanel();
-  } else if (tab === 'toko') {
-    html = renderTokoPanel();
-  } else if (tab === 'quest') {
-    html = renderQuestPanel();
-  } else if (tab === 'profil') {
-    html = renderProfilPanel();
-  } else if (tab === 'cabang') {
-    html = renderCabangPanel();
-  } else if (tab === 'convert') {
-    html = renderConvertPanel();
-  } else if (tab === 'topup') {
-    html = renderTopupPanel();
-  } else if (tab === 'voucher') {
-    html = renderVoucherPanel();
-  } else if (tab === 'cerita') {
-    html = renderCeritaPanel();
-  }
-  $('panelContent').innerHTML = html;
-  bindPanelEvents(tab);
-}
-
-// ===================================================================
-// PANEL GAME
-// ===================================================================
-function renderGamePanel() {
-  var upgrades = [
-    { id: 'tukang_semprot', nama: 'Tukang Semprot', harga: 100, produksi: 1 },
-    { id: 'tukang_sabun', nama: 'Tukang Sabun', harga: 1000, produksi: 5 },
-    { id: 'tukang_bilas', nama: 'Tukang Bilas', harga: 10000, produksi: 25 },
-    { id: 'tukang_kering', nama: 'Tukang Kering', harga: 100000, produksi: 100 },
-    { id: 'tukang_poles', nama: 'Tukang Poles', harga: 1000000, produksi: 500 },
-    { id: 'kompresor', nama: 'Kompresor', harga: 10000000, produksi: 2500 }
-  ];
-  var html = '<div class="section-title">⚡ Upgrade Produksi</div>';
-  upgrades.forEach(function(u) {
-    var lvl = state.upgrade[u.id] || 0;
-    var harga = Math.floor(u.harga * Math.pow(2.5, lvl));
-    var prod = Math.floor(u.produksi * Math.pow(2, lvl));
-    html += '<div class="list-item">' +
-      '<div class="list-icon">🔧</div>' +
-      '<div class="list-body">' +
-      '<div class="list-name">' + u.nama + ' <span class="badge badge-emas">Lv ' + lvl + '</span></div>' +
-      '<div class="list-desc">Produksi: ' + prod + '/detik • Harga: ' + angkaFormat(harga) + ' koin</div>' +
-      '</div>' +
-      '<div class="list-action"><button class="btn btn-merah" onclick="beliUpgrade(\'' + u.id + '\')">Beli</button></div>' +
-      '</div>';
-  });
-  return html;
-}
-
-// ===================================================================
-// PANEL MANAJER
-// ===================================================================
-function renderManajerPanel() {
-  var manajers = [
-    { id: 'budi', nama: 'Pak Budi', harga: 500, produksi: 1 },
-    { id: 'siti', nama: 'Bu Siti', harga: 5000, produksi: 5 },
-    { id: 'andi', nama: 'Pak Andi', harga: 50000, produksi: 25 },
-    { id: 'rina', nama: 'Bu Rina', harga: 500000, produksi: 100 },
-    { id: 'joko', nama: 'Pak Joko', harga: 5000000, produksi: 500 },
-    { id: 'umar', nama: 'Teknisi Umar', harga: 50000000, produksi: 2500 }
-  ];
-  var html = '<div class="section-title">👔 Manajer</div>';
-  manajers.forEach(function(m) {
-    var jml = state.manajer[m.id] || 0;
-    html += '<div class="list-item">' +
-      '<div class="list-icon gold">👔</div>' +
-      '<div class="list-body">' +
-      '<div class="list-name">' + m.nama + ' <span class="badge badge-hijau">' + jml + '</span></div>' +
-      '<div class="list-desc">Produksi: ' + m.produksi + '/detik • Harga: ' + angkaFormat(m.harga) + ' koin</div>' +
-      '</div>' +
-      '<div class="list-action"><button class="btn btn-merah" onclick="beliManajer(\'' + m.id + '\', ' + m.harga + ')">Rekrut</button></div>' +
-      '</div>';
-  });
-  return html;
-}
-
-// ===================================================================
-// PANEL TOKO
-// ===================================================================
-function renderTokoPanel() {
-  var items = [
-    { id: 'skin_merah', nama: 'Skin Merah Metalik', koin: 50000, kristal: 4000 },
-    { id: 'tema_steam', nama: 'Tema Steam Mewah', koin: 100000, kristal: 8000 },
-    { id: 'badge_juara', nama: 'Badge Juara', koin: 20000, kristal: 1500 },
-    { id: 'boost_1jam', nama: 'Boost 1 Jam', koin: 200000, kristal: 15000 },
-    { id: 'unlock_manajer', nama: 'Unlock Manajer', koin: 500000, kristal: 40000 },
-    { id: 'voucher_cuci', nama: 'Voucher Cuci', koin: 70000, kristal: 7000 },
-    { id: 'manajer_legendaris', nama: 'Manajer Legendaris', kristal: 50 },
-    { id: 'skin_emas', nama: 'Skin Emas Premium', kristal: 30 }
-  ];
-  var html = '<div class="section-title">🛒 Toko</div>';
-  items.forEach(function(it) {
-    var harga = it.koin ? angkaFormat(it.koin) + ' koin' : '';
-    if (it.kristal) harga += (harga ? ' / ' : '') + it.kristal + ' kristal';
-    html += '<div class="list-item">' +
-      '<div class="list-icon">🛒</div>' +
-      '<div class="list-body">' +
-      '<div class="list-name">' + it.nama + '</div>' +
-      '<div class="list-desc">' + harga + '</div>' +
-      '</div>' +
-      '<div class="list-action"><button class="btn btn-emas" onclick="beliToko(\'' + it.id + '\')">Beli</button></div>' +
-      '</div>';
-  });
-  return html;
-}
-
-// ===================================================================
-// PANEL QUEST
-// ===================================================================
-function renderQuestPanel() {
-  var quests = [
-    { id: 'h1', nama: 'Cuci 5 Motor', tipe: 'harian', target: 5, reward: 500 },
-    { id: 'h2', nama: 'Cuci 1 Moge', tipe: 'harian', target: 1, reward: 1000 },
-    { id: 'h3', nama: 'Tap 20 Kali', tipe: 'harian', target: 20, reward: 300 },
-    { id: 'm1', nama: 'Cuci 50 Motor', tipe: 'mingguan', target: 50, reward: 5000 },
-    { id: 'm2', nama: 'Kumpulkan 10.000 Koin', tipe: 'mingguan', target: 10000, reward: 2000 },
-    { id: 'm3', nama: 'Rekrut 1 Manajer', tipe: 'mingguan', target: 1, reward: 3000 },
-    { id: 's1', nama: 'Capai Level 10', tipe: 'spesial', target: 10, reward: 10000 },
-    { id: 's2', nama: 'Punya 5 Manajer', tipe: 'spesial', target: 5, reward: 25000 },
-    { id: 's3', nama: 'Kumpulkan 1 Juta Koin', tipe: 'spesial', target: 1000000, reward: 50000 },
-    { id: 's4', nama: 'Buka 3 Cabang', tipe: 'spesial', target: 3, reward: 100000 },
-    { id: 's5', nama: 'Selesaikan Bab 5', tipe: 'spesial', target: 5, reward: 75000 },
-    { id: 's6', nama: 'Punya 10 Upgrade', tipe: 'spesial', target: 10, reward: 30000 },
-    { id: 's7', nama: 'Cuci 100 Motor', tipe: 'spesial', target: 100, reward: 20000 }
-  ];
-  var html = '';
-  ['harian', 'mingguan', 'spesial'].forEach(function(tipe) {
-    html += '<div class="section-title">' + tipe.charAt(0).toUpperCase() + tipe.slice(1) + '</div>';
-    quests.filter(function(q) { return q.tipe === tipe; }).forEach(function(q) {
-      var prog = state.questProgress[q.id] || 0;
-      var pct = Math.min(100, (prog / q.target) * 100);
-      var selesai = prog >= q.target;
-      html += '<div class="list-item">' +
-        '<div class="list-body">' +
-        '<div class="list-name">' + q.nama + '</div>' +
-        '<div class="list-desc">' + prog + '/' + q.target + ' • Reward: ' + angkaFormat(q.reward) + ' koin</div>' +
-        '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
-        '</div>' +
-        '<div class="list-action"><button class="btn ' + (selesai ? 'btn-hijau' : 'btn-abu') + '" ' + (selesai ? '' : 'disabled') + ' onclick="klaimQuest(\'' + q.id + '\', ' + q.reward + ')">Klaim</button></div>' +
+        html += '<div class="list-item">' +
+          '<div class="li-icon">' + u.icon + '</div>' +
+          '<div class="li-info">' +
+            '<div class="li-title">' + u.name + ' <span style="color:#F59E0B;font-size:10px;">Lv.' + lvl + '</span></div>' +
+            '<div class="li-desc">Produksi: +' + formatNumber(rate) + '/detik</div>' +
+            '<div class="li-cost">🪙 ' + formatNumber(cost) + '</div>' +
+          '</div>' +
+          '<button class="li-btn buy" ' + (canBuy ? '' : 'disabled') + ' onclick="window.buyUpgrade(\'' + u.key + '\')">Beli</button>' +
         '</div>';
-    });
-  });
-  return html;
-}
+      }
 
-// ===================================================================
-// PANEL PROFIL
-// ===================================================================
-function renderProfilPanel() {
-  var u = state.user || {};
-  return '<div class="section-title">👤 Profil</div>' +
-    '<div class="list-item"><div class="list-body"><div class="list-name">Nama</div><div class="list-desc">' + (u.nama || '-') + '</div></div></div>' +
-    '<div class="list-item"><div class="list-body"><div class="list-name">Nomor HP</div><div class="list-desc">' + sensorHP(u.nomor) + '</div></div></div>' +
-    '<div class="list-item"><div class="list-body"><div class="list-name">Level</div><div class="list-desc">' + state.level + '</div></div></div>' +
-    '<div class="list-item"><div class="list-body"><div class="list-name">Total Cuci</div><div class="list-desc">' + state.totalCuci + ' motor</div></div></div>' +
-    '<div class="list-item"><div class="list-body"><div class="list-name">Cabang</div><div class="list-desc">' + state.cabang + '</div></div></div>' +
-    '<div class="mt-12"><button class="btn btn-merah" style="width:100%;padding:12px" onclick="logout()">🚪 Logout</button></div>';
-}
-
-// ===================================================================
-// PANEL CABANG
-// ===================================================================
-function renderCabangPanel() {
-  var cabangs = [
-    { id: 2, harga: 1000000 },
-    { id: 3, harga: 50000000 },
-    { id: 4, harga: 2500000000 },
-    { id: 5, harga: 100000000000 }
-  ];
-  var html = '<div class="section-title">🏢 Cabang</div>';
-  cabangs.forEach(function(c) {
-    var bisa = state.cabang < c.id;
-    html += '<div class="list-item">' +
-      '<div class="list-icon">🏢</div>' +
-      '<div class="list-body">' +
-      '<div class="list-name">Cabang ' + c.id + '</div>' +
-      '<div class="list-desc">Harga: ' + angkaFormat(c.harga) + ' koin</div>' +
-      '</div>' +
-      '<div class="list-action"><button class="btn ' + (bisa ? 'btn-merah' : 'btn-abu') + '" ' + (bisa ? '' : 'disabled') + ' onclick="beliCabang(' + c.id + ', ' + c.harga + ')">Beli</button></div>' +
+      // Info produksi
+      var totalRate = getProductionRate();
+      html += '<div class="section-title">📊 Total Produksi</div>';
+      html += '<div class="list-item">' +
+        '<div class="li-icon">⚡</div>' +
+        '<div class="li-info">' +
+          '<div class="li-title">' + formatNumber(totalRate) + ' koin/detik</div>' +
+          '<div class="li-desc">Pending: ' + formatNumber(state.pendingProduction) + '</div>' +
+        '</div>' +
       '</div>';
-  });
-  return html;
-}
 
-// ===================================================================
-// PANEL CONVERT
-// ===================================================================
-function renderConvertPanel() {
-  return '<div class="section-title">💱 Convert Koin ke Rupiah</div>' +
-    '<div class="list-item"><div class="list-body"><div class="list-name">Rate</div><div class="list-desc">1000 koin = Rp 100 (potong 10%)</div></div></div>' +
-    '<div class="list-item"><div class="list-body"><div class="list-name">Minimal</div><div class="list-desc">10.000 koin</div></div></div>' +
-    '<div class="mt-8"><input type="number" id="convertAmount" placeholder="Jumlah koin" style="width:100%;padding:10px;border-radius:8px;border:2px solid #ddd;font-family:Poppins;font-size:14px"></div>' +
-    '<div class="mt-8"><button class="btn btn-merah" style="width:100%;padding:12px" onclick="convertKoin()">Convert</button></div>' +
-    '<div class="mt-8"><button class="btn btn-emas" style="width:100%;padding:12px" onclick="convertDenganIklan()">🎬 Nonton Iklan (tanpa potong)</button></div>';
-}
+      container.innerHTML = html;
+    }
 
-// ===================================================================
-// PANEL TOPUP
-// ===================================================================
-function renderTopupPanel() {
-  var koins = [
-    { rp: 5000, koin: 100000 },
-    { rp: 10000, koin: 250000 },
-    { rp: 25000, koin: 700000 },
-    { rp: 50000, koin: 1500000 },
-    { rp: 100000, koin: 3500000 }
-  ];
-  var html = '<div class="section-title">💎 Topup Koin</div>';
-  koins.forEach(function(k) {
-    html += '<div class="list-item"><div class="list-body"><div class="list-name">' + angkaFormat(k.koin) + ' Koin</div><div class="list-desc">' + rupiahFormat(k.rp) + '</div></div><div class="list-action"><button class="btn btn-emas" onclick="topupKoin(' + k.rp + ', ' + k.koin + ')">Beli</button></div></div>';
-  });
-  html += '<div class="section-title">💵 Topup Rupiah</div>';
-  var rupiahs = [
-    { rp: 5000, saldo: 5500 },
-    { rp: 10000, saldo: 12000 },
-    { rp: 25000, saldo: 32500 },
-    { rp: 50000, saldo: 70000 },
-    { rp: 100000, saldo: 150000 }
-  ];
-  rupiahs.forEach(function(r) {
-    html += '<div class="list-item"><div class="list-body"><div class="list-name">' + rupiahFormat(r.saldo) + '</div><div class="list-desc">' + rupiahFormat(r.rp) + '</div></div><div class="list-action"><button class="btn btn-emas" onclick="topupRupiah(' + r.rp + ', ' + r.saldo + ')">Beli</button></div></div>';
-  });
-  html += '<div class="section-title">💎 Topup Kristal</div>';
-  var kristals = [
-    { rp: 5000, kristal: 10 },
-    { rp: 10000, kristal: 25 },
-    { rp: 25000, kristal: 70 },
-    { rp: 50000, kristal: 160 },
-    { rp: 100000, kristal: 350 }
-  ];
-  kristals.forEach(function(k) {
-    html += '<div class="list-item"><div class="list-body"><div class="list-name">' + k.kristal + ' Kristal</div><div class="list-desc">' + rupiahFormat(k.rp) + '</div></div><div class="list-action"><button class="btn btn-emas" onclick="topupKristal(' + k.rp + ', ' + k.kristal + ')">Beli</button></div></div>';
-  });
-  html += '<div class="section-title">📸 Upload Bukti</div>' +
-    '<div class="list-item"><div class="list-body"><div class="list-name">Upload Bukti Transfer</div><div class="list-desc">QRIS tersedia di atas</div></div></div>' +
-    '<div class="mt-8"><input type="file" id="buktiTopup" accept="image/*" style="width:100%"></div>' +
-    '<div class="mt-8"><button class="btn btn-merah" style="width:100%;padding:12px" onclick="uploadBukti()">Kirim Bukti</button></div>' +
-    '<div class="mt-8 text-center"><img src="assets/qris.png" style="max-width:200px;border-radius:12px" onerror="this.style.display=\'none\'"></div>';
-  return html;
-}
+    window.buyUpgrade = function(key) {
+      var upgrades = {
+        tukang_semprot: { cost: 100, rate: 1 },
+        tukang_sabun: { cost: 1000, rate: 5 },
+        tukang_bilas: { cost: 10000, rate: 25 },
+        tukang_kering: { cost: 100000, rate: 100 },
+        tukang_poles: { cost: 1000000, rate: 500 },
+        kompresor: { cost: 10000000, rate: 2500 }
+      };
+      var u = upgrades[key];
+      if (!u) return;
+      var lvl = state.upgrades[key] || 0;
+      var cost = Math.floor(u.cost * Math.pow(2.5, lvl));
+      if (state.koin < cost) {
+        showToast('Koin tidak cukup!', 'error');
+        playSound('buzz');
+        return;
+      }
+      state.koin -= cost;
+      state.upgrades[key] = lvl + 1;
+      saveExtra({ exp: state.exp, managers: state.managers, upgrades: state.upgrades, totalCuci: state.totalCuci, tokoItems: state.tokoItems });
+      updateHeader();
+      showToast('Upgrade berhasil! 🎉', 'success');
+      playSound('chime');
+      openPanel('game');
+    };
 
-// ===================================================================
-// PANEL VOUCHER
-// ===================================================================
-function renderVoucherPanel() {
-  return '<div class="section-title">🎟️ Voucher</div>' +
-    '<div class="list-item"><div class="list-body"><div class="list-name">Voucher Cuci Gratis</div><div class="list-desc">70.000 koin atau Rp 7.000 • Max 1/minggu</div></div></div>' +
-    '<div class="mt-8"><button class="btn btn-merah" style="width:100%;padding:12px" onclick="beliVoucher()">Beli Voucher (70.000 koin)</button></div>' +
-    '<div class="mt-8"><button class="btn btn-emas" style="width:100%;padding:12px" onclick="beliVoucherRp()">Beli Voucher (Rp 7.000)</button></div>';
-}
+    function renderManajerPanel(container) {
+      var managers = [
+        { key: 'pak_budi', name: 'Pak Budi Semprot', cost: 500, rate: 1, icon: '🧹' },
+        { key: 'bu_siti', name: 'Bu Siti Sabun', cost: 5000, rate: 5, icon: '🧼' },
+        { key: 'pak_andi', name: 'Pak Andi Bilas', cost: 50000, rate: 25, icon: '💧' },
+        { key: 'bu_rina', name: 'Bu Rina Kering', cost: 500000, rate: 100, icon: '💨' },
+        { key: 'pak_joko', name: 'Pak Joko Poles', cost: 5000000, rate: 500, icon: '✨' },
+        { key: 'teknisi_umar', name: 'Teknisi Umar', cost: 50000000, rate: 2500, icon: '⚙️' }
+      ];
 
-// ===================================================================
-// PANEL CERITA
-// ===================================================================
-function renderCeritaPanel() {
-  var html = '<div class="section-title">📖 Cerita</div>';
-  for (var i = 1; i <= 7; i++) {
-    var unlocked = state.storyUnlocked >= i;
-    var judul = ['Awal Mula', 'Cucian Pertama', 'Modal Bertambah', 'Karyawan Pertama', 'Jutawan', 'Tim Solid', 'Raja Steam'][i-1];
-    html += '<div class="list-item" style="opacity:' + (unlocked ? 1 : 0.5) + '">' +
-      '<div class="list-icon">' + (unlocked ? '📖' : '🔒') + '</div>' +
-      '<div class="list-body"><div class="list-name">Bab ' + i + ': ' + judul + '</div>' +
-      '<div class="list-desc">' + (unlocked ? 'Terbuka' : 'Terkunci') + '</div></div>' +
+      var html = '';
+      var owned = state.managers || [];
+
+      for (var i = 0; i < managers.length; i++) {
+        var m = managers[i];
+        var isOwned = false;
+        for (var j = 0; j < owned.length; j++) {
+          if (owned[j].key === m.key) { isOwned = true; break; }
+        }
+        var canBuy = state.koin >= m.cost;
+
+        html += '<div class="list-item">' +
+          '<div class="li-icon">' + m.icon + '</div>' +
+          '<div class="li-info">' +
+            '<div class="li-title">' + m.name + '</div>' +
+            '<div class="li-desc">+' + m.rate + ' koin/detik</div>' +
+            '<div class="li-cost">🪙 ' + formatNumber(m.cost) + '</div>' +
+          '</div>' +
+          (isOwned ?
+            '<button class="li-btn done">✅ Dimiliki</button>' :
+            '<button class="li-btn buy" ' + (canBuy ? '' : 'disabled') + ' onclick="window.buyManager(\'' + m.key + '\')">Rekrut</button>') +
+        '</div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    window.buyManager = function(key) {
+      var managers = {
+        pak_budi: { name: 'Pak Budi Semprot', cost: 500, rate: 1 },
+        bu_siti: { name: 'Bu Siti Sabun', cost: 5000, rate: 5 },
+        pak_andi: { name: 'Pak Andi Bilas', cost: 50000, rate: 25 },
+        bu_rina: { name: 'Bu Rina Kering', cost: 500000, rate: 100 },
+        pak_joko: { name: 'Pak Joko Poles', cost: 5000000, rate: 500 },
+        teknisi_umar: { name: 'Teknisi Umar', cost: 50000000, rate: 2500 }
+      };
+      var m = managers[key];
+      if (!m) return;
+      if (state.koin < m.cost) {
+        showToast('Koin tidak cukup!', 'error');
+        playSound('buzz');
+        return;
+      }
+      state.koin -= m.cost;
+      if (!state.managers) state.managers = [];
+      state.managers.push({ key: key, name: m.name, rate: m.rate, aktif: true });
+      saveExtra({ exp: state.exp, managers: state.managers, upgrades: state.upgrades, totalCuci: state.totalCuci, tokoItems: state.tokoItems });
+      updateHeader();
+      showToast('Manajer direkrut! 👔', 'success');
+      playSound('chime');
+      openPanel('manajer');
+    };
+
+    function renderTokoPanel(container) {
+      var items = [
+        { name: 'Skin Merah Metalik', koin: 50000, kristal: 4000, icon: '🔴' },
+        { name: 'Tema Steam Mewah', koin: 100000, kristal: 8000, icon: '🎨' },
+        { name: 'Badge Juara', koin: 20000, kristal: 1500, icon: '🏆' },
+        { name: 'Boost 1 Jam', koin: 200000, kristal: 15000, icon: '⚡' },
+        { name: 'Unlock Manajer', koin: 500000, kristal: 40000, icon: '🔓' },
+        { name: 'Voucher Cuci', koin: 70000, kristal: 7000, icon: '🎫' },
+        { name: 'Manajer Legendaris', koin: 0, kristal: 50, icon: '👑' },
+        { name: 'Skin Emas Premium', koin: 0, kristal: 30, icon: '🌟' }
+      ];
+
+      var html = '';
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        var costText = '';
+        if (it.koin > 0) costText = '🪙 ' + formatNumber(it.koin);
+        if (it.kristal > 0) costText += (costText ? ' / ' : '') + '💎 ' + it.kristal;
+        var canBuy = (it.koin === 0 || state.koin >= it.koin) && (it.kristal === 0 || state.kristal >= it.kristal);
+
+        html += '<div class="list-item">' +
+          '<div class="li-icon">' + it.icon + '</div>' +
+          '<div class="li-info">' +
+            '<div class="li-title">' + it.name + '</div>' +
+            '<div class="li-cost">' + costText + '</div>' +
+          '</div>' +
+          '<button class="li-btn buy" ' + (canBuy ? '' : 'disabled') + ' onclick="window.buyToko(' + i + ')">Beli</button>' +
+        '</div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    window.buyToko = function(idx) {
+      var items = [
+        { name: 'Skin Merah Metalik', koin: 50000, kristal: 4000 },
+        { name: 'Tema Steam Mewah', koin: 100000, kristal: 8000 },
+        { name: 'Badge Juara', koin: 20000, kristal: 1500 },
+        { name: 'Boost 1 Jam', koin: 200000, kristal: 15000 },
+        { name: 'Unlock Manajer', koin: 500000, kristal: 40000 },
+        { name: 'Voucher Cuci', koin: 70000, kristal: 7000 },
+        { name: 'Manajer Legendaris', koin: 0, kristal: 50 },
+        { name: 'Skin Emas Premium', koin: 0, kristal: 30 }
+      ];
+      var it = items[idx];
+      if (!it) return;
+      if (it.koin > 0 && state.koin < it.koin) { showToast('Koin tidak cukup!', 'error'); playSound('buzz'); return; }
+      if (it.kristal > 0 && state.kristal < it.kristal) { showToast('Kristal tidak cukup!', 'error'); playSound('buzz'); return; }
+      if (it.koin > 0) state.koin -= it.koin;
+      if (it.kristal > 0) state.kristal -= it.kristal;
+      if (!state.tokoItems) state.tokoItems = [];
+      state.tokoItems.push({ name: it.name, bought: new Date().toISOString() });
+      saveExtra({ exp: state.exp, managers: state.managers, upgrades: state.upgrades, totalCuci: state.totalCuci, tokoItems: state.tokoItems });
+      updateHeader();
+      showToast('Berhasil membeli ' + it.name + '! 🎉', 'success');
+      playSound('chime');
+      openPanel('toko');
+    };
+
+    function renderQuestPanel(container) {
+      var quests = [
+        { id: 1, nama: 'Cuci 5 Motor', tipe: 'harian', target: 5, reward: 500, icon: '🛵' },
+        { id: 2, nama: 'Cuci 10 Motor', tipe: 'harian', target: 10, reward: 1000, icon: '🛵' },
+        { id: 3, nama: 'Dapatkan 1000 Koin', tipe: 'harian', target: 1000, reward: 200, icon: '🪙' },
+        { id: 4, nama: 'Tap 20 Kali', tipe: 'harian', target: 20, reward: 800, icon: '👆' },
+        { id: 5, nama: 'Cuci 3 Moge', tipe: 'harian', target: 3, reward: 1500, icon: '🏍️' },
+        { id: 6, nama: 'Beli 1 Upgrade', tipe: 'harian', target: 1, reward: 300, icon: '⚡' },
+        { id: 7, nama: 'Cuci 50 Motor', tipe: 'mingguan', target: 50, reward: 5000, icon: '🛵' },
+        { id: 8, nama: 'Dapatkan 10000 Koin', tipe: 'mingguan', target: 10000, reward: 2000, icon: '🪙' },
+        { id: 9, nama: 'Rekrut 2 Manajer', tipe: 'mingguan', target: 2, reward: 3000, icon: '👔' },
+        { id: 10, nama: 'Beli 5 Item Toko', tipe: 'mingguan', target: 5, reward: 4000, icon: '🛒' },
+        { id: 11, nama: 'Capai Level 5', tipe: 'spesial', target: 5, reward: 10000, icon: '⭐' },
+        { id: 12, nama: 'Kumpulkan 100 Kristal', tipe: 'spesial', target: 100, reward: 5000, icon: '💎' },
+        { id: 13, nama: 'Buka 3 Cabang', tipe: 'spesial', target: 3, reward: 50000, icon: '🏢' }
+      ];
+
+      var html = '';
+      var sections = ['harian', 'mingguan', 'spesial'];
+      var sectionNames = { harian: '📅 Harian', mingguan: '📆 Mingguan', spesial: '⭐ Spesial' };
+
+      for (var s = 0; s < sections.length; s++) {
+        var sec = sections[s];
+        html += '<div class="section-title">' + sectionNames[sec] + '</div>';
+        for (var i = 0; i < quests.length; i++) {
+          var q = quests[i];
+          if (q.tipe !== sec) continue;
+          var progress = 0;
+          if (q.id === 1 || q.id === 2 || q.id === 7) progress = state.totalCuci;
+          else if (q.id === 3 || q.id === 8) progress = state.koin;
+          else if (q.id === 4) progress = Math.floor(state.totalCuci * 3);
+          else if (q.id === 5) progress = 0;
+          else if (q.id === 6) progress = Object.keys(state.upgrades || {}).length;
+          else if (q.id === 9) progress = (state.managers || []).length;
+          else if (q.id === 10) progress = (state.tokoItems || []).length;
+          else if (q.id === 11) progress = state.level;
+          else if (q.id === 12) progress = state.kristal;
+          else if (q.id === 13) progress = state.branches;
+
+          var pct = Math.min(100, (progress / q.target) * 100);
+          var done = progress >= q.target;
+
+          html += '<div class="list-item">' +
+            '<div class="li-icon">' + q.icon + '</div>' +
+            '<div class="li-info">' +
+              '<div class="li-title">' + q.nama + ' <span class="badge ' + q.tipe + '">' + q.tipe + '</span></div>' +
+              '<div class="li-desc">Progres: ' + Math.min(progress, q.target) + '/' + q.target + '</div>' +
+              '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+              '<div class="li-cost">🪙 ' + formatNumber(q.reward) + '</div>' +
+            '</div>' +
+            (done ?
+              '<button class="li-btn claim" onclick="window.klaimQuest(' + q.id + ',' + q.reward + ')">Klaim</button>' :
+              '<button class="li-btn" disabled>Belum</button>') +
+          '</div>';
+        }
+      }
+
+      container.innerHTML = html;
+    }
+
+    window.klaimQuest = function(id, reward) {
+      state.koin += reward;
+      updateHeader();
+      showToast('+' + reward + ' koin! 🎉', 'success');
+      playSound('chime');
+      openPanel('quest');
+    };
+
+    function renderProfilPanel(container) {
+      var u = state.user;
+      if (!u) return;
+      var html = '<div class="list-item">' +
+        '<div class="li-icon">👤</div>' +
+        '<div class="li-info">' +
+          '<div class="li-title">' + (u.nama || 'Pemain') + '</div>' +
+          '<div class="li-desc">' + (u.nomor || '-') + '</div>' +
+        '</div>' +
       '</div>';
-  }
-  return html;
-}
+      html += '<div class="list-item">' +
+        '<div class="li-icon">🪙</div>' +
+        '<div class="li-info">' +
+          '<div class="li-title">' + formatNumber(state.koin) + ' Koin</div>' +
+          '<div class="li-desc">Pending: ' + formatNumber(state.pendingProduction) + '</div>' +
+        '</div>' +
+      '</div>';
+      html += '<div class="list-item">' +
+        '<div class="li-icon">💵</div>' +
+        '<div class="li-info">' +
+          '<div class="li-title">' + formatRupiah(state.rupiah) + '</div>' +
+          '<div class="li-desc">Saldo Rupiah</div>' +
+        '</div>' +
+      '</div>';
+      html += '<div class="list-item">' +
+        '<div class="li-icon">💎</div>' +
+        '<div class="li-info">' +
+          '<div class="li-title">' + formatNumber(state.kristal) + ' Kristal</div>' +
+          '<div class="li-desc">Mata uang premium</div>' +
+        '</div>' +
+      '</div>';
+      html += '<div class="list-item">' +
+        '<div class="li-icon">⭐</div>' +
+        '<div class="li-info">' +
+          '<div class="li-title">Level ' + state.level + '</div>' +
+          '<div class="li-desc">EXP: ' + state.exp + '</div>' +
+        '</div>' +
+      '</div>';
+      html += '<button class="modal-btn secondary" style="margin-top:16px;" onclick="window.logout()">🚪 Logout</button>';
+      container.innerHTML = html;
+    }
 
-// ===================================================================
-// BIND EVENTS
-// ===================================================================
-function bindEvents() {
-  // Canvas tap
-  canvas.addEventListener('touchstart', function(e) {
-    e.preventDefault();
-    handleCanvasTap(e);
-  }, { passive: false });
-  canvas.addEventListener('mousedown', handleCanvasTap);
+    window.logout = function() {
+      clearSession();
+      window.location.replace('login.html');
+    };
 
-  // Nav
-  document.querySelectorAll('.nav-btn[data-tab]').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
-      this.classList.add('active');
-      openPanel(this.dataset.tab);
-    });
-  });
+    function renderLainnyaPanel(container) {
+      var items = [
+        { tab: 'cabang', icon: '🏢', label: 'Cabang' },
+        { tab: 'convert', icon: '💱', label: 'Convert' },
+        { tab: 'topup', icon: '💰', label: 'Topup' },
+        { tab: 'voucher', icon: '🎫', label: 'Voucher' },
+        { tab: 'cerita', icon: '📖', label: 'Cerita' }
+      ];
+      var html = '<div class="more-grid">';
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        html += '<div class="more-btn" onclick="window.openPanel(\'' + it.tab + '\')">' +
+          '<span class="mb-icon">' + it.icon + '</span>' +
+          '<span class="mb-label">' + it.label + '</span>' +
+        '</div>';
+      }
+      html += '</div>';
+      container.innerHTML = html;
+    }
 
-  // More button
-  $('btnMore').addEventListener('click', function() {
-    var html = '<div class="section-title">📋 Menu Lainnya</div>' +
-      '<div class="list-item" onclick="openPanel(\'cabang\')"><div class="list-icon">🏢</div><div class="list-body"><div class="list-name">Cabang</div></div></div>' +
-      '<div class="list-item" onclick="openPanel(\'convert\')"><div class="list-icon">💱</div><div class="list-body"><div class="list-name">Convert</div></div></div>' +
-      '<div class="list-item" onclick="openPanel(\'topup\')"><div class="list-icon">💎</div><div class="list-body"><div class="list-name">Topup</div></div></div>' +
-      '<div class="list-item" onclick="openPanel(\'voucher\')"><div class="list-icon">🎟️</div><div class="list-body"><div class="list-name">Voucher</div></div></div>' +
-      '<div class="list-item" onclick="openPanel(\'cerita\')"><div class="list-icon">📖</div><div class="list-body"><div class="list-name">Cerita</div></div></div>';
-    $('panelTitle').textContent = 'Lainnya';
-    $('panelContent').innerHTML = html;
-    $('panel').classList.add('open');
-  });
+    window.openPanel = openPanel;
 
-  // Panel close
-  $('panelClose').addEventListener('click', closePanel);
+    function renderCabangPanel(container) {
+      var costs = { 2: 1000000, 3: 50000000, 4: 2500000000, 5: 100000000000 };
+      var html = '';
+      for (var lvl = 2; lvl <= 5; lvl++) {
+        var cost = costs[lvl];
+        var canBuy = state.koin >= cost && state.branches < lvl;
+        var owned = state.branches >= lvl;
+        html += '<div class="list-item">' +
+          '<div class="li-icon">🏢</div>' +
+          '<div class="li-info">' +
+            '<div class="li-title">Cabang ' + lvl + '</div>' +
+            '<div class="li-desc">Tingkatkan cabang ke level ' + lvl + '</div>' +
+            '<div class="li-cost">🪙 ' + formatNumber(cost) + '</div>' +
+          '</div>' +
+          (owned ? '<button class="li-btn done">✅</button>' :
+            '<button class="li-btn buy" ' + (canBuy ? '' : 'disabled') + ' onclick="window.buyCabang(' + lvl + ',' + cost + ')">Beli</button>') +
+        '</div>';
+      }
+      container.innerHTML = html;
+    }
 
-  // Header buttons
-  $('btnMusik').addEventListener('click', function() {
-    state.musikOn = !state.musikOn;
-    this.textContent = state.musikOn ? '🔊' : '🔇';
-    this.classList.toggle('active', state.musikOn);
-  });
-  $('btnMenu').addEventListener('click', function() {
-    $('panelTitle').textContent = 'Menu';
-    $('panelContent').innerHTML = '<div class="section-title">⚙️ Menu</div>' +
-      '<div class="list-item" onclick="logout()"><div class="list-icon">🚪</div><div class="list-body"><div class="list-name">Logout</div></div></div>';
-    $('panel').classList.add('open');
-  });
+    window.buyCabang = function(lvl, cost) {
+      if (state.koin < cost) { showToast('Koin tidak cukup!', 'error'); playSound('buzz'); return; }
+      state.koin -= cost;
+      state.branches = lvl;
+      updateHeader();
+      showToast('Cabang ' + lvl + ' dibuka! 🏢', 'success');
+      playSound('chime');
+      openPanel('cabang');
+    };
 
-  // Modal close on overlay
-  $('modalOverlay').addEventListener('click', function(e) {
-    if (e.target === this) this.classList.remove('open');
-  });
+    function renderConvertPanel(container) {
+      var html = '<div class="list-item">' +
+        '<div class="li-icon">💱</div>' +
+        '<div class="li-info">' +
+          '<div class="li-title">Convert Koin ke Rupiah</div>' +
+          '<div class="li-desc">1000 koin = Rp 100. Min. 10.000 koin</div>' +
+        '</div>' +
+      '</div>';
+      html += '<div class="list-item">' +
+        '<div class="li-icon">🪙</div>' +
+        '<div class="li-info">' +
+          '<div class="li-title">Koin tersedia: ' + formatNumber(state.koin) + '</div>' +
+        '</div>' +
+      '</div>';
+      html += '<div style="padding:12px 0;"><input type="number" id="convertAmount" placeholder="Jumlah koin" style="width:100%;padding:12px;border-radius:10px;border:1px solid #444;background:#1a1a1a;color:#fff;font-family:Poppins;font-size:14px;" min="10000" step="1000"></div>';
+      html += '<button class="modal-btn" onclick="window.doConvert()">Convert</button>';
+      container.innerHTML = html;
+    }
 
-  // Admin close
-  $('adminClose').addEventListener('click', function() {
-    localStorage.removeItem('smp7k_admin');
-    location.reload();
-  });
+    window.doConvert = function() {
+      var input = document.getElementById('convertAmount');
+      var amount = parseInt(input.value) || 0;
+      if (amount < 10000) { showToast('Minimal 10.000 koin!', 'error'); playSound('buzz'); return; }
+      if (amount > state.koin) { showToast('Koin tidak cukup!', 'error'); playSound('buzz'); return; }
+      var rupiah = Math.floor(amount / 1000) * 100;
+      state.koin -= amount;
+      state.rupiah += rupiah;
+      updateHeader();
+      showToast('Convert berhasil! +' + formatRupiah(rupiah), 'success');
+      playSound('chime');
+      openPanel('convert');
+    };
 
-  // Admin tabs
-  document.querySelectorAll('.admin-tab').forEach(function(tab) {
-    tab.addEventListener('click', function() {
-      document.querySelectorAll('.admin-tab').forEach(function(t) { t.classList.remove('active'); });
-      this.classList.add('active');
-      renderAdminTab(this.dataset.atab);
-    });
-  });
-}
+    function renderTopupPanel(container) {
+      var html = '<div class="section-title">🪙 Koin</div>';
+      var koinPackages = [
+        { label: '5rb', price: 5000, koin: 100000 },
+        { label: '10rb', price: 10000, koin: 250000 },
+        { label: '25rb', price: 25000, koin: 700000 },
+        { label: '50rb', price: 50000, koin: 1500000 },
+        { label: '100rb', price: 100000, koin: 3500000 }
+      ];
+      for (var i = 0; i < koinPackages.length; i++) {
+        var p = koinPackages[i];
+        html += '<div class="list-item">' +
+          '<div class="li-icon">🪙</div>' +
+          '<div class="li-info">' +
+            '<div class="li-title">' + formatNumber(p.koin) + ' Koin</div>' +
+            '<div class="li-cost">' + formatRupiah(p.price) + '</div>' +
+          '</div>' +
+          '<button class="li-btn buy" onclick="window.topupItem(\'' + p.label + '\')">Beli</button>' +
+        '</div>';
+      }
+      html += '<div class="section-title">💵 Rupiah</div>';
+      var rupiahPackages = [
+        { label: '5rb', price: 5000, rupiah: 5500 },
+        { label: '10rb', price: 10000, rupiah: 12000 },
+        { label: '25rb', price: 25000, rupiah: 32500 },
+        { label: '50rb', price: 50000, rupiah: 70000 },
+        { label: '100rb', price: 100000, rupiah: 150000 }
+      ];
+      for (var i = 0; i < rupiahPackages.length; i++) {
+        var p = rupiahPackages[i];
+        html += '<div class="list-item">' +
+          '<div class="li-icon">💵</div>' +
+          '<div class="li-info">' +
+            '<div class="li-title">' + formatRupiah(p.rupiah) + '</div>' +
+            '<div class="li-cost">' + formatRupiah(p.price) + '</div>' +
+          '</div>' +
+          '<button class="li-btn buy" onclick="window.topupItem(\'' + p.label + '\')">Beli</button>' +
+        '</div>';
+      }
+      html += '<div class="section-title">💎 Kristal</div>';
+      var kristalPackages = [
+        { label: '5rb', price: 5000, kristal: 10 },
+        { label: '10rb', price: 10000, kristal: 25 },
+        { label: '25rb', price: 25000, kristal: 70 },
+        { label: '50rb', price: 50000, kristal: 160 },
+        { label: '100rb', price: 100000, kristal: 350 }
+      ];
+      for (var i = 0; i < kristalPackages.length; i++) {
+        var p = kristalPackages[i];
+        html += '<div class="list-item">' +
+          '<div class="li-icon">💎</div>' +
+          '<div class="li-info">' +
+            '<div class="li-title">' + p.kristal + ' Kristal</div>' +
+            '<div class="li-cost">' + formatRupiah(p.price) + '</div>' +
+          '</div>' +
+          '<button class="li-btn buy" onclick="window.topupItem(\'' + p.label + '\')">Beli</button>' +
+        '</div>';
+      }
+      container.innerHTML = html;
+    }
 
-function bindPanelEvents(tab) {
-  // Events sudah via onclick inline
-}
+    window.topupItem = function(label) {
+      showToast('Topup ' + label + ' — hubungi admin untuk pembayaran', 'info');
+    };
 
-// ===================================================================
-// BELI UPGRADE
-// ===================================================================
-function beliUpgrade(id) {
-  var upgrades = {
-    tukang_semprot: { harga: 100, produksi: 1 },
-    tukang_sabun: { harga: 1000, produksi: 5 },
-    tukang_bilas: { harga: 10000, produksi: 25 },
-    tukang_kering: { harga: 100000, produksi: 100 },
-    tukang_poles: { harga: 1000000, produksi: 500 },
-    kompresor: { harga: 10000000, produksi: 2500 }
-  };
-  var u = upgrades[id];
-  if (!u) return;
-  var lvl = state.upgrade[id] || 0;
-  var harga = Math.floor(u.harga * Math.pow(2.5, lvl));
-  if (state.koin < harga) { toast('Koin tidak cukup!'); playSound('buzz'); return; }
-  state.koin -= harga;
-  state.upgrade[id] = lvl + 1;
-  updateExtra('upgrade', state.upgrade);
-  updateHeader();
-  playSound('chime');
-  toast('Upgrade berhasil! Level ' + (lvl + 1));
-  renderPanelContent('game');
-}
+    function renderVoucherPanel(container) {
+      var html = '<div class="list-item">' +
+        '<div class="li-icon">🎫</div>' +
+        '<div class="li-info">' +
+          '<div class="li-title">Voucher Cuci</div>' +
+          '<div class="li-desc">70.000 koin atau Rp 7.000. Maks 1/minggu</div>' +
+        '</div>' +
+      '</div>';
+      html += '<div class="list-item">' +
+        '<div class="li-icon">📱</div>' +
+        '<div class="li-info">' +
+          '<div class="li-title">Konfirmasi Nomor HP</div>' +
+          '<div class="li-desc">' + (state.user ? state.user.nomor : '-') + '</div>' +
+        '</div>' +
+      '</div>';
+      html += '<button class="modal-btn" onclick="window.beliVoucher()">Beli Voucher</button>';
+      container.innerHTML = html;
+    }
 
-// ===================================================================
-// BELI MANAJER
-// ===================================================================
-function beliManajer(id, harga) {
-  if (state.koin < harga) { toast('Koin tidak cukup!'); playSound('buzz'); return; }
-  state.koin -= harga;
-  state.manajer[id] = (state.manajer[id] || 0) + 1;
-  updateExtra('manajer', state.manajer);
-  updateHeader();
-  playSound('chime');
-  toast('Manajer direkrut!');
-  cekStory();
-  renderPanelContent('manajer');
-}
+    window.beliVoucher = function() {
+      if (state.koin < 70000 && state.rupiah < 7000) {
+        showToast('Koin/Rupiah tidak cukup!', 'error');
+        playSound('buzz');
+        return;
+      }
+      var kode = 'MP7K-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      if (state.koin >= 70000) state.koin -= 70000;
+      else state.rupiah -= 7000;
+      updateHeader();
+      showToast('Voucher: ' + kode, 'success');
+      playSound('chime');
+    };
 
-// ===================================================================
-// BELI TOKO
-// ===================================================================
-function beliToko(id) {
-  toast('Fitur toko segera hadir!');
-}
+    function renderCeritaPanel(container) {
+      var chapters = [
+        { id: 1, title: 'Bab 1: Awal Mula', unlocked: true },
+        { id: 2, title: 'Bab 2: Pelanggan Pertama', unlocked: state.totalCuci >= 5 },
+        { id: 3, title: 'Bab 3: Koin Pertama', unlocked: state.koin >= 10000 },
+        { id: 4, title: 'Bab 4: Manajer Pertama', unlocked: (state.managers || []).length >= 1 },
+        { id: 5, title: 'Bab 5: Jutawan', unlocked: state.koin >= 1000000 },
+        { id: 6, title: 'Bab 6: Tim Solid', unlocked: (state.managers || []).length >= 3 },
+        { id: 7, title: 'Bab 7: Raja Steam', unlocked: state.koin >= 1000000000 }
+      ];
+      var html = '';
+      for (var i = 0; i < chapters.length; i++) {
+        var c = chapters[i];
+        html += '<div class="list-item" onclick="window.bukaCerita(' + c.id + ')">' +
+          '<div class="li-icon">' + (c.unlocked ? '📖' : '🔒') + '</div>' +
+          '<div class="li-info">' +
+            '<div class="li-title">' + c.title + '</div>' +
+            '<div class="li-desc">' + (c.unlocked ? 'Terbuka' : 'Terkunci') + '</div>' +
+          '</div>' +
+        '</div>';
+      }
+      container.innerHTML = html;
 
-// ===================================================================
-// KLAIM QUEST
-// ===================================================================
-function klaimQuest(id, reward) {
-  state.koin += reward;
-  updateHeader();
-  playSound('chime');
-  toast('Quest selesai! +' + angkaFormat(reward) + ' koin');
-  state.questProgress[id] = 0;
-  updateExtra('questProgress', state.questProgress);
-  renderPanelContent('quest');
-}
+      if (state.storyUnlocked === 0) {
+        setTimeout(function() { bukaCerita(1); }, 500);
+      }
+    }
 
-// ===================================================================
-// BELI CABANG
-// ===================================================================
-function beliCabang(id, harga) {
-  if (state.koin < harga) { toast('Koin tidak cukup!'); playSound('buzz'); return; }
-  state.koin -= harga;
-  state.cabang = id;
-  updateExtra('cabang', state.cabang);
-  updateHeader();
-  playSound('chime');
-  toast('Cabang ' + id + ' terbuka!');
-  renderPanelContent('cabang');
-}
+    window.bukaCerita = function(id) {
+      var chapters = {
+        1: { title: 'Bab 1: Awal Mula', text: 'Pak Aldi membuka usaha cuci motor "Steam MP 7000". Mulailah petualanganmu!' },
+        2: { title: 'Bab 2: Pelanggan Pertama', text: 'Motor pertama datang! Cuci dengan baik dan dapatkan koin.' },
+        3: { title: 'Bab 3: Koin Pertama', text: 'Koin mulai mengalir. Waktunya upgrade peralatan!' },
+        4: { title: 'Bab 4: Manajer Pertama', text: 'Rekrut manajer untuk membantu produksi koin.' },
+        5: { title: 'Bab 5: Jutawan', text: 'Kamu sudah mengumpulkan 1 juta koin! Luar biasa!' },
+        6: { title: 'Bab 6: Tim Solid', text: 'Dengan 3 manajer, usahamu semakin besar.' },
+        7: { title: 'Bab 7: Raja Steam', text: '1 miliar koin! Kamu adalah Raja Steam MP 7000!' }
+      };
+      var c = chapters[id];
+      if (!c) return;
+      var img = getImage('pak-aldi');
+      var avatar = img ? '<img src="' + img.src + '" alt="Pak Aldi">' : '👨‍🔧';
+      showModal(
+        '<div class="modal-avatar">' + avatar + '</div>' +
+        '<div class="modal-title">' + c.title + '</div>' +
+        '<div class="modal-text">' + c.text + '</div>' +
+        '<button class="modal-btn" onclick="window.closeModal();window.afterStory(' + id + ')">Lanjut</button>'
+      );
+    };
 
-// ===================================================================
-// CONVERT
-// ===================================================================
-function convertKoin() {
-  var input = $('convertAmount');
-  if (!input) return;
-  var amount = parseInt(input.value) || 0;
-  if (amount < 10000) { toast('Minimal 10.000 koin!'); return; }
-  if (state.koin < amount) { toast('Koin tidak cukup!'); return; }
-  var rupiah = (amount / 1000) * 100;
-  var potong = rupiah * 0.1;
-  var hasil = rupiah - potong;
-  state.koin -= amount;
-  state.rupiah += hasil;
-  updateHeader();
-  playSound('chime');
-  toast('Convert berhasil! +' + rupiahFormat(hasil));
-  syncKeServer();
-  renderPanelContent('convert');
-}
+    window.afterStory = function(id) {
+      if (id > state.storyUnlocked) {
+        state.storyUnlocked = id;
+        if (state.user) {
+          state.user.story_unlocked = id;
+          saveUser(state.user);
+        }
+      }
+    };
 
-function convertDenganIklan() {
-  toast('Tonton iklan untuk convert tanpa potong!');
-  window.open('https://www.profitableratecpmnetwork.com/q9qnyhdf9c?key=56f60182ff2837aef7d8e65616a77746', '_blank');
-}
+    // ============================================================
+    // INIT
+    // ============================================================
+    function init() {
+      console.log('Dashboard: load');
 
-// ===================================================================
-// TOPUP
-// ===================================================================
-function topupKoin(rp, koin) {
-  toast('Topup ' + rupiahFormat(rp) + ' untuk ' + angkaFormat(koin) + ' koin');
-}
-function topupRupiah(rp, saldo) {
-  toast('Topup ' + rupiahFormat(rp) + ' untuk ' + rupiahFormat(saldo));
-}
-function topupKristal(rp, kristal) {
-  toast('Topup ' + rupiahFormat(rp) + ' untuk ' + kristal + ' kristal');
-}
-function uploadBukti() {
-  toast('Bukti terkirim! Menunggu verifikasi admin.');
-}
+      // Cek admin
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('admin') === '1' && localStorage.getItem('smp7k_admin')) {
+        state.adminMode = true;
+      }
 
-// ===================================================================
-// VOUCHER
-// ===================================================================
-function beliVoucher() {
-  var now = Date.now();
-  if (now - state.voucherLast < 7 * 24 * 60 * 60 * 1000) {
-    toast('Voucher mingguan sudah dipakai!');
-    return;
-  }
-  if (state.koin < 70000) { toast('Koin tidak cukup!'); return; }
-  state.koin -= 70000;
-  state.voucherLast = now;
-  updateExtra('voucherLast', now);
-  updateHeader();
-  var kode = 'MP7K-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-  toast('Voucher: ' + kode);
-  playSound('chime');
-}
-function beliVoucherRp() {
-  toast('Voucher Rp 7.000 segera diproses!');
-}
+      // Resize canvas
+      resizeCanvas();
 
-// ===================================================================
-// LOGOUT
-// ===================================================================
-function logout() {
-  if (confirm('Yakin ingin logout?')) {
-    clearUserSession();
-    window.location.replace('index.html');
-  }
-}
+      // Load images
+      loadImage('steam-bg', 'assets/steam-bg.png', 0, false);
+      loadImage('motor-bebek-kotor', 'assets/motor-bebek-kotor.png', 40, true);
+      loadImage('motor-bebek-bersih', 'assets/motor-bebek-bersih.png', 40, true);
+      loadImage('motor-moge-kotor', 'assets/motor-moge-kotor.png', 40, true);
+      loadImage('motor-moge-bersih', 'assets/motor-moge-bersih.png', 40, true);
+      loadImage('koin', 'assets/koin.png', 30, true);
+      loadImage('kristal', 'assets/kristal.png', 20, true);
+      loadImage('rupiah', 'assets/rupiah.png', 25, true);
+      loadImage('pak-aldi', 'assets/pak-aldi.png', 40, true);
+      loadImage('qris', 'assets/qris.png', 0, false);
 
-// ===================================================================
-// ADMIN
-// ===================================================================
-function openAdmin() {
-  $('adminPanel').classList.add('open');
-  state.admin = true;
-  renderAdminTab('dashboard');
-}
+      // Load user
+      loadUserData();
 
-function renderAdminTab(tab) {
-  var html = '';
-  if (tab === 'dashboard') {
-    html = '<div class="section-title">📊 Dashboard</div>' +
-      '<div class="list-item"><div class="list-body"><div class="list-name">Total Pemain</div><div class="list-desc">-</div></div></div>' +
-      '<div class="list-item"><div class="list-body"><div class="list-name">Total Koin</div><div class="list-desc">-</div></div></div>';
-  } else {
-    html = '<div class="section-title">' + tab + '</div><p style="color:#999;font-size:12px">Fitur admin segera hadir.</p>';
-  }
-  $('adminContent').innerHTML = html;
-}
+      // Setup nav
+      var navItems = document.querySelectorAll('.nav-item');
+      for (var i = 0; i < navItems.length; i++) {
+        (function(item) {
+          item.addEventListener('click', function() {
+            var tab = item.getAttribute('data-tab');
+            if (tab === 'lainnya') {
+              openPanel('lainnya');
+            } else {
+              openPanel(tab);
+            }
+          });
+        })(navItems[i]);
+      }
 
-// ===================================================================
-// MULAI
-// ===================================================================
-document.addEventListener('DOMContentLoaded', function() {
-  init();
-});
+      // Panel close
+      document.getElementById('panelClose').addEventListener('click', closePanel);
+      document.getElementById('panelOverlay').addEventListener('click', closePanel);
 
-// Update partikels di render loop
-var _origRender = renderGame;
-renderGame = function() {
-  _origRender();
-  updatePartikels();
-  renderPartikels();
-};
+      // Header buttons
+      document.getElementById('btnWeather').addEventListener('click', function() {
+        state.weather = state.weather === 'panas' ? 'hujan' : 'panas';
+        this.textContent = state.weather === 'panas' ? '☀️' : '🌧️';
+        showToast(state.weather === 'panas' ? '☀️ Cuaca panas!' : '🌧️ Cuaca hujan!', 'info');
+      });
 
-// Resize canvas setelah orientasi berubah
-window.addEventListener('orientationchange', function() {
-  setTimeout(resizeCanvas, 300);
-});
+      document.getElementById('btnMusic').addEventListener('click', function() {
+        state.musikOn = !state.musikOn;
+        var audio = document.getElementById('bgMusic');
+        if (state.musikOn) {
+          audio.play().catch(function() {});
+          this.textContent = '🔊';
+        } else {
+          audio.pause();
+          this.textContent = '🔇';
+        }
+      });
 
-// Prevent zoom
-document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
-document.addEventListener('dblclick', function(e) { e.preventDefault(); });
-</script>
+      document.getElementById('btnMenu').addEventListener('click', function() {
+        openPanel('lainnya');
+      });
+
+      document.getElementById('btnLogout').addEventListener('click', function() {
+        showModal(
+          '<div class="modal-title">Keluar?</div>' +
+          '<div class="modal-text">Yakin ingin keluar dari game?</div>' +
+          '<button class="modal-btn" onclick="window.logout()">Ya, Keluar</button>' +
+          '<button class="modal-btn secondary" onclick="window.closeModal()">Batal</button>'
+        );
+      });
+
+      // Canvas tap
+      canvas.addEventListener('click', function(e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        tapMotor(x, y);
+      });
+
+      // Touch
+      canvas.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        var touch = e.touches[0];
+        var rect = canvas.getBoundingClientRect();
+        var x = touch.clientX - rect.left;
+        var y = touch.clientY - rect.top;
+        tapMotor(x, y);
+      }, { passive: false });
+
+      // Start game loop
+      requestAnimationFrame(gameLoop);
+
+      // Sync setiap 10 detik
+      setInterval(function() {
+        if (state.user) syncToServer();
+      }, 10000);
+
+      // Update produksi
+      setInterval(function() {
+        updateHeader();
+      }, 1000);
+
+      // Init audio on first interaction
+      document.addEventListener('touchstart', function() {
+        initAudio();
+        var audio = document.getElementById('bgMusic');
+        if (state.musikOn && audio.paused) {
+          audio.play().catch(function() {});
+        }
+      }, { once: true });
+
+      document.addEventListener('click', function() {
+        initAudio();
+      }, { once: true });
+
+      // Tampilkan panel game pertama kali
+      setTimeout(function() {
+        openPanel('game');
+      }, 1000);
+    }
+
+    // ============================================================
+    // START
+    // ============================================================
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+  })();
+  </script>
 </body>
 </html>
