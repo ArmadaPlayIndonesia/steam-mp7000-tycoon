@@ -2,215 +2,693 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Steam MP 7000 Tycoon — Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Steam MP 7000 Tycoon</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-    :root{
-      --merah:#C8102E;--merah-gelap:#a00d24;--emas:#F59E0B;--emas-gelap:#d97706;
-      --putih:#FAFAFA;--abu:#f0f0f0;--gelap:#1a1a2e;--hijau:#10b981;--biru:#3b82f6;
-      --shadow:0 8px 32px rgba(0,0,0,0.18);--radius:16px;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
-    html,body{width:100%;height:100%;overflow:hidden;font-family:'Poppins',sans-serif;background:#1a1a2e;user-select:none;}
-    #app{position:relative;width:100vw;height:100vh;overflow:hidden;background:linear-gradient(135deg,#C8102E,#8b0a1e);}
-    canvas{position:absolute;top:0;left:0;width:100%;height:100%;}
-    #gameCanvas{z-index:1;}
-    #cuacaCanvas{z-index:2;pointer-events:none;}
-
-    /* ========== HEADER ========== */
-    #appHeader{
-      position:absolute;top:0;left:0;right:0;z-index:20;
-      background:linear-gradient(180deg,rgba(0,0,0,0.55),rgba(0,0,0,0.15));
-      backdrop-filter:blur(6px);padding:6px 10px;display:flex;flex-direction:column;gap:4px;
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #1a1a1a;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      color: #FAFAFA;
     }
-    .header-row{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:nowrap;}
-    .header-left{display:flex;align-items:center;gap:6px;min-width:0;flex:1;}
-    .logo-mp{
-      width:32px;height:32px;border-radius:8px;background:var(--emas);
-      display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;
-      color:var(--merah);flex-shrink:0;box-shadow:0 2px 8px rgba(245,158,11,0.5);
+    #app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #2a2a2a;
     }
-    .player-info{display:flex;flex-direction:column;min-width:0;overflow:hidden;}
-    .player-name{font-size:11px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .player-phone{font-size:9px;color:#ddd;}
-    .header-right{display:flex;align-items:center;gap:4px;flex-shrink:0;}
-    .icon-btn{
-      width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,0.18);
-      color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;
-      cursor:pointer;transition:all .2s;flex-shrink:0;
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
     }
-    .icon-btn:active{transform:scale(.85);background:rgba(255,255,255,0.35);}
-    .saldo-row{display:flex;align-items:center;justify-content:space-between;gap:4px;}
-    .saldo-item{display:flex;align-items:center;gap:3px;background:rgba(0,0,0,0.35);border-radius:20px;padding:2px 8px 2px 4px;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;}
-    .saldo-item img{width:18px;height:18px;object-fit:contain;}
-    .saldo-item .emoji-fb{font-size:14px;}
-    .level-wrap{flex:1;margin-left:4px;min-width:40px;}
-    .level-text{font-size:9px;color:#fff;font-weight:600;margin-bottom:1px;text-align:right;}
-    .level-bar{height:5px;background:rgba(255,255,255,0.25);border-radius:4px;overflow:hidden;}
-    .level-bar-fill{height:100%;background:linear-gradient(90deg,var(--emas),#fbbf24);border-radius:4px;transition:width .4s;}
-    .cuaca-icon{font-size:16px;animation:bounce 2s infinite;}
-    @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-
-    /* ========== BOTTOM NAV ========== */
-    #bottomNav{
-      position:absolute;bottom:0;left:0;right:0;z-index:20;
-      background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);
-      display:flex;overflow-x:auto;padding:4px 2px;gap:0;
-      border-top:2px solid rgba(200,16,46,0.15);scrollbar-width:none;
+    #gameCanvas {
+      z-index: 1;
+      touch-action: none;
     }
-    #bottomNav::-webkit-scrollbar{display:none;}
-    .nav-item{
-      flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;
-      padding:4px 8px;border:none;background:transparent;cursor:pointer;
-      font-family:'Poppins',sans-serif;font-size:8px;font-weight:600;color:#666;
-      transition:all .2s;border-radius:10px;position:relative;min-width:52px;
-    }
-    .nav-item .nav-emoji{font-size:18px;line-height:1;}
-    .nav-item.active{color:var(--merah);background:rgba(200,16,46,0.08);}
-    .nav-item:active{transform:scale(.9);}
-    .nav-badge{
-      position:absolute;top:0;right:2px;background:var(--merah);color:#fff;
-      font-size:7px;font-weight:700;border-radius:8px;padding:0 4px;min-width:14px;text-align:center;
+    #cuacaCanvas {
+      z-index: 2;
+      pointer-events: none;
     }
 
-    /* ========== PANEL SLIDE ========== */
-    #panelSlide{
-      position:absolute;bottom:0;left:0;right:0;z-index:30;
-      background:var(--putih);border-radius:22px 22px 0 0;
-      box-shadow:0 -8px 40px rgba(0,0,0,0.3);
-      transform:translateY(105%);transition:transform .45s cubic-bezier(.34,1.56,.64,1);
-      max-height:78vh;display:flex;flex-direction:column;
+    /* HEADER */
+    #appHeader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      background: linear-gradient(180deg, rgba(200,16,46,0.95) 0%, rgba(200,16,46,0.85) 80%, rgba(200,16,46,0) 100%);
+      padding: 8px 10px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
     }
-    #panelSlide.open{transform:translateY(0);}
-    .panel-handle{width:40px;height:4px;background:#ccc;border-radius:4px;margin:8px auto 4px;flex-shrink:0;}
-    .panel-header{display:flex;align-items:center;justify-content:space-between;padding:0 16px 8px;flex-shrink:0;}
-    .panel-title{font-size:16px;font-weight:800;color:var(--merah);}
-    .panel-close{width:30px;height:30px;border-radius:50%;border:none;background:var(--abu);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-    .panel-body{overflow-y:auto;padding:0 14px 20px;flex:1;-webkit-overflow-scrolling:touch;}
+    .header-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: auto;
+    }
+    .header-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: #F59E0B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: #C8102E;
+      box-shadow: 0 2px 8px rgba(245,158,11,0.5);
+      flex-shrink: 0;
+    }
+    .header-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .header-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .header-phone {
+      font-size: 10px;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.2;
+    }
+    .header-weather {
+      font-size: 22px;
+      width: 34px;
+      text-align: center;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+    .header-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(4px);
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s;
+    }
+    .header-btn:active { transform: scale(0.9); }
+    .header-balance {
+      display: flex;
+      gap: 6px;
+      pointer-events: auto;
+    }
+    .balance-item {
+      flex: 1;
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(6px);
+      border-radius: 10px;
+      padding: 4px 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid rgba(255,255,255,0.15);
+      min-width: 0;
+    }
+    .balance-icon {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      flex-shrink: 0;
+      image-rendering: auto;
+    }
+    .balance-icon-emoji {
+      font-size: 15px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .balance-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+    .level-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: auto;
+    }
+    .level-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #F59E0B;
+      background: rgba(0,0,0,0.4);
+      padding: 2px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+    .level-bar {
+      flex: 1;
+      height: 6px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .level-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #F59E0B, #fbbf24);
+      border-radius: 6px;
+      transition: width 0.4s;
+      width: 0%;
+    }
 
-    /* ========== TOAST ========== */
-    #toastBox{position:absolute;top:70px;left:50%;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;width:90%;max-width:340px;}
-    .toast{
-      background:rgba(30,30,50,0.92);color:#fff;padding:8px 18px;border-radius:24px;
-      font-size:12px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,0.3);
-      animation:toastIn .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;
-      border-left:4px solid var(--emas);
+    /* BOTTOM NAV */
+    #bottomNav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      overflow-x: auto;
+      padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+      gap: 2px;
+      scrollbar-width: none;
+      border-top: 1px solid rgba(200,16,46,0.15);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
     }
-    .toast.success{border-left-color:var(--hijau);}
-    .toast.error{border-left-color:var(--merah);}
-    @keyframes toastIn{from{opacity:0;transform:translateY(-20px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+    #bottomNav::-webkit-scrollbar { display: none; }
+    .nav-item {
+      flex: 0 0 auto;
+      min-width: 58px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 4px 2px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      position: relative;
+    }
+    .nav-item:active { transform: scale(0.92); }
+    .nav-item.active { background: rgba(200,16,46,0.12); }
+    .nav-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+    .nav-label {
+      font-size: 9px;
+      font-weight: 600;
+      color: #333;
+      white-space: nowrap;
+    }
+    .nav-item.active .nav-label { color: #C8102E; }
+    .nav-badge {
+      position: absolute;
+      top: 0;
+      right: 6px;
+      background: #C8102E;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      min-width: 14px;
+      height: 14px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
+      border: 1.5px solid #fff;
+    }
 
-    /* ========== MODAL OVERLAY ========== */
-    #modalOverlay{position:absolute;inset:0;z-index:90;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:20px;}
-    #modalOverlay.show{display:flex;animation:fadeIn .3s;}
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-    .modal-box{
-      background:var(--putih);border-radius:20px;padding:20px;max-width:360px;width:100%;
-      box-shadow:0 20px 60px rgba(0,0,0,0.4);border:3px solid var(--emas);
-      animation:modalIn .4s cubic-bezier(.34,1.56,.64,1);max-height:80vh;overflow-y:auto;
+    /* PANEL SLIDE */
+    #panelSlide {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      background: #FAFAFA;
+      border-radius: 22px 22px 0 0;
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
+      transform: translateY(110%);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-height: 72vh;
+      display: flex;
+      flex-direction: column;
+      pointer-events: none;
+      color: #222;
     }
-    @keyframes modalIn{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
-    .modal-title{font-size:16px;font-weight:800;color:var(--merah);margin-bottom:8px;text-align:center;}
-    .modal-text{font-size:12px;color:#444;line-height:1.6;margin-bottom:12px;}
-    .modal-btn{
-      width:100%;padding:12px;border:none;border-radius:14px;font-family:'Poppins',sans-serif;
-      font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:6px;
+    #panelSlide.open {
+      transform: translateY(0);
+      pointer-events: auto;
     }
-    .modal-btn.primary{background:linear-gradient(135deg,var(--merah),#e11d48);color:#fff;box-shadow:0 4px 16px rgba(200,16,46,0.4);}
-    .modal-btn.gold{background:linear-gradient(135deg,var(--emas),#fbbf24);color:#fff;box-shadow:0 4px 16px rgba(245,158,11,0.4);}
-    .modal-btn.ghost{background:var(--abu);color:#555;}
-    .modal-btn:active{transform:scale(.96);}
-    .modal-btn:disabled{opacity:.45;cursor:not-allowed;}
+    .panel-handle {
+      width: 40px;
+      height: 4px;
+      background: #ddd;
+      border-radius: 4px;
+      margin: 8px auto 4px;
+      flex-shrink: 0;
+    }
+    .panel-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #C8102E;
+      text-align: center;
+      padding: 4px 16px 8px;
+      flex-shrink: 0;
+    }
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 12px 20px;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+    .panel-content::-webkit-scrollbar { width: 4px; }
+    .panel-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 
-    /* ========== MODAL CERITA ========== */
-    #modalCerita{position:absolute;inset:0;z-index:95;display:none;align-items:center;justify-content:center;padding:16px;}
-    #modalCerita.show{display:flex;}
-    .cerita-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.7);}
-    .cerita-box{
-      position:relative;background:var(--putih);border-radius:20px;padding:22px 18px;
-      max-width:360px;width:100%;border:3px solid var(--emas);box-shadow:0 20px 60px rgba(0,0,0,0.5);
-      animation:modalIn .5s cubic-bezier(.34,1.56,.64,1);text-align:center;max-height:85vh;overflow-y:auto;
+    /* UPGRADE / ITEM CARDS */
+    .upgrade-card, .item-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 10px;
+      margin-bottom: 8px;
+      border: 1.5px solid #eee;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: border-color 0.2s, transform 0.15s;
     }
-    .cerita-img{width:80px;height:80px;object-fit:contain;margin-bottom:8px;border-radius:50%;background:var(--abu);padding:4px;}
-    .cerita-img-fb{font-size:48px;margin-bottom:8px;display:block;}
-    .cerita-bab{font-size:10px;font-weight:700;color:var(--emas-gelap);text-transform:uppercase;letter-spacing:1px;}
-    .cerita-judul{font-size:17px;font-weight:800;color:var(--merah);margin:4px 0 10px;}
-    .cerita-dialog{font-size:12.5px;color:#333;line-height:1.7;margin-bottom:16px;text-align:left;background:var(--abu);padding:12px;border-radius:12px;}
-
-    /* ========== KONTEN PANEL ========== */
-    .card{background:#fff;border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 2px 12px rgba(0,0,0,0.07);border:1.5px solid #f0f0f0;}
-    .card-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-    .card-title{font-size:13px;font-weight:700;color:#222;}
-    .card-sub{font-size:10px;color:#888;margin-top:2px;}
-    .card-desc{font-size:11px;color:#666;margin-top:4px;line-height:1.4;}
-    .btn-sm{
-      padding:8px 14px;border:none;border-radius:10px;font-family:'Poppins',sans-serif;
-      font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;
+    .upgrade-card:active, .item-card:active { transform: scale(0.98); }
+    .upgrade-card.affordable { border-color: #F59E0B; }
+    .upgrade-card.locked { opacity: 0.55; }
+    .upgrade-emoji {
+      font-size: 28px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f7f7f7;
+      border-radius: 12px;
+      flex-shrink: 0;
     }
-    .btn-sm.primary{background:var(--merah);color:#fff;}
-    .btn-sm.gold{background:var(--emas);color:#fff;}
-    .btn-sm.ghost{background:var(--abu);color:#666;}
-    .btn-sm:active{transform:scale(.94);}
-    .btn-sm:disabled{opacity:.4;cursor:not-allowed;}
-    .progress-bar{height:8px;background:#eee;border-radius:6px;overflow:hidden;margin-top:6px;}
-    .progress-fill{height:100%;background:linear-gradient(90deg,var(--merah),var(--emas));border-radius:6px;transition:width .4s;}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
-    .input-field{
-      width:100%;padding:10px 12px;border:2px solid #e5e5e5;border-radius:12px;
-      font-family:'Poppins',sans-serif;font-size:13px;outline:none;transition:border .2s;
+    .upgrade-info {
+      flex: 1;
+      min-width: 0;
     }
-    .input-field:focus{border-color:var(--merah);}
-    .section-title{font-size:13px;font-weight:800;color:var(--merah);margin:14px 0 8px;display:flex;align-items:center;gap:6px;}
-    .section-title:first-child{margin-top:0;}
-    .empty-msg{text-align:center;color:#aaa;font-size:12px;padding:24px 0;font-style:italic;}
-    .chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;}
-    .chip.green{background:#d1fae5;color:#065f46;}
-    .chip.red{background:#fee2e2;color:#991b1b;}
-    .chip.gold{background:#fef3c7;color:#92400e;}
-    .chip.blue{background:#dbeafe;color:#1e40af;}
-    .locked{opacity:.45;filter:grayscale(.8);}
-
-    /* ========== PANEL ADMIN ========== */
-    #panelAdmin{
-      position:absolute;inset:0;z-index:200;background:#f5f5f7;display:none;
-      flex-direction:column;overflow:hidden;
+    .upgrade-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #222;
+      line-height: 1.2;
     }
-    #panelAdmin.show{display:flex;}
-    .admin-header{
-      background:linear-gradient(135deg,var(--merah),#8b0a1e);color:#fff;
-      padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
-      box-shadow:0 4px 16px rgba(0,0,0,0.2);flex-shrink:0;
+    .upgrade-desc {
+      font-size: 10px;
+      color: #888;
+      line-height: 1.3;
     }
-    .admin-header h2{font-size:16px;font-weight:800;}
-    .admin-body{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;}
-    .admin-tabs{display:flex;gap:4px;overflow-x:auto;padding:8px 14px;background:#fff;border-bottom:2px solid #eee;flex-shrink:0;scrollbar-width:none;}
-    .admin-tabs::-webkit-scrollbar{display:none;}
-    .admin-tab{
-      flex:0 0 auto;padding:7px 14px;border:none;border-radius:10px;background:var(--abu);
-      font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;color:#666;cursor:pointer;transition:all .2s;
+    .upgrade-level {
+      font-size: 10px;
+      font-weight: 600;
+      color: #C8102E;
     }
-    .admin-tab.active{background:var(--merah);color:#fff;}
-    .admin-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
-    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-    .stat-box{background:linear-gradient(135deg,#fff,#f8f8f8);border-radius:12px;padding:14px;text-align:center;border:1.5px solid #eee;}
-    .stat-val{font-size:20px;font-weight:800;color:var(--merah);}
-    .stat-lbl{font-size:10px;color:#888;margin-top:2px;}
+    .upgrade-action {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .btn-buy {
+      background: linear-gradient(135deg, #C8102E, #e63946);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 3px 10px rgba(200,16,46,0.3);
+    }
+    .btn-buy:active { transform: scale(0.93); }
+    .btn-buy:disabled {
+      background: #ccc;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-buy.gold {
+      background: linear-gradient(135deg, #F59E0B, #fbbf24);
+      box-shadow: 0 3px 10px rgba(245,158,11,0.4);
+      color: #7c2d12;
+    }
+    .btn-buy.blue {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      box-shadow: 0 3px 10px rgba(37,99,235,0.3);
+    }
 
-    .float-coin{position:absolute;font-size:16px;font-weight:800;color:var(--emas);pointer-events:none;z-index:50;text-shadow:0 2px 6px rgba(0,0,0,0.4);animation:floatUp .8s ease-out forwards;}
-    @keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-60px) scale(1.4)}}
+    /* STORY MODAL */
+    #modalCerita {
+      position: absolute;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    #modalCerita.show {
+      display: flex;
+      opacity: 1;
+    }
+    .cerita-box {
+      background: #fff;
+      border: 3px solid #F59E0B;
+      border-radius: 20px;
+      padding: 20px 18px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      transform: scale(0.85);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      color: #222;
+    }
+    #modalCerita.show .cerita-box { transform: scale(1); }
+    .cerita-img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin: 0 auto 8px;
+      display: block;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    }
+    .cerita-img-emoji {
+      font-size: 56px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .cerita-judul {
+      font-size: 17px;
+      font-weight: 800;
+      color: #C8102E;
+      margin-bottom: 10px;
+    }
+    .cerita-dialog {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #444;
+      margin-bottom: 16px;
+      min-height: 60px;
+    }
+    .cerita-dialog p { margin-bottom: 6px; }
+    .btn-cerita {
+      background: linear-gradient(135deg, #C8102E, #e63946);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 11px 32px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(200,16,46,0.4);
+      transition: transform 0.15s;
+    }
+    .btn-cerita:active { transform: scale(0.95); }
+    .btn-cerita.gold {
+      background: linear-gradient(135deg, #F59E0B, #fbbf24);
+      color: #7c2d12;
+      box-shadow: 0 4px 14px rgba(245,158,11,0.4);
+    }
 
-    .ripple{position:relative;overflow:hidden;}
-    .ripple::after{content:'';position:absolute;width:100%;height:100%;top:0;left:0;background:radial-gradient(circle,rgba(255,255,255,0.6) 10%,transparent 70%);opacity:0;transition:opacity .4s;}
-    .ripple:active::after{opacity:1;}
+    /* TOAST */
+    #toastBox {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 70;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+      pointer-events: none;
+      width: 90%;
+      max-width: 340px;
+    }
+    .toast {
+      background: rgba(30,30,30,0.92);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      animation: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-align: center;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
+      width: 100%;
+    }
+    .toast.success { background: rgba(22,163,74,0.92); }
+    .toast.error { background: rgba(220,38,38,0.92); }
+    .toast.gold { background: rgba(245,158,11,0.95); color: #422006; }
+    .toast.out { animation: toastOut 0.3s forwards; }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-16px) scale(0.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes toastOut {
+      to { opacity: 0; transform: translateY(-12px) scale(0.9); }
+    }
 
-    .glow-btn{animation:glow 2s infinite;}
-    @keyframes glow{0%,100%{box-shadow:0 0 8px rgba(245,158,11,0.5)}50%{box-shadow:0 0 20px rgba(245,158,11,0.9)}}
+    /* MODAL OVERLAY (generic) */
+    #modalOverlay {
+      position: absolute;
+      inset: 0;
+      z-index: 55;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(3px);
+      padding: 20px;
+    }
+    #modalOverlay.show { display: flex; }
+    .modal-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 22px 20px;
+      max-width: 340px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      text-align: center;
+      animation: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      color: #222;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal-card h3 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #C8102E;
+      margin-bottom: 8px;
+    }
+    .modal-card p {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .modal-actions .btn-buy { flex: 1; padding: 10px; font-size: 13px; }
+    .btn-ghost {
+      background: #eee;
+      color: #444;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      flex: 1;
+    }
 
-    ::-webkit-scrollbar{width:4px;height:4px;}
-    ::-webkit-scrollbar-thumb{background:#ccc;border-radius:4px;}
+    /* ADMIN PANEL */
+    #panelAdmin {
+      position: absolute;
+      inset: 0;
+      z-index: 100;
+      background: #0f172a;
+      color: #e2e8f0;
+      display: none;
+      flex-direction: column;
+      font-family: 'Poppins', sans-serif;
+    }
+    #panelAdmin.show { display: flex; }
+    .admin-header {
+      background: #C8102E;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .admin-header h2 { font-size: 15px; font-weight: 700; flex: 1; }
+    .admin-tabs {
+      display: flex;
+      overflow-x: auto;
+      background: #1e293b;
+      padding: 6px 8px;
+      gap: 4px;
+      flex-shrink: 0;
+      scrollbar-width: none;
+    }
+    .admin-tabs::-webkit-scrollbar { display: none; }
+    .admin-tab {
+      flex: 0 0 auto;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .admin-tab.active { background: #C8102E; color: #fff; }
+    .admin-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      font-size: 12px;
+    }
+    .admin-body table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    .admin-body th, .admin-body td {
+      padding: 6px 8px;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+    }
+    .admin-body th { color: #F59E0B; font-weight: 700; }
+    .admin-body .row { background: #1e293b; border-radius: 8px; padding: 10px; margin-bottom: 8px; }
+
+    /* UTIL */
+    .hidden { display: none !important; }
+    .text-center { text-align: center; }
+    .mt-8 { margin-top: 8px; }
+    .mb-8 { margin-bottom: 8px; }
+    .flex { display: flex; }
+    .gap-8 { gap: 8px; }
+    .flex-1 { flex: 1; }
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #C8102E;
+      margin: 14px 0 8px;
+      padding-left: 4px;
+    }
+    .empty-state {
+      text-align: center;
+      color: #999;
+      font-size: 12px;
+      padding: 24px 0;
+    }
+    .progress-bar-sm {
+      height: 6px;
+      background: #eee;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .progress-bar-sm > div {
+      height: 100%;
+      background: linear-gradient(90deg, #F59E0B, #fbbf24);
+      border-radius: 6px;
+      transition: width 0.3s;
+    }
+
+    /* RIPPLE */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      transform: scale(0);
+      animation: rippleAnim 0.6s linear;
+      pointer-events: none;
+    }
+    @keyframes rippleAnim {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: 0.4; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+    .sparkle-star {
+      position: absolute;
+      font-size: 12px;
+      animation: sparkle 1s infinite;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -219,1665 +697,1800 @@
   <canvas id="cuacaCanvas"></canvas>
   <header id="appHeader"></header>
   <nav id="bottomNav"></nav>
-  <div id="panelSlide"></div>
+  <div id="panelSlide">
+    <div class="panel-handle"></div>
+    <div class="panel-title" id="panelTitle">Panel</div>
+    <div class="panel-content" id="panelContent"></div>
+  </div>
   <div id="toastBox"></div>
   <div id="modalOverlay"></div>
   <div id="modalCerita"></div>
 </div>
-<div id="panelAdmin"></div>
 
 <script>
 /* ============================================================
-   STEAM MP 7000 TYCOON v0.04 — DASHBOARD
+   STEAM MP 7000 TYCOON v0.05 - dashboard.html
    ============================================================ */
+(function() {
 'use strict';
 
-/* ========== KONFIG ========== */
+// ==================== KONFIGURASI ====================
 const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxANi_x0tXyAqC2a6L10p5Uu4TNGvhQV4UsI8k-7rogvuzSl_o4TuECRsDCOXDjcvIA/exec';
 const TOKEN = 'steam-mp-7000-2026';
-const IS_ADMIN = new URLSearchParams(location.search).get('admin') === '1' && !!localStorage.getItem('smp7k_admin');
+const IKLAN_URL = 'https://www.profitableratecpmnetwork.com/q9qnyhdf9c?key=56f60182ff2837aef7d8e65616a77746';
+const IKLAN_BACKUP = 'https://omg10.com/4/11785165';
+const MAX_KOIN_PER_DETIK = 100000;
+const MAX_SYNC_DELTA = 1000000;
 
-/* ========== STATE ========== */
-const S = {
+// ==================== STATE GLOBAL ====================
+const state = {
   user: null,
   saldo: { koin: 0, rupiah: 0, kristal: 0 },
-  totalKoinPernah: 0,
   level: 1,
   exp: 0,
-  storyUnlocked: 0,
+  expNext: 100,
   motorDicuci: 0,
   mogeDicuci: 0,
-  tapCount: 0,
-  manajerDisewa: 0,
-  cabang: 1,
-  motors: [],
-  partikel: [],
-  floatTexts: [],
+  totalTap: 0,
+  totalConvert: 0,
+  manajer: 0,
+  cabang: 0,
+  storyUnlocked: 0,
   cuaca: 'panas',
-  cuacaTimer: 0,
-  spawnTimer: 0,
-  cuacaCanvasCtx: null,
-  gameCanvasCtx: null,
-  bgImage: null,
-  motorImages: {},
-  koinImg: null, rupiahImg: null, kristalImg: null,
-  qrisImg: null, pakAldiImg: null,
-  panelAktif: null,
-  adminAktif: false,
-  adminTab: 'dashboard',
+  musikOn: true,
+  isAdmin: false,
   adminData: {},
-  musikOn: localStorage.getItem('smp7k_music') !== 'off',
-  audioCtx: null,
-  syncDelta: 0,
-  lastSync: Date.now(),
+  upgrades: {
+    semprot: 0, sabun: 0, bilas: 0, kering: 0, poles: 0, kompresor: 0
+  },
+  manajerList: {
+    budi: 0, siti: 0, andi: 0, rina: 0, joko: 0, umar: 0
+  },
+  questProgress: {},
+  tokoItems: [],
   storyData: [],
-  questData: [],
-  tokoData: [],
-  manajerData: [],
-  cabangData: [],
-  upgradeLevels: JSON.parse(localStorage.getItem('smp7k_upgrade') || '{}'),
-  manajerDimiliki: JSON.parse(localStorage.getItem('smp7k_manajer') || '[]'),
-  mogeNontonIklan: {},
-  slotParkir: new Array(16).fill(null),
-  mogeCount: 0,
-  isMogeMode: false,
-  timerIklan: null,
-  iklanTimer: 0,
-  iklanMotor: null,
-  produksiPerDetik: 0,
+  questsData: [],
+  motorList: [],
+  slotParkir: [],
+  particles: [],
+  koinTerbang: [],
+  hujanDrops: [],
+  ripples: [],
+  lastSyncTime: 0,
+  dirtySync: false,
+  syncInterval: null,
+  produksiLoop: null,
+  spawnInterval: null,
+  cuacaInterval: null,
+  motorIdCounter: 0,
+  isProcessing: false,
+  panelAktif: null,
+  mogeIklanTimer: null,
+  mogeIklanTarget: null,
+  audioCtx: null,
+  musikEl: null
 };
 
-/* ========== UTIL ========== */
-function $(id){return document.getElementById(id);}
-function fmtRp(n){return 'Rp ' + Math.floor(n).toLocaleString('id-ID');}
-function fmtNum(n){
-  n = Math.floor(n);
-  if(n >= 1e12) return (n/1e12).toFixed(1)+'T';
-  if(n >= 1e9) return (n/1e9).toFixed(1)+'M';
-  if(n >= 1e6) return (n/1e6).toFixed(1)+'jt';
-  if(n >= 1e3) return (n/1e3).toFixed(1)+'rb';
+// ==================== IMAGE CACHE ====================
+const imageCache = {};
+
+// ==================== HELPER: FORMAT ====================
+function formatRupiah(n) {
+  n = Math.floor(n || 0);
+  return 'Rp ' + n.toLocaleString('id-ID');
+}
+function formatKoin(n) {
+  n = Math.floor(n || 0);
+  if (n >= 1e12) return (n/1e12).toFixed(1) + 'T';
+  if (n >= 1e9) return (n/1e9).toFixed(1) + 'M';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'jt';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + 'rb';
   return n.toString();
 }
-function sensorHP(hp){
-  if(!hp) return '-';
+function sensorHP(hp) {
+  if (!hp) return '08xx-xxxx-xxxx';
   hp = String(hp);
-  if(hp.length < 6) return hp;
-  return hp.slice(0,4) + '****' + hp.slice(-2);
-}
-function toast(msg, tipe='info'){
-  const box = $('toastBox');
-  const el = document.createElement('div');
-  el.className = 'toast ' + (tipe==='success'?'success':tipe==='error'?'error':'');
-  el.textContent = msg;
-  box.appendChild(el);
-  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateY(-10px)';el.style.transition='all .3s';setTimeout(()=>el.remove(),300);},2500);
-}
-function playSound(tipe){
-  try{
-    if(!S.audioCtx) S.audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-    const ctx = S.audioCtx;
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    if(tipe==='tap'){o.type='sawtooth';o.frequency.setValueAtTime(1200,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(300,ctx.currentTime+0.15);g.gain.setValueAtTime(0.08,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.15);o.start();o.stop(ctx.currentTime+0.15);}
-    else if(tipe==='koin'){o.type='sine';o.frequency.setValueAtTime(800,ctx.currentTime);o.frequency.setValueAtTime(1200,ctx.currentTime+0.08);g.gain.setValueAtTime(0.1,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.25);o.start();o.stop(ctx.currentTime+0.25);}
-    else if(tipe==='level'){o.type='sine';o.frequency.setValueAtTime(523,ctx.currentTime);o.frequency.setValueAtTime(659,ctx.currentTime+0.1);o.frequency.setValueAtTime(784,ctx.currentTime+0.2);g.gain.setValueAtTime(0.12,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.4);o.start();o.stop(ctx.currentTime+0.4);}
-    else if(tipe==='error'){o.type='square';o.frequency.setValueAtTime(150,ctx.currentTime);g.gain.setValueAtTime(0.08,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.2);o.start();o.stop(ctx.currentTime+0.2);}
-  }catch(e){}
+  if (hp.length < 8) return hp;
+  return hp.slice(0,4) + '-xxxx-' + hp.slice(-4);
 }
 
-/* ========== HAPUS BACKGROUND PUTIH ========== */
-function hilangkanBackgroundPutih(imgSrc, toleransi, callback){
+// ==================== HELPER: HAPUS BACKGROUND PUTIH ====================
+function hilangkanBackgroundPutih(imgSrc, toleransi, callback) {
   var img = new Image();
   img.crossOrigin = 'anonymous';
-  img.onload = function(){
+  img.onload = function() {
     var canvas = document.createElement('canvas');
-    canvas.width = img.width; canvas.height = img.height;
+    canvas.width = img.width;
+    canvas.height = img.height;
     var ctx = canvas.getContext('2d');
-    ctx.drawImage(img,0,0);
-    try{
-      var imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img, 0, 0);
+    try {
+      var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       var data = imageData.data;
       var tol = toleransi || 40;
-      for(var i=0;i<data.length;i+=4){
-        if(data[i]>255-tol && data[i+1]>255-tol && data[i+2]>255-tol) data[i+3]=0;
+      for (var i = 0; i < data.length; i += 4) {
+        if (data[i] > 255 - tol && data[i+1] > 255 - tol && data[i+2] > 255 - tol) {
+          data[i+3] = 0;
+        }
       }
-      ctx.putImageData(imageData,0,0);
+      ctx.putImageData(imageData, 0, 0);
       callback(canvas.toDataURL('image/png'));
-    }catch(e){callback(imgSrc);}
+    } catch(e) { callback(imgSrc); }
   };
-  img.onerror = function(){callback(null);};
+  img.onerror = function() { callback(null); };
   img.src = imgSrc;
 }
 
-/* ========== BACKEND ========== */
-async function api(action, params={}){
-  try{
-    const res = await fetch(BACKEND_URL,{
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action, token:TOKEN, ...params}),
-      redirect:'follow'
+// ==================== LOAD IMAGES ====================
+function loadAllImages(cb) {
+  var assets = [
+    { key: 'koin', src: 'assets/koin.png', tol: 30 },
+    { key: 'kristal', src: 'assets/kristal.png', tol: 20 },
+    { key: 'rupiah', src: 'assets/rupiah.png', tol: 25 },
+    { key: 'pakAldi', src: 'assets/pak-aldi.png', tol: 40 },
+    { key: 'motorBebekKotor', src: 'assets/motor-bebek-kotor.png', tol: 40 },
+    { key: 'motorBebekBersih', src: 'assets/motor-bebek-bersih.png', tol: 40 },
+    { key: 'motorMogeKotor', src: 'assets/motor-moge-kotor.png', tol: 40 },
+    { key: 'motorMogeBersih', src: 'assets/motor-moge-bersih.png', tol: 40 }
+  ];
+  // background & qris tidak dihapus
+  var rawAssets = [
+    { key: 'bg', src: 'assets/steam-bg.png' },
+    { key: 'qris', src: 'assets/qris.png' }
+  ];
+  var total = assets.length + rawAssets.length;
+  var done = 0;
+  function checkDone() { done++; if (done >= total && cb) cb(); }
+
+  assets.forEach(function(a) {
+    hilangkanBackgroundPutih(a.src, a.tol, function(result) {
+      if (result) {
+        imageCache[a.key] = result;
+      } else {
+        imageCache[a.key] = null; // fallback emoji
+      }
+      checkDone();
     });
-    const t = await res.text();
-    try{return JSON.parse(t);}catch(e){return {ok:false,pesan:'Respons tidak valid'};}
-  }catch(e){return {ok:false,pesan:'Gagal terhubung ke server'};}
-}
-
-/* ========== SESSION ========== */
-function cekSesi(){
-  const sess = localStorage.getItem('smp7k_session');
-  if(!sess){location.href='index.html';return false;}
-  try{S.user = JSON.parse(localStorage.getItem('smp7k_user')||'{}');}catch(e){location.href='index.html';return false;}
-  if(!S.user || !S.user.nama){location.href='index.html';return false;}
-  return true;
-}
-
-/* ========== LOAD ASSETS ========== */
-function loadImage(src){
-  return new Promise(res=>{
-    const img = new Image();
-    img.crossOrigin='anonymous';
-    img.onload = ()=>res(img);
-    img.onerror = ()=>res(null);
-    img.src = src;
+  });
+  rawAssets.forEach(function(a) {
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() { imageCache[a.key] = a.src; checkDone(); };
+    img.onerror = function() { imageCache[a.key] = null; checkDone(); };
+    img.src = a.src;
   });
 }
 
-async function loadAssets(){
-  const [bg, koin, rupiah, kristal, qris, pakAldi,
-    bebekKotor, bebekBersih, mogeKotor, mogeBersih] = await Promise.all([
-    loadImage('assets/steam-bg.png'),
-    loadImage('assets/koin.png'),
-    loadImage('assets/rupiah.png'),
-    loadImage('assets/kristal.png'),
-    loadImage('assets/qris.png'),
-    loadImage('assets/pak-aldi.png'),
-    loadImage('assets/motor-bebek-kotor.png'),
-    loadImage('assets/motor-bebek-bersih.png'),
-    loadImage('assets/motor-moge-kotor.png'),
-    loadImage('assets/motor-moge-bersih.png')
-  ]);
-  S.bgImage = bg;
-  // koin/rupiah/kristal → hilangkanBackgroundPutih
-  await new Promise(r=>{
-    if(koin) hilangkanBackgroundPutih('assets/koin.png',40,d=>{S.koinImg=d;r();});
-    else {S.koinImg=null;r();}
-  });
-  await new Promise(r=>{
-    if(rupiah) hilangkanBackgroundPutih('assets/rupiah.png',40,d=>{S.rupiahImg=d;r();});
-    else {S.rupiahImg=null;r();}
-  });
-  await new Promise(r=>{
-    if(kristal) hilangkanBackgroundPutih('assets/kristal.png',40,d=>{S.kristalImg=d;r();});
-    else {S.kristalImg=null;r();}
-  });
-  S.qrisImg = qris; S.pakAldiImg = pakAldi;
-  S.motorImages = {
-    bebekKotor, bebekBersih, mogeKotor, mogeBersih
-  };
+// ==================== AUDIO ====================
+function initAudio() {
+  if (!state.audioCtx) {
+    try {
+      state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch(e) {}
+  }
 }
-
-/* ========== AMBIL DATA USER DARI SERVER ========== */
-async function loadUserFromServer(){
-  if(!S.user || !S.user.nomor) return;
-  const r = await api('bacaSatu',{sheet:'Users',kolom:'nomor',nilai:S.user.nomor});
-  if(r.ok && r.data){
-    const u = r.data;
-    S.saldo.koin = Number(u.koin)||0;
-    S.saldo.rupiah = Number(u.rupiah)||0;
-    S.saldo.kristal = Number(u.kristal)||0;
-    S.totalKoinPernah = Number(u.total_koin)||S.saldo.koin;
-    S.level = Number(u.level)||1;
-    S.storyUnlocked = Number(u.story_unlocked)||0;
-    S.motorDicuci = Number(u.motor_dicuci)||0;
-    S.mogeDicuci = Number(u.moge_dicuci)||0;
-    S.cabang = Number(u.cabang)||1;
-    S.manajerDisewa = Number(u.manajer_disewa)||0;
-    if(u.upgrade_data){
-      try{S.upgradeLevels = JSON.parse(u.upgrade_data);}catch(e){}
-    }
-    if(u.manajer_data){
-      try{S.manajerDimiliki = JSON.parse(u.manajer_data);}catch(e){}
-    }
-    S.user._row = u._row;
-    localStorage.setItem('smp7k_user',JSON.stringify(S.user));
+function playSound(type) {
+  if (!state.audioCtx) return;
+  var ctx = state.audioCtx;
+  if (ctx.state === 'suspended') ctx.resume();
+  var osc = ctx.createOscillator();
+  var gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  var now = ctx.currentTime;
+  if (type === 'tap') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, now);
+    osc.frequency.exponentialRampToValueAtTime(200, now + 0.15);
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc.start(now); osc.stop(now + 0.2);
+  } else if (type === 'coin') {
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(1200, now);
+    osc.frequency.setValueAtTime(1600, now + 0.06);
+    gain.gain.setValueAtTime(0.06, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc.start(now); osc.stop(now + 0.2);
+  } else if (type === 'levelup') {
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(523, now);
+    osc.frequency.setValueAtTime(659, now + 0.1);
+    osc.frequency.setValueAtTime(784, now + 0.2);
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+    osc.start(now); osc.stop(now + 0.4);
+  } else if (type === 'error') {
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(150, now);
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+    osc.start(now); osc.stop(now + 0.25);
   }
 }
 
-/* ========== SYNC PROGRESS (DELTA) ========== */
-async function syncProgress(){
-  if(!S.user || !S.user.nomor) return;
-  // clamp delta max 1.000.000
-  if(S.syncDelta > 1000000) S.syncDelta = 1000000;
-  if(S.syncDelta <= 0) return;
-  const delta = Math.floor(S.syncDelta);
-  const r = await api('update',{
-    sheet:'Users', row:S.user._row,
-    data:{
-      koin:S.saldo.koin,
-      total_koin:S.totalKoinPernah,
-      motor_dicuci:S.motorDicuci,
-      moge_dicuci:S.mogeDicuci,
-      story_unlocked:S.storyUnlocked,
-      upgrade_data:JSON.stringify(S.upgradeLevels),
-      manajer_data:JSON.stringify(S.manajerDimiliki)
+// ==================== BACKEND API ====================
+async function apiCall(action, data) {
+  try {
+    var body = Object.assign({ action: action, token: TOKEN }, data || {});
+    var res = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body)
+    });
+    var json = await res.json();
+    return json;
+  } catch(e) {
+    console.warn('API error:', e);
+    return { ok: false, pesan: 'Koneksi gagal', data: null };
+  }
+}
+
+async function baca(sheet) {
+  return apiCall('baca', { sheet: sheet });
+}
+async function bacaSatu(sheet, id) {
+  return apiCall('bacaSatu', { sheet: sheet, id: id });
+}
+async function tulis(sheet, data) {
+  return apiCall('tulis', { sheet: sheet, data: data });
+}
+async function updateData(sheet, id, data) {
+  return apiCall('update', { sheet: sheet, id: id, data: data });
+}
+async function hapus(sheet, id) {
+  return apiCall('hapus', { sheet: sheet, id: id });
+}
+
+// ==================== SESSION ====================
+function cekSesi() {
+  var session = localStorage.getItem('smp7k_session');
+  if (!session) {
+    window.location.href = 'index.html';
+    return false;
+  }
+  var user = localStorage.getItem('smp7k_user');
+  if (user) {
+    try { state.user = JSON.parse(user); } catch(e) { state.user = { nama: user, hp: '' }; }
+  } else {
+    state.user = { nama: 'Pemain', hp: '' };
+  }
+  // Cek admin
+  var urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('admin') === '1' && localStorage.getItem('smp7k_admin')) {
+    state.isAdmin = true;
+  }
+  return true;
+}
+
+// ==================== LOAD DATA USER DARI SERVER ====================
+async function loadUserData() {
+  if (!state.user) return;
+  try {
+    var res = await bacaSatu('Users', state.user.hp || state.user.nama);
+    if (res && res.ok && res.data) {
+      var d = res.data;
+      state.saldo.koin = Number(d.koin) || 0;
+      state.saldo.rupiah = Number(d.rupiah) || 0;
+      state.saldo.kristal = Number(d.kristal) || 0;
+      state.level = Number(d.level) || 1;
+      state.exp = Number(d.exp) || 0;
+      state.expNext = Number(d.exp_next) || 100;
+      state.motorDicuci = Number(d.motor_dicuci) || 0;
+      state.mogeDicuci = Number(d.moge_dicuci) || 0;
+      state.totalTap = Number(d.total_tap) || 0;
+      state.totalConvert = Number(d.total_convert) || 0;
+      state.manajer = Number(d.manajer) || 0;
+      state.cabang = Number(d.cabang) || 0;
+      state.storyUnlocked = Number(d.story_unlocked) || 0;
+      // upgrades
+      if (d.upgrades) {
+        try { var u = JSON.parse(d.upgrades); Object.assign(state.upgrades, u); } catch(e) {}
+      }
+      if (d.manajer_list) {
+        try { var m = JSON.parse(d.manajer_list); Object.assign(state.manajerList, m); } catch(e) {}
+      }
+      state._serverData = d;
+    }
+  } catch(e) { console.warn('loadUserData error', e); }
+}
+
+// ==================== SYNC PROGRESS (DELTA) ====================
+async function syncProgress(force) {
+  if (!state.user) return;
+  var now = Date.now();
+  if (!force && now - state.lastSyncTime < 5000) return;
+  var deltaKoin = state._deltaKoin || 0;
+  if (deltaKoin <= 0 && !force) return;
+  if (deltaKoin > MAX_SYNC_DELTA) deltaKoin = MAX_SYNC_DELTA;
+  state._deltaKoin = 0;
+  state.lastSyncTime = now;
+  try {
+    await apiCall('update', {
+      sheet: 'Users',
+      id: state.user.hp || state.user.nama,
+      data: {
+        koin: state.saldo.koin,
+        rupiah: state.saldo.rupiah,
+        kristal: state.saldo.kristal,
+        level: state.level,
+        exp: state.exp,
+        exp_next: state.expNext,
+        motor_dicuci: state.motorDicuci,
+        moge_dicuci: state.mogeDicuci,
+        total_tap: state.totalTap,
+        total_convert: state.totalConvert,
+        manajer: state.manajer,
+        cabang: state.cabang,
+        story_unlocked: state.storyUnlocked,
+        upgrades: JSON.stringify(state.upgrades),
+        manajer_list: JSON.stringify(state.manajerList)
+      }
+    });
+  } catch(e) { /* silent */ }
+}
+
+// ==================== TOAST ====================
+function showToast(msg, type) {
+  var box = document.getElementById('toastBox');
+  var el = document.createElement('div');
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.textContent = msg;
+  box.appendChild(el);
+  setTimeout(function() {
+    el.classList.add('out');
+    setTimeout(function() { el.remove(); }, 300);
+  }, 2200);
+}
+
+// ==================== RIPPLE EFFECT ====================
+function addRipple(e) {
+  var btn = e.currentTarget;
+  var rect = btn.getBoundingClientRect();
+  var ripple = document.createElement('span');
+  ripple.className = 'ripple';
+  var size = Math.max(rect.width, rect.height);
+  ripple.style.width = ripple.style.height = size + 'px';
+  ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+  ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+  btn.style.position = 'relative';
+  btn.style.overflow = 'hidden';
+  btn.appendChild(ripple);
+  setTimeout(function() { ripple.remove(); }, 600);
+}
+
+// ==================== HEADER RENDER ====================
+function renderHeader() {
+  var h = document.getElementById('appHeader');
+  var koinImg = imageCache.koin ? '<img class="balance-icon" src="' + imageCache.koin + '" alt="koin">' : '<span class="balance-icon-emoji">🪙</span>';
+  var kristalImg = imageCache.kristal ? '<img class="balance-icon" src="' + imageCache.kristal + '" alt="kristal">' : '<span class="balance-icon-emoji">💎</span>';
+  var rupiahImg = imageCache.rupiah ? '<img class="balance-icon" src="' + imageCache.rupiah + '" alt="rupiah">' : '<span class="balance-icon-emoji">💵</span>';
+  var cuacaIcon = state.cuaca === 'panas' ? '☀️' : '🌧️';
+  var expPct = state.expNext > 0 ? Math.min(100, (state.exp / state.expNext) * 100) : 0;
+  h.innerHTML =
+    '<div class="header-row">' +
+      '<div class="header-logo">MP</div>' +
+      '<div class="header-info">' +
+        '<div class="header-name">' + (state.user ? state.user.nama : 'Pemain') + '</div>' +
+        '<div class="header-phone">' + sensorHP(state.user ? state.user.hp : '') + '</div>' +
+      '</div>' +
+      '<div class="header-weather" id="weatherIcon">' + cuacaIcon + '</div>' +
+      '<button class="header-btn" id="btnMusik">' + (state.musikOn ? '🔊' : '🔇') + '</button>' +
+      '<button class="header-btn" id="btnMenu">☰</button>' +
+      '<button class="header-btn" id="btnKeluar">🚪</button>' +
+    '</div>' +
+    '<div class="header-balance">' +
+      '<div class="balance-item">' + koinImg + '<span class="balance-text" id="txtKoin">' + formatKoin(state.saldo.koin) + '</span></div>' +
+      '<div class="balance-item">' + rupiahImg + '<span class="balance-text" id="txtRupiah">' + formatRupiah(state.saldo.rupiah) + '</span></div>' +
+      '<div class="balance-item">' + kristalImg + '<span class="balance-text" id="txtKristal">' + state.saldo.kristal + '</span></div>' +
+    '</div>' +
+    '<div class="level-row">' +
+      '<span class="level-label">Lv ' + state.level + '</span>' +
+      '<div class="level-bar"><div class="level-bar-fill" style="width:' + expPct + '%"></div></div>' +
+    '</div>';
+  // Events
+  var btnMusik = document.getElementById('btnMusik');
+  if (btnMusik) btnMusik.onclick = toggleMusik;
+  var btnMenu = document.getElementById('btnMenu');
+  if (btnMenu) btnMenu.onclick = function() { openPanel('menu'); };
+  var btnKeluar = document.getElementById('btnKeluar');
+  if (btnKeluar) btnKeluar.onclick = logout;
+}
+
+function updateHeaderSaldo() {
+  var elKoin = document.getElementById('txtKoin');
+  if (elKoin) elKoin.textContent = formatKoin(state.saldo.koin);
+  var elRupiah = document.getElementById('txtRupiah');
+  if (elRupiah) elRupiah.textContent = formatRupiah(state.saldo.rupiah);
+  var elKristal = document.getElementById('txtKristal');
+  if (elKristal) elKristal.textContent = state.saldo.kristal;
+  var wIcon = document.getElementById('weatherIcon');
+  if (wIcon) wIcon.textContent = state.cuaca === 'panas' ? '☀️' : '🌧️';
+}
+
+// ==================== MUSIK ====================
+function initMusik() {
+  if (!state.musikEl) {
+    state.musikEl = new Audio('assets/musik-latar.mp3');
+    state.musikEl.loop = true;
+    state.musikEl.volume = 0.3;
+  }
+  var saved = localStorage.getItem('smp7k_music');
+  if (saved === 'off') { state.musikOn = false; state.musikEl.pause(); }
+  else { state.musikOn = true; state.musikEl.play().catch(function(){}); }
+}
+function toggleMusik() {
+  if (!state.musikEl) return;
+  state.musikOn = !state.musikOn;
+  if (state.musikOn) { state.musikEl.play().catch(function(){}); localStorage.setItem('smp7k_music', 'on'); }
+  else { state.musikEl.pause(); localStorage.setItem('smp7k_music', 'off'); }
+  renderHeader();
+}
+
+// ==================== LOGOUT ====================
+function logout() {
+  if (confirm('Yakin ingin keluar?')) {
+    localStorage.removeItem('smp7k_session');
+    localStorage.removeItem('smp7k_user');
+    localStorage.removeItem('smp7k_admin');
+    window.location.href = 'index.html';
+  }
+}
+
+// ==================== BOTTOM NAV ====================
+const NAV_ITEMS = [
+  { id: 'game', icon: '🎮', label: 'Game' },
+  { id: 'manajer', icon: '👨‍🔧', label: 'Manajer' },
+  { id: 'cabang', icon: '🏪', label: 'Cabang' },
+  { id: 'toko', icon: '🛒', label: 'Toko' },
+  { id: 'convert', icon: '🔄', label: 'Convert' },
+  { id: 'topup', icon: '💰', label: 'Topup' },
+  { id: 'voucher', icon: '🎟️', label: 'Voucher' },
+  { id: 'cerita', icon: '📖', label: 'Cerita' },
+  { id: 'quest', icon: '📋', label: 'Quest' },
+  { id: 'profil', icon: '👤', label: 'Profil' }
+];
+
+function renderNav() {
+  var nav = document.getElementById('bottomNav');
+  nav.innerHTML = NAV_ITEMS.map(function(item) {
+    return '<button class="nav-item" data-panel="' + item.id + '">' +
+      '<span class="nav-icon">' + item.icon + '</span>' +
+      '<span class="nav-label">' + item.label + '</span>' +
+      (item.id === 'quest' && state._questKlaimable > 0 ? '<span class="nav-badge">' + state._questKlaimable + '</span>' : '') +
+    '</button>';
+  }).join('');
+  nav.querySelectorAll('.nav-item').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      addRipple(e);
+      openPanel(this.dataset.panel);
+    });
+  });
+}
+
+// ==================== PANEL SLIDE ====================
+function openPanel(id) {
+  if (state.panelAktif === id) { closePanel(); return; }
+  state.panelAktif = id;
+  var title = document.getElementById('panelTitle');
+  var content = document.getElementById('panelContent');
+  var panel = document.getElementById('panelSlide');
+  var found = NAV_ITEMS.find(function(n) { return n.id === id; });
+  title.textContent = found ? found.label : id;
+  content.innerHTML = '<div class="empty-state">Memuat...</div>';
+  panel.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.panel === id);
+  });
+  renderPanelContent(id);
+}
+
+function closePanel() {
+  state.panelAktif = null;
+  document.getElementById('panelSlide').classList.remove('open');
+  document.querySelectorAll('.nav-item').forEach(function(b) { b.classList.remove('active'); });
+}
+
+// ==================== RENDER PANEL CONTENT ====================
+async function renderPanelContent(id) {
+  var c = document.getElementById('panelContent');
+  switch(id) {
+    case 'game': renderTabGame(c); break;
+    case 'manajer': renderTabManajer(c); break;
+    case 'cabang': renderTabCabang(c); break;
+    case 'toko': await renderTabToko(c); break;
+    case 'convert': renderTabConvert(c); break;
+    case 'topup': renderTabTopup(c); break;
+    case 'voucher': renderTabVoucher(c); break;
+    case 'cerita': renderTabCerita(c); break;
+    case 'quest': await renderTabQuest(c); break;
+    case 'profil': renderTabProfil(c); break;
+    case 'menu': renderTabMenu(c); break;
+    default: c.innerHTML = '<div class="empty-state">Segera hadir</div>';
+  }
+}
+
+// ==================== TAB GAME (UPGRADE) ====================
+const UPGRADE_DEFS = [
+  { key: 'semprot', name: 'Tukang Semprot', emoji: '💦', basePrice: 100, baseProd: 1, desc: '1 koin/detik' },
+  { key: 'sabun', name: 'Tukang Sabun', emoji: '🧼', basePrice: 1000, baseProd: 5, desc: '5 koin/detik' },
+  { key: 'bilas', name: 'Tukang Bilas', emoji: '🚿', basePrice: 10000, baseProd: 25, desc: '25 koin/detik' },
+  { key: 'kering', name: 'Tukang Kering', emoji: '💨', basePrice: 100000, baseProd: 100, desc: '100 koin/detik' },
+  { key: 'poles', name: 'Tukang Poles', emoji: '✨', basePrice: 1000000, baseProd: 500, desc: '500 koin/detik' },
+  { key: 'kompresor', name: 'Kompresor', emoji: '🔧', basePrice: 10000000, baseProd: 2500, desc: '2.500 koin/detik' }
+];
+
+function getUpgradePrice(def, level) {
+  return Math.floor(def.basePrice * Math.pow(2.5, level));
+}
+function getUpgradeProd(def, level) {
+  return def.baseProd * Math.pow(2, level);
+}
+
+function renderTabGame(c) {
+  var html = '<div class="section-label">⚡ Upgrade Produksi</div>';
+  UPGRADE_DEFS.forEach(function(def) {
+    var lv = state.upgrades[def.key] || 0;
+    var price = getUpgradePrice(def, lv);
+    var prod = getUpgradeProd(def, lv);
+    var afford = state.saldo.koin >= price;
+    html += '<div class="upgrade-card' + (afford ? ' affordable' : '') + '">' +
+      '<div class="upgrade-emoji">' + def.emoji + '</div>' +
+      '<div class="upgrade-info">' +
+        '<div class="upgrade-name">' + def.name + '</div>' +
+        '<div class="upgrade-desc">' + def.desc + '</div>' +
+        '<div class="upgrade-level">Lv ' + lv + ' → ' + prod + ' koin/dtk</div>' +
+      '</div>' +
+      '<div class="upgrade-action">' +
+        '<button class="btn-buy" data-upgrade="' + def.key + '"' + (afford ? '' : ' disabled') + '>' +
+          formatKoin(price) +
+        '</button>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '<div class="section-label" style="margin-top:16px;">📊 Produksi Total</div>' +
+    '<div class="upgrade-card"><div class="upgrade-emoji">⚙️</div>' +
+    '<div class="upgrade-info"><div class="upgrade-name">Total Produksi</div>' +
+    '<div class="upgrade-desc">' + getTotalProduksi() + ' koin/detik</div></div></div>';
+  c.innerHTML = html;
+  c.querySelectorAll('[data-upgrade]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      addRipple(e);
+      beliUpgrade(this.dataset.upgrade);
+    });
+  });
+}
+
+function getTotalProduksi() {
+  var total = 0;
+  UPGRADE_DEFS.forEach(function(def) {
+    var lv = state.upgrades[def.key] || 0;
+    total += getUpgradeProd(def, lv) * lv;
+  });
+  // manajer juga produksi
+  var manajerDefs = [
+    { key: 'budi', prod: 1 }, { key: 'siti', prod: 5 }, { key: 'andi', prod: 25 },
+    { key: 'rina', prod: 100 }, { key: 'joko', prod: 500 }, { key: 'umar', prod: 2500 }
+  ];
+  manajerDefs.forEach(function(m) {
+    if (state.manajerList[m.key]) total += m.prod;
+  });
+  return Math.min(total, MAX_KOIN_PER_DETIK);
+}
+
+function beliUpgrade(key) {
+  var def = UPGRADE_DEFS.find(function(d) { return d.key === key; });
+  if (!def) return;
+  var lv = state.upgrades[key] || 0;
+  var price = getUpgradePrice(def, lv);
+  if (state.saldo.koin < price) { showToast('Koin tidak cukup!', 'error'); playSound('error'); return; }
+  state.saldo.koin -= price;
+  state.upgrades[key] = lv + 1;
+  state._deltaKoin = (state._deltaKoin || 0) + 0; // sync via server
+  showToast('✅ ' + def.name + ' Lv ' + (lv+1), 'success');
+  playSound('levelup');
+  updateHeaderSaldo();
+  renderPanelContent('game');
+  syncProgress(true);
+  cekQuestProgress('upgrade');
+  cekStoryUnlock();
+}
+
+// ==================== TAB MANAJER ====================
+const MANAJER_DEFS = [
+  { key: 'budi', name: 'Pak Budi Semprot', emoji: '👨‍🔧', price: 500, prod: 1 },
+  { key: 'siti', name: 'Bu Siti Sabun', emoji: '👩‍🔧', price: 5000, prod: 5 },
+  { key: 'andi', name: 'Pak Andi Bilas', emoji: '👨‍🔧', price: 50000, prod: 25 },
+  { key: 'rina', name: 'Bu Rina Kering', emoji: '👩‍🔧', price: 500000, prod: 100 },
+  { key: 'joko', name: 'Pak Joko Poles', emoji: '👨‍🔧', price: 5000000, prod: 500 },
+  { key: 'umar', name: 'Teknisi Umar Kompresor', emoji: '👷', price: 50000000, prod: 2500 }
+];
+
+function renderTabManajer(c) {
+  var html = '<div class="section-label">👥 Sewa Manajer</div>';
+  MANAJER_DEFS.forEach(function(m) {
+    var owned = state.manajerList[m.key] > 0;
+    var afford = state.saldo.koin >= m.price;
+    html += '<div class="upgrade-card' + (owned ? '' : afford ? ' affordable' : '') + '">' +
+      '<div class="upgrade-emoji">' + m.emoji + '</div>' +
+      '<div class="upgrade-info">' +
+        '<div class="upgrade-name">' + m.name + '</div>' +
+        '<div class="upgrade-desc">+' + m.prod + ' koin/detik</div>' +
+        (owned ? '<div class="upgrade-level">✅ Aktif</div>' : '') +
+      '</div>' +
+      '<div class="upgrade-action">' +
+        (owned ? '<span style="font-size:11px;color:#16a34a;font-weight:700;">Aktif</span>' :
+          '<button class="btn-buy" data-manajer="' + m.key + '"' + (afford ? '' : ' disabled') + '>' + formatKoin(m.price) + '</button>') +
+      '</div>' +
+    '</div>';
+  });
+  c.innerHTML = html;
+  c.querySelectorAll('[data-manajer]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      addRipple(e);
+      sewaManajer(this.dataset.manajer);
+    });
+  });
+}
+
+function sewaManajer(key) {
+  var m = MANAJER_DEFS.find(function(d) { return d.key === key; });
+  if (!m) return;
+  if (state.manajerList[key] > 0) { showToast('Sudah disewa', 'error'); return; }
+  if (state.saldo.koin < m.price) { showToast('Koin tidak cukup!', 'error'); playSound('error'); return; }
+  state.saldo.koin -= m.price;
+  state.manajerList[key] = 1;
+  state.manajer = Object.values(state.manajerList).filter(function(v) { return v > 0; }).length;
+  showToast('✅ ' + m.name + ' disewa!', 'success');
+  playSound('levelup');
+  updateHeaderSaldo();
+  renderPanelContent('manajer');
+  syncProgress(true);
+  cekQuestProgress('manajer');
+  cekStoryUnlock();
+}
+
+// ==================== TAB CABANG ====================
+const CABANG_DEFS = [
+  { level: 2, price: 1000000, label: 'Cabang 2' },
+  { level: 3, price: 50000000, label: 'Cabang 3' },
+  { level: 4, price: 2500000000, label: 'Cabang 4' },
+  { level: 5, price: 100000000000, label: 'Cabang 5' }
+];
+
+function renderTabCabang(c) {
+  var html = '<div class="section-label">🏪 Buka Cabang Baru</div>' +
+    '<div class="upgrade-card"><div class="upgrade-emoji">🏠</div>' +
+    '<div class="upgrade-info"><div class="upgrade-name">Cabang Saat Ini</div>' +
+    '<div class="upgrade-desc">Level ' + state.cabang + ' dari 5</div></div></div>';
+  CABANG_DEFS.forEach(function(cb) {
+    var owned = state.cabang >= cb.level;
+    var canBuy = state.cabang === cb.level - 1;
+    var afford = state.saldo.koin >= cb.price;
+    html += '<div class="upgrade-card' + (canBuy && afford ? ' affordable' : '') + (owned ? '' : canBuy ? '' : ' locked') + '">' +
+      '<div class="upgrade-emoji">🏪</div>' +
+      '<div class="upgrade-info">' +
+        '<div class="upgrade-name">' + cb.label + '</div>' +
+        '<div class="upgrade-desc">Reset dari 0 · +produksi</div>' +
+      '</div>' +
+      '<div class="upgrade-action">' +
+        (owned ? '<span style="font-size:11px;color:#16a34a;font-weight:700;">✅ Terbuka</span>' :
+          canBuy ? '<button class="btn-buy" data-cabang="' + cb.level + '"' + (afford ? '' : ' disabled') + '>' + formatKoin(cb.price) + '</button>' :
+          '<span style="font-size:10px;color:#999;">🔒 Terkunci</span>') +
+      '</div>' +
+    '</div>';
+  });
+  c.innerHTML = html;
+  c.querySelectorAll('[data-cabang]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      addRipple(e);
+      bukaCabang(parseInt(this.dataset.cabang));
+    });
+  });
+}
+
+function bukaCabang(level) {
+  var cb = CABANG_DEFS.find(function(d) { return d.level === level; });
+  if (!cb) return;
+  if (state.cabang !== level - 1) { showToast('Buka cabang sebelumnya dulu', 'error'); return; }
+  if (state.saldo.koin < cb.price) { showToast('Koin tidak cukup!', 'error'); playSound('error'); return; }
+  if (!confirm('Buka ' + cb.label + '? Semua upgrade & manajer akan di-reset!')) return;
+  state.saldo.koin -= cb.price;
+  state.cabang = level;
+  // Reset upgrades & manajer
+  Object.keys(state.upgrades).forEach(function(k) { state.upgrades[k] = 0; });
+  Object.keys(state.manajerList).forEach(function(k) { state.manajerList[k] = 0; });
+  state.manajer = 0;
+  showToast('🎉 ' + cb.label + ' terbuka!', 'gold');
+  playSound('levelup');
+  updateHeaderSaldo();
+  renderPanelContent('cabang');
+  syncProgress(true);
+  cekQuestProgress('cabang');
+  cekStoryUnlock();
+}
+
+// ==================== TAB TOKO ====================
+async function renderTabToko(c) {
+  c.innerHTML = '<div class="empty-state">Memuat toko...</div>';
+  var res = await baca('Toko');
+  if (res && res.ok && res.data && res.data.length) {
+    state.tokoItems = res.data;
+  }
+  if (!state.tokoItems.length) {
+    // fallback default 8 item
+    state.tokoItems = [
+      { id: 't1', nama: 'Sabun Cuci', emoji: '🧼', harga: 500, desc: '+1 koin/detik' },
+      { id: 't2', nama: 'Sikat', emoji: '🪥', harga: 2000, desc: '+2 koin/detik' },
+      { id: 't3', nama: 'Selang', emoji: '🚿', harga: 5000, desc: '+5 koin/detik' },
+      { id: 't4', nama: 'Kompresor Kecil', emoji: '💨', harga: 15000, desc: '+10 koin/detik' },
+      { id: 't5', nama: 'Polesan', emoji: '✨', harga: 50000, desc: '+25 koin/detik' },
+      { id: 't6', nama: 'Lap Mikrofiber', emoji: '🧽', harga: 150000, desc: '+50 koin/detik' },
+      { id: 't7', nama: 'Mesin Uap', emoji: '♨️', harga: 500000, desc: '+100 koin/detik' },
+      { id: 't8', nama: 'Robot Cuci', emoji: '🤖', harga: 2000000, desc: '+250 koin/detik' }
+    ];
+  }
+  var html = '<div class="section-label">🛒 Toko Peralatan</div>';
+  state.tokoItems.forEach(function(item) {
+    var afford = state.saldo.koin >= (item.harga || 0);
+    html += '<div class="item-card">' +
+      '<div class="upgrade-emoji">' + (item.emoji || '📦') + '</div>' +
+      '<div class="upgrade-info">' +
+        '<div class="upgrade-name">' + (item.nama || 'Item') + '</div>' +
+        '<div class="upgrade-desc">' + (item.desc || '') + '</div>' +
+      '</div>' +
+      '<div class="upgrade-action">' +
+        '<button class="btn-buy gold" data-toko="' + (item.id || '') + '"' + (afford ? '' : ' disabled') + '>' +
+          formatKoin(item.harga || 0) +
+        '</button>' +
+      '</div>' +
+    '</div>';
+  });
+  c.innerHTML = html;
+  c.querySelectorAll('[data-toko]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      addRipple(e);
+      beliToko(this.dataset.toko);
+    });
+  });
+}
+
+function beliToko(id) {
+  var item = state.tokoItems.find(function(i) { return String(i.id) === String(id); });
+  if (!item) return;
+  if (state.saldo.koin < item.harga) { showToast('Koin tidak cukup!', 'error'); playSound('error'); return; }
+  state.saldo.koin -= item.harga;
+  showToast('✅ ' + item.nama + ' dibeli!', 'success');
+  playSound('coin');
+  updateHeaderSaldo();
+  renderPanelContent('toko');
+  syncProgress(true);
+  cekQuestProgress('toko');
+}
+
+// ==================== TAB CONVERT ====================
+function renderTabConvert(c) {
+  var minConvert = 10000;
+  var rate = 1000; // 1000 koin = Rp100
+  var html = '<div class="section-label">🔄 Convert Koin ke Rupiah</div>' +
+    '<div class="upgrade-card"><div class="upgrade-emoji">💱</div>' +
+    '<div class="upgrade-info">' +
+      '<div class="upgrade-name">Rate</div>' +
+      '<div class="upgrade-desc">1.000 koin = Rp 100</div>' +
+      '<div class="upgrade-desc">Min. 10.000 koin</div>' +
+    '</div></div>' +
+    '<div class="upgrade-card"><div class="upgrade-emoji">🪙</div>' +
+    '<div class="upgrade-info"><div class="upgrade-name">Koin Kamu</div>' +
+    '<div class="upgrade-desc">' + formatKoin(state.saldo.koin) + ' koin</div></div></div>' +
+    '<div class="section-label">Pilih Jumlah</div>';
+  var opts = [10000, 50000, 100000, 500000, 1000000];
+  opts.forEach(function(jml) {
+    var dapat = Math.floor(jml / rate * 100);
+    var potong = Math.floor(dapat * 0.9);
+    html += '<div class="upgrade-card">' +
+      '<div class="upgrade-emoji">💵</div>' +
+      '<div class="upgrade-info">' +
+        '<div class="upgrade-name">' + formatKoin(jml) + ' koin</div>' +
+        '<div class="upgrade-desc">Dapat ' + formatRupiah(dapat) + ' · Potong 10% → ' + formatRupiah(potong) + '</div>' +
+      '</div>' +
+      '<div class="upgrade-action">' +
+        '<button class="btn-buy blue" data-convert="' + jml + '"' + (state.saldo.koin >= jml ? '' : ' disabled') + '>Convert</button>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '<div class="upgrade-card" style="margin-top:8px;">' +
+    '<div class="upgrade-emoji">🎬</div>' +
+    '<div class="upgrade-info"><div class="upgrade-name">Nonton Iklan = Tanpa Potongan</div>' +
+    '<div class="upgrade-desc">Konversi penuh tanpa potong 10%</div></div></div>';
+  c.innerHTML = html;
+  c.querySelectorAll('[data-convert]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      addRipple(e);
+      doConvert(parseInt(this.dataset.convert), false);
+    });
+  });
+}
+
+function doConvert(jml, viaIklan) {
+  if (state.saldo.koin < jml) { showToast('Koin tidak cukup!', 'error'); return; }
+  var dapat = Math.floor(jml / 1000 * 100);
+  if (!viaIklan) dapat = Math.floor(dapat * 0.9);
+  state.saldo.koin -= jml;
+  state.saldo.rupiah += dapat;
+  state.totalConvert += jml;
+  showToast('✅ Convert ' + formatKoin(jml) + ' koin → ' + formatRupiah(dapat), 'success');
+  playSound('coin');
+  updateHeaderSaldo();
+  renderPanelContent('convert');
+  syncProgress(true);
+  cekQuestProgress('convert');
+}
+
+// ==================== TAB TOPUP ====================
+function renderTabTopup(c) {
+  var html = '<div class="section-label">💰 Topup Koin</div>';
+  var koinOpts = [
+    { bayar: 5000, dapat: 100000 }, { bayar: 10000, dapat: 250000 },
+    { bayar: 25000, dapat: 700000 }, { bayar: 50000, dapat: 1500000 },
+    { bayar: 100000, dapat: 3500000 }
+  ];
+  koinOpts.forEach(function(o) {
+    html += '<div class="upgrade-card"><div class="upgrade-emoji">🪙</div>' +
+      '<div class="upgrade-info"><div class="upgrade-name">' + formatRupiah(o.bayar) + '</div>' +
+      '<div class="upgrade-desc">Dapat ' + formatKoin(o.dapat) + ' koin</div></div>' +
+      '<div class="upgrade-action"><button class="btn-buy gold" data-topup="koin" data-bayar="' + o.bayar + '" data-dapat="' + o.dapat + '">Beli</button></div></div>';
+  });
+  html += '<div class="section-label" style="margin-top:16px;">💎 Topup Kristal</div>';
+  var kristalOpts = [
+    { bayar: 5000, dapat: 10 }, { bayar: 10000, dapat: 25 },
+    { bayar: 25000, dapat: 70 }, { bayar: 50000, dapat: 160 },
+    { bayar: 100000, dapat: 350 }
+  ];
+  kristalOpts.forEach(function(o) {
+    html += '<div class="upgrade-card"><div class="upgrade-emoji">💎</div>' +
+      '<div class="upgrade-info"><div class="upgrade-name">' + formatRupiah(o.bayar) + '</div>' +
+      '<div class="upgrade-desc">Dapat ' + o.dapat + ' kristal</div></div>' +
+      '<div class="upgrade-action"><button class="btn-buy blue" data-topup="kristal" data-bayar="' + o.bayar + '" data-dapat="' + o.dapat + '">Beli</button></div></div>';
+  });
+  html += '<div class="section-label" style="margin-top:16px;">📸 Upload Bukti</div>' +
+    '<input type="file" id="inputBukti" accept="image/*" style="font-size:12px;margin-bottom:8px;">' +
+    '<button class="btn-buy" id="btnKirimBukti" style="width:100%;">Kirim Bukti Topup</button>';
+  c.innerHTML = html;
+  c.querySelectorAll('[data-topup]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      addRipple(e);
+      showToast('Silakan transfer ' + formatRupiah(parseInt(this.dataset.bayar)) + ', lalu upload bukti.', 'gold');
+      playSound('coin');
+    });
+  });
+  var kirim = document.getElementById('btnKirimBukti');
+  if (kirim) kirim.onclick = kirimBuktiTopup;
+}
+
+function kirimBuktiTopup() {
+  var input = document.getElementById('inputBukti');
+  if (!input || !input.files || !input.files[0]) { showToast('Pilih gambar bukti dulu', 'error'); return; }
+  var file = input.files[0];
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var maxW = 600;
+      var scale = maxW / img.width;
+      canvas.width = maxW;
+      canvas.height = img.height * scale;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+      tulis('Topups', {
+        user: state.user ? (state.user.hp || state.user.nama) : 'unknown',
+        bukti: dataUrl,
+        status: 'pending',
+        waktu: new Date().toISOString()
+      }).then(function() {
+        showToast('✅ Bukti terkirim!', 'success');
+        cekQuestProgress('topup');
+      });
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ==================== TAB VOUCHER ====================
+function renderTabVoucher(c) {
+  var lastVoucher = localStorage.getItem('smp7k_voucher_week') || '';
+  var mingguIni = getWeekKey();
+  var bisa = lastVoucher !== mingguIni;
+  var html = '<div class="section-label">🎟️ Voucher Steam MP 7000</div>' +
+    '<div class="upgrade-card"><div class="upgrade-emoji">🎫</div>' +
+    '<div class="upgrade-info"><div class="upgrade-name">Voucher Spesial</div>' +
+    '<div class="upgrade-desc">70.000 koin atau Rp 7.000</div>' +
+    '<div class="upgrade-desc">Max 1x per minggu</div></div></div>' +
+    (bisa ?
+      '<button class="btn-buy gold" id="btnVoucher" style="width:100%;padding:12px;margin-top:8px;">Buat Voucher (70.000 koin)</button>' :
+      '<div class="empty-state">✅ Voucher minggu ini sudah dibuat</div>');
+  c.innerHTML = html;
+  var btn = document.getElementById('btnVoucher');
+  if (btn) btn.onclick = function() {
+    if (state.saldo.koin < 70000) { showToast('Koin tidak cukup!', 'error'); return; }
+    if (!confirm('Buat voucher? 70.000 koin akan dipotong.')) return;
+    state.saldo.koin -= 70000;
+    var kode = 'MP7K-' + Math.random().toString(36).substr(2,6).toUpperCase();
+    localStorage.setItem('smp7k_voucher_week', mingguIni);
+    localStorage.setItem('smp7k_voucher_code', kode);
+    showToast('🎟️ Voucher: ' + kode, 'gold');
+    playSound('levelup');
+    updateHeaderSaldo();
+    renderPanelContent('voucher');
+    syncProgress(true);
+  };
+}
+function getWeekKey() {
+  var d = new Date();
+  var day = d.getDay();
+  var diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  var monday = new Date(d.setDate(diff));
+  return monday.toISOString().slice(0,10);
+}
+
+// ==================== TAB CERITA ====================
+const BAB_DEFS = [
+  { bab: 1, judul: 'Bab 1: Awal Mula', syarat: null },
+  { bab: 2, judul: 'Bab 2: Pelanggan Pertama', syarat: function() { return state.motorDicuci >= 5; } },
+  { bab: 3, judul: 'Bab 3: Koin Pertama', syarat: function() { return state.saldo.koin >= 10000; } },
+  { bab: 4, judul: 'Bab 4: Manajer Pertama', syarat: function() { return state.manajer >= 1; } },
+  { bab: 5, judul: 'Bab 5: Jutawan', syarat: function() { return state.saldo.koin >= 1000000; } },
+  { bab: 6, judul: 'Bab 6: Tim Solid', syarat: function() { return state.manajer >= 3; } },
+  { bab: 7, judul: 'Bab 7: Raja Steam', syarat: function() { return state.saldo.koin >= 1000000000; } }
+];
+
+function renderTabCerita(c) {
+  var html = '<div class="section-label">📖 Cerita Pak Aldi</div>';
+  BAB_DEFS.forEach(function(b) {
+    var unlocked = state.storyUnlocked >= b.bab;
+    var bisaBuka = b.bab === 1 || (unlocked || (b.syarat && b.syarat()));
+    html += '<div class="upgrade-card' + (bisaBuka ? ' affordable' : ' locked') + '">' +
+      '<div class="upgrade-emoji">' + (unlocked ? '📖' : bisaBuka ? '📖' : '🔒') + '</div>' +
+      '<div class="upgrade-info"><div class="upgrade-name">' + b.judul + '</div>' +
+      '<div class="upgrade-desc">' + (unlocked ? '✅ Sudah dibaca' : bisaBuka ? 'Bisa dibuka' : 'Terkunci') + '</div></div>' +
+      '<div class="upgrade-action">' +
+        (bisaBuka ? '<button class="btn-buy" data-bab="' + b.bab + '">' + (unlocked ? 'Baca' : 'Buka') + '</button>' : '') +
+      '</div>' +
+    '</div>';
+  });
+  c.innerHTML = html;
+  c.querySelectorAll('[data-bab]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      addRipple(e);
+      bacaBab(parseInt(this.dataset.bab));
+    });
+  });
+}
+
+async function bacaBab(bab) {
+  var res = await baca('Story');
+  var dialog = 'Dialog bab ' + bab + '...';
+  if (res && res.ok && res.data) {
+    var found = res.data.find(function(s) { return Number(s.bab) === bab; });
+    if (found) dialog = found.dialog || dialog;
+  }
+  tampilkanCerita(bab, dialog);
+}
+
+function tampilkanCerita(bab, dialog) {
+  var modal = document.getElementById('modalCerita');
+  var def = BAB_DEFS.find(function(b) { return b.bab === bab; });
+  var pakAldiImg = imageCache.pakAldi ? '<img class="cerita-img" src="' + imageCache.pakAldi + '" alt="Pak Aldi">' : '<div class="cerita-img-emoji">👨‍🔧</div>';
+  modal.innerHTML = '<div class="cerita-box">' +
+    pakAldiImg +
+    '<div class="cerita-judul">' + (def ? def.judul : 'Bab ' + bab) + '</div>' +
+    '<div class="cerita-dialog">' + dialog.replace(/\n/g, '<br>') + '</div>' +
+    '<button class="btn-cerita" id="btnLanjutCerita">' + (bab === 7 ? 'Selesai' : 'Lanjut') + '</button>' +
+  '</div>';
+  modal.classList.add('show');
+  document.getElementById('btnLanjutCerita').onclick = function() {
+    modal.classList.remove('show');
+    if (state.storyUnlocked < bab) {
+      state.storyUnlocked = bab;
+      syncProgress(true);
+      // Update server story
+      apiCall('update', { sheet: 'Users', id: state.user.hp || state.user.nama, data: { story_unlocked: bab } });
+    }
+    if (state.panelAktif === 'cerita') renderPanelContent('cerita');
+  };
+}
+
+function cekStoryUnlock() {
+  BAB_DEFS.forEach(function(b) {
+    if (b.syarat && b.syarat() && state.storyUnlocked < b.bab) {
+      // auto-unlock berikutnya
     }
   });
-  if(r.ok) S.syncDelta = 0;
 }
 
-/* ========== PRODUKSI LOOP (HANYA SATU) ========== */
-function startProduksiLoop(){
-  if(window.__produksiLoop) return; // flag
-  window.__produksiLoop = true;
-  setInterval(()=>{
-    let prod = 0;
-    const upg = S.upgradeLevels;
-    const upgradeDefs = [
-      {id:'semprot',base:1},{id:'sabun',base:5},{id:'bilas',base:25},
-      {id:'kering',base:100},{id:'poles',base:500},{id:'kompresor',base:2500}
+// ==================== TAB QUEST ====================
+async function renderTabQuest(c) {
+  c.innerHTML = '<div class="empty-state">Memuat quest...</div>';
+  var resQ = await baca('Quests');
+  if (resQ && resQ.ok && resQ.data) state.questsData = resQ.data;
+  if (!state.questsData.length) {
+    state.questsData = [
+      { id: 'q1', judul: 'Cuci 10 Motor', target: 10, reward: 5000, tipe: 'harian', progressKey: 'motorDicuci' },
+      { id: 'q2', judul: 'Cuci 100 Motor', target: 100, reward: 50000, tipe: 'harian', progressKey: 'motorDicuci' },
+      { id: 'q3', judul: 'Pertama Cuci', target: 1, reward: 1000, tipe: 'spesial', progressKey: 'motorDicuci' },
+      { id: 'q4', judul: 'Cuci 5 Moge', target: 5, reward: 10000, tipe: 'harian', progressKey: 'mogeDicuci' },
+      { id: 'q5', judul: 'Cuci 20 Moge', target: 20, reward: 100000, tipe: 'mingguan', progressKey: 'mogeDicuci' },
+      { id: 'q6', judul: 'Tap 100 Kali', target: 100, reward: 2000, tipe: 'harian', progressKey: 'totalTap' },
+      { id: 'q7', judul: 'Convert 50.000 Koin', target: 50000, reward: 5000, tipe: 'mingguan', progressKey: 'totalConvert' },
+      { id: 'q8', judul: 'Pertama Convert', target: 1, reward: 1000, tipe: 'spesial', progressKey: 'totalConvert' },
+      { id: 'q9', judul: 'Sewa 1 Manajer', target: 1, reward: 5000, tipe: 'spesial', progressKey: 'manajer' },
+      { id: 'q10', judul: 'Pertama Sewa Manajer', target: 1, reward: 2000, tipe: 'spesial', progressKey: 'manajer' },
+      { id: 'q11', judul: 'Buka 1 Cabang', target: 1, reward: 50000, tipe: 'spesial', progressKey: 'cabang' },
+      { id: 'q12', judul: 'Pertama Buka Cabang', target: 1, reward: 10000, tipe: 'spesial', progressKey: 'cabang' },
+      { id: 'q13', judul: 'Pertama Topup', target: 1, reward: 5000, tipe: 'spesial', progressKey: 'topup' }
     ];
-    upgradeDefs.forEach(u=>{
-      const lv = upg[u.id]||0;
-      if(lv>0) prod += u.base * Math.pow(2,lv-1);
+  }
+  var sections = { harian: [], mingguan: [], spesial: [] };
+  state.questsData.forEach(function(q) {
+    var tipe = (q.tipe || 'harian').toLowerCase();
+    if (sections[tipe]) sections[tipe].push(q);
+  });
+  var html = '';
+  ['harian','mingguan','spesial'].forEach(function(tipe) {
+    var list = sections[tipe];
+    if (!list.length) return;
+    html += '<div class="section-label">' + (tipe === 'harian' ? '📅 Harian' : tipe === 'mingguan' ? '📆 Mingguan' : '⭐ Spesial') + '</div>';
+    list.forEach(function(q) {
+      var prog = getQuestProgress(q);
+      var pct = Math.min(100, (prog / q.target) * 100);
+      var selesai = prog >= q.target;
+      var diklaim = state.questProgress[q.id + '_claimed'] ? true : false;
+      html += '<div class="upgrade-card">' +
+        '<div class="upgrade-emoji">' + (selesai ? (diklaim ? '✅' : '🎁') : '📋') + '</div>' +
+        '<div class="upgrade-info">' +
+          '<div class="upgrade-name">' + q.judul + '</div>' +
+          '<div class="upgrade-desc">' + Math.min(prog, q.target) + '/' + q.target + ' · Reward ' + formatKoin(q.reward) + ' koin</div>' +
+          '<div class="progress-bar-sm"><div style="width:' + pct + '%"></div></div>' +
+        '</div>' +
+        '<div class="upgrade-action">' +
+          (selesai && !diklaim ? '<button class="btn-buy gold" data-quest="' + q.id + '">Klaim</button>' : diklaim ? '<span style="font-size:10px;color:#16a34a;">✅</span>' : '') +
+        '</div>' +
+      '</div>';
     });
-    const manajerDefs = [
-      {id:'budi',base:1},{id:'siti',base:5},{id:'andi',base:25},
-      {id:'rina',base:100},{id:'joko',base:500},{id:'umar',base:2500}
-    ];
-    manajerDefs.forEach(m=>{
-      if(S.manajerDimiliki.includes(m.id)) prod += m.base;
+  });
+  c.innerHTML = html || '<div class="empty-state">Belum ada quest</div>';
+  c.querySelectorAll('[data-quest]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      addRipple(e);
+      klaimQuest(this.dataset.quest);
     });
-    // clamp max 100.000/detik
-    if(prod > 100000) prod = 100000;
-    S.produksiPerDetik = prod;
-    if(prod > 0){
-      S.saldo.koin += prod;
-      S.totalKoinPernah += prod;
-      S.syncDelta += prod;
+  });
+  // update badge
+  var klaimable = 0;
+  state.questsData.forEach(function(q) {
+    var prog = getQuestProgress(q);
+    if (prog >= q.target && !state.questProgress[q.id + '_claimed']) klaimable++;
+  });
+  state._questKlaimable = klaimable;
+  renderNav();
+}
+
+function getQuestProgress(q) {
+  var key = q.progressKey;
+  if (key === 'motorDicuci') return state.motorDicuci;
+  if (key === 'mogeDicuci') return state.mogeDicuci;
+  if (key === 'totalTap') return state.totalTap;
+  if (key === 'totalConvert') return state.totalConvert;
+  if (key === 'manajer') return state.manajer;
+  if (key === 'cabang') return state.cabang;
+  if (key === 'topup') return state._topupDone ? 1 : 0;
+  return 0;
+}
+
+function klaimQuest(id) {
+  var q = state.questsData.find(function(d) { return String(d.id) === String(id); });
+  if (!q) return;
+  var prog = getQuestProgress(q);
+  if (prog < q.target) { showToast('Belum selesai', 'error'); return; }
+  if (state.questProgress[q.id + '_claimed']) { showToast('Sudah diklaim', 'error'); return; }
+  state.questProgress[q.id + '_claimed'] = true;
+  state.saldo.koin += q.reward;
+  showToast('🎁 +' + formatKoin(q.reward) + ' koin!', 'gold');
+  playSound('coin');
+  updateHeaderSaldo();
+  syncProgress(true);
+  renderPanelContent('quest');
+  updateQuestProgressServer(q.id);
+}
+
+function updateQuestProgressServer(qid) {
+  apiCall('update', {
+    sheet: 'QuestProgress',
+    id: (state.user.hp || state.user.nama) + '_' + qid,
+    data: { claimed: true, waktu: new Date().toISOString() }
+  });
+}
+
+function cekQuestProgress(type) {
+  if (type === 'topup') state._topupDone = true;
+  if (state.panelAktif === 'quest') renderPanelContent('quest');
+}
+
+// ==================== TAB PROFIL ====================
+function renderTabProfil(c) {
+  var html = '<div class="section-label">👤 Profil Pemain</div>' +
+    '<div class="upgrade-card"><div class="upgrade-emoji">👤</div>' +
+    '<div class="upgrade-info"><div class="upgrade-name">' + (state.user.nama || '-') + '</div>' +
+    '<div class="upgrade-desc">HP: ' + (state.user.hp || '-') + '</div>' +
+    '<div class="upgrade-desc">Level: ' + state.level + '</div></div></div>' +
+    '<div class="upgrade-card"><div class="upgrade-emoji">📊</div>' +
+    '<div class="upgrade-info"><div class="upgrade-name">Statistik</div>' +
+    '<div class="upgrade-desc">Motor dicuci: ' + state.motorDicuci + '</div>' +
+    '<div class="upgrade-desc">Moge dicuci: ' + state.mogeDicuci + '</div>' +
+    '<div class="upgrade-desc">Total tap: ' + state.totalTap + '</div>' +
+    '<div class="upgrade-desc">Total convert: ' + formatKoin(state.totalConvert) + '</div>' +
+    '<div class="upgrade-desc">Manajer: ' + state.manajer + '</div>' +
+    '<div class="upgrade-desc">Cabang: ' + state.cabang + '</div></div></div>' +
+    '<button class="btn-buy" id="btnLogout" style="width:100%;padding:12px;margin-top:8px;background:linear-gradient(135deg,#dc2626,#ef4444);">🚪 Keluar</button>';
+  c.innerHTML = html;
+  document.getElementById('btnLogout').onclick = logout;
+}
+
+// ==================== TAB MENU ====================
+function renderTabMenu(c) {
+  var html = '<div class="section-label">☰ Menu</div>' +
+    '<button class="btn-buy" id="btnMenuProfil" style="width:100%;padding:12px;margin-bottom:8px;">👤 Profil</button>' +
+    '<button class="btn-buy" id="btnMenuTopup" style="width:100%;padding:12px;margin-bottom:8px;">💰 Topup</button>' +
+    '<button class="btn-buy" id="btnMenuKeluar" style="width:100%;padding:12px;background:linear-gradient(135deg,#dc2626,#ef4444);">🚪 Keluar</button>';
+  c.innerHTML = html;
+  document.getElementById('btnMenuProfil').onclick = function() { openPanel('profil'); };
+  document.getElementById('btnMenuTopup').onclick = function() { openPanel('topup'); };
+  document.getElementById('btnMenuKeluar').onclick = logout;
+}
+
+// ==================== GAME CANVAS & LOGIKA ====================
+var canvas, ctx, cuacaCanvas, cuacaCtx;
+var canvasW, canvasH;
+
+function initCanvas() {
+  canvas = document.getElementById('gameCanvas');
+  ctx = canvas.getContext('2d');
+  cuacaCanvas = document.getElementById('cuacaCanvas');
+  cuacaCtx = cuacaCanvas.getContext('2d');
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  // tap detection
+  canvas.addEventListener('pointerdown', onCanvasTap);
+  canvas.addEventListener('click', onCanvasTap);
+}
+
+function resizeCanvas() {
+  var dpr = window.devicePixelRatio || 1;
+  canvasW = canvas.clientWidth;
+  canvasH = canvas.clientHeight;
+  canvas.width = canvasW * dpr;
+  canvas.height = canvasH * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  cuacaCanvas.width = canvasW * dpr;
+  cuacaCanvas.height = canvasH * dpr;
+  cuacaCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  initSlotParkir();
+}
+
+// ==================== SLOT PARKIR ====================
+function initSlotParkir() {
+  state.slotParkir = [];
+  var cols = 6, rows = 3;
+  var yRows = [0.42, 0.55, 0.68];
+  var xStart = 0.12, xEnd = 0.88;
+  var xStep = (xEnd - xStart) / (cols - 1);
+  for (var r = 0; r < rows; r++) {
+    for (var col = 0; col < cols; col++) {
+      state.slotParkir.push({
+        x: xStart + col * xStep,
+        y: yRows[r],
+        occupied: false,
+        motorId: null
+      });
     }
-    updateHeader();
-  },1000);
+  }
 }
 
-/* ========== GAME CANVAS ========== */
-function initCanvas(){
-  const gc = $('gameCanvas');
-  const cc = $('cuacaCanvas');
-  const resize = ()=>{
-    gc.width = window.innerWidth * devicePixelRatio;
-    gc.height = window.innerHeight * devicePixelRatio;
-    gc.style.width = window.innerWidth+'px';
-    gc.style.height = window.innerHeight+'px';
-    cc.width = window.innerWidth * devicePixelRatio;
-    cc.height = window.innerHeight * devicePixelRatio;
-    cc.style.width = window.innerWidth+'px';
-    cc.style.height = window.innerHeight+'px';
-  };
-  resize();
-  window.addEventListener('resize',resize);
-  S.gameCanvasCtx = gc.getContext('2d');
-  S.cuacaCanvasCtx = cc.getContext('2d');
-}
+// ==================== SPAWN MOTOR ====================
+function spawnMotor() {
+  if (state.motorList.length > 30) return;
+  var isMoge = Math.random() < (1/8);
+  var arah = Math.random() < 0.5 ? 1 : -1; // 1 kiri->kanan, -1 kanan->kiri
+  var masukParkiran = Math.random() < 0.4;
+  var parkiranPenuh = state.slotParkir.filter(function(s) { return s.occupied; }).length >= 18;
+  if (parkiranPenuh) masukParkiran = false;
 
-/* ========== MOTOR ========== */
-const SLOT_X = [];
-for(let i=0;i<16;i++){
-  SLOT_X.push(12 + (i/15)*76); // 12% - 88%
-}
-
-function createMotor(){
-  const isMoge = Math.random() < 1/8;
-  const arah = Math.random()<0.5?'kiri-ke-kanan':'kanan-ke-kiri';
-  const startX = arah==='kiri-ke-kanan' ? -15 : 115;
-  const parkirPenuh = S.slotParkir.every(s=>s!==null);
-  const masukParkir = Math.random()<0.4 && !parkirPenuh;
-  const state = masukParkir ? 'masuk' : 'lewat';
-  const motor = {
-    id: Date.now()+Math.random(),
-    x: startX,
-    y: state==='lewat'?90:90,
-    arah,
-    state,
-    level: isMoge?2:1,
+  var motor = {
+    id: ++state.motorIdCounter,
+    x: arah === 1 ? -0.1 : 1.1,
+    y: 0.04,
+    arah: arah,
+    state: masukParkiran ? 'masuk' : 'lewat',
+    level: isMoge ? 2 : 1,
     kotor: true,
     tapCount: 0,
     waktuMasuk: Date.now(),
-    isMoge,
+    isMoge: isMoge,
     sudahNontonIklan: false,
-    slotTarget: -1,
-    masukTimer: 0,
-    keluarTimer: 0,
+    slotTarget: null,
+    rotasi: 0,
+    animProgress: 0,
+    targetX: 0,
+    targetY: 0,
+    startX: 0,
+    startY: 0,
+    kaburTimer: null,
+    emojiKabur: false,
+    sparkle: isMoge
   };
-  if(masukParkir){
-    // cari slot kosong
-    const kosong = S.slotParkir.map((s,i)=>s===null?i:-1).filter(i=>i>=0);
-    if(kosong.length){
-      motor.slotTarget = kosong[Math.floor(Math.random()*kosong.length)];
-      S.slotParkir[motor.slotTarget] = motor.id;
+
+  if (masukParkiran) {
+    var slot = state.slotParkir.find(function(s) { return !s.occupied; });
+    if (slot) {
+      slot.occupied = true;
+      slot.motorId = motor.id;
+      motor.slotTarget = slot;
+      motor.startX = motor.x;
+      motor.startY = motor.y;
+      motor.targetX = slot.x;
+      motor.targetY = slot.y;
+      motor.animProgress = 0;
+      motor.state = 'masuk';
     } else {
       motor.state = 'lewat';
     }
   }
-  S.motors.push(motor);
+  state.motorList.push(motor);
 }
 
-function updateMotors(dt){
-  for(let i=S.motors.length-1;i>=0;i--){
-    const m = S.motors[i];
-    if(m.state==='lewat'){
-      const spd = 0.8;
-      if(m.arah==='kiri-ke-kanan'){m.x += spd;} else {m.x -= spd;}
-      if(m.x < -20 || m.x > 120){S.motors.splice(i,1);}
-    }
-    else if(m.state==='masuk'){
-      m.masukTimer += dt;
-      const t = Math.min(m.masukTimer/1.0,1);
-      const targetX = SLOT_X[m.slotTarget] || 50;
-      m.x = m.x + (targetX - m.x) * 0.08;
-      m.y = 90 + (72-90)*t;
-      if(t>=1){m.state='parkir';m.y=72;m.x=targetX;}
-    }
-    else if(m.state==='parkir'){
-      const elapsed = (Date.now()-m.waktuMasuk)/1000;
-      if(elapsed > 8){
+// ==================== UPDATE MOTOR ====================
+function updateMotors(dt) {
+  var now = Date.now();
+  for (var i = state.motorList.length - 1; i >= 0; i--) {
+    var m = state.motorList[i];
+    // Update waktu
+    if (m.state === 'parkir') {
+      var elapsed = (now - m.waktuMasuk) / 1000;
+      if (elapsed > 8 && !m.emojiKabur) {
         // kabur
-        m.state='pergi';
-        if(m.slotTarget>=0) S.slotParkir[m.slotTarget]=null;
-        toast('Pelanggan kabur!','error');
+        m.emojiKabur = true;
+        showToast('Pelanggan kabur!', 'error');
+        playSound('error');
+        // lepas slot
+        if (m.slotTarget) { m.slotTarget.occupied = false; m.slotTarget.motorId = null; }
+        m.state = 'keluar';
+        m.startX = m.x; m.startY = m.y;
+        m.targetX = m.arah === 1 ? 1.2 : -0.2;
+        m.targetY = 0.04;
+        m.animProgress = 0;
+      } else if (elapsed > 5 && !m.emojiKabur) {
+        m.showAngry = true;
       }
     }
-    else if(m.state==='pergi'){
-      if(m.arah==='kiri-ke-kanan'){m.x += 1.5;} else {m.x -= 1.5;}
-      m.y += 0.8;
-      if(m.y > 95){m.y=95;}
-      if(m.x < -20 || m.x > 120){
-        S.motors.splice(i,1);
-        if(m.slotTarget>=0) S.slotParkir[m.slotTarget]=null;
+
+    if (m.state === 'lewat') {
+      m.x += m.arah * 0.08 * dt;
+      if (m.x > 1.2 || m.x < -0.2) { state.motorList.splice(i, 1); continue; }
+    } else if (m.state === 'masuk') {
+      m.animProgress += dt / 1.5;
+      if (m.animProgress >= 1) {
+        m.animProgress = 1;
+        m.x = m.targetX; m.y = m.targetY;
+        m.state = 'parkir';
+        m.waktuMasuk = now;
+        m.rotasi = Math.PI;
+      } else {
+        var t = easeInOut(m.animProgress);
+        m.x = m.startX + (m.targetX - m.startX) * t;
+        m.y = m.startY + (m.targetY - m.startY) * t;
+        m.rotasi = Math.PI * t;
       }
+    } else if (m.state === 'parkir') {
+      // diam, timer berjalan
+    } else if (m.state === 'keluar') {
+      m.animProgress += dt / 1.2;
+      if (m.animProgress >= 1) {
+        // lanjut lewat
+        m.state = 'lewat';
+        m.y = 0.04;
+        if (m.arah === 1) m.x = 1.2; else m.x = -0.2;
+      } else {
+        var t2 = easeInOut(m.animProgress);
+        m.x = m.startX + (m.targetX - m.startX) * t2;
+        m.y = m.startY + (m.targetY - m.startY) * t2;
+        m.rotasi = Math.PI * (1 - t2);
+      }
+    } else if (m.state === 'dicuci') {
+      // animasi pergi setelah dibersihkan
+      m.animProgress += dt / 0.8;
+      if (m.animProgress >= 1) {
+        state.motorList.splice(i, 1); continue;
+      }
+      m.x += m.arah * 0.05 * dt;
     }
   }
 }
 
-/* ========== RENDER ========== */
-function render(){
-  const ctx = S.gameCanvasCtx;
-  const W = ctx.canvas.width/devicePixelRatio;
-  const H = ctx.canvas.height/devicePixelRatio;
-  ctx.save();
-  ctx.scale(devicePixelRatio,devicePixelRatio);
-  // background
-  if(S.bgImage){
-    ctx.drawImage(S.bgImage,0,0,W,H);
+function easeInOut(t) {
+  return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2;
+}
+
+// ==================== RENDER GAME ====================
+function renderGame() {
+  ctx.clearRect(0, 0, canvasW, canvasH);
+  // Background
+  if (imageCache.bg) {
+    var img = new Image();
+    img.src = imageCache.bg;
+    // drawImage cover
+    drawCover(ctx, img, 0, 0, canvasW, canvasH);
   } else {
-    const grad = ctx.createLinearGradient(0,0,0,H);
-    grad.addColorStop(0,'#C8102E');
-    grad.addColorStop(1,'#FAFAFA');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0,0,W,H);
+    // fallback gradient
+    var grd = ctx.createLinearGradient(0, 0, 0, canvasH);
+    grd.addColorStop(0, '#87CEEB');
+    grd.addColorStop(0.08, '#555');
+    grd.addColorStop(0.18, '#4a7c59');
+    grd.addColorStop(0.25, '#3b82f6');
+    grd.addColorStop(0.32, '#aaa');
+    grd.addColorStop(0.35, '#666');
+    grd.addColorStop(0.75, '#555');
+    grd.addColorStop(0.85, '#8B4513');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, canvasW, canvasH);
   }
-  // cuaca overlay
-  if(S.cuaca==='panas'){
-    ctx.fillStyle='rgba(255,220,100,0.08)';
-    ctx.fillRect(0,0,W,H);
-  } else if(S.cuaca==='hujan'){
-    ctx.fillStyle='rgba(100,120,180,0.12)';
-    ctx.fillRect(0,0,W,H);
+
+  // Render motor
+  state.motorList.forEach(function(m) {
+    renderMotor(m);
+  });
+
+  // Render partikel
+  renderParticles();
+
+  // Render koin terbang
+  renderKoinTerbang();
+}
+
+function drawCover(ctx, img, dx, dy, dw, dh) {
+  if (!img.complete || img.naturalWidth === 0) return;
+  var scale = Math.max(dw / img.naturalWidth, dh / img.naturalHeight);
+  var sw = dw / scale;
+  var sh = dh / scale;
+  var sx = (img.naturalWidth - sw) / 2;
+  var sy = (img.naturalHeight - sh) / 2;
+  ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+}
+
+function renderMotor(m) {
+  var px = m.x * canvasW;
+  var py = m.y * canvasH;
+  var size = m.state === 'parkir' || m.state === 'masuk' || m.state === 'keluar' ? { w: 80, h: 100 } : { w: 60, h: 80 };
+  var imgKey = '';
+  if (m.level === 2) {
+    imgKey = m.kotor ? 'motorMogeKotor' : 'motorMogeBersih';
+  } else {
+    imgKey = m.kotor ? 'motorBebekKotor' : 'motorBebekBersih';
   }
-  // render motor
-  S.motors.forEach(m=>{
-    const px = (m.x/100)*W;
-    const py = (m.y/100)*H;
-    const mw = 120, mh = 80;
-    let img = null;
-    if(m.level===2){
-      img = m.kotor ? S.motorImages.mogeKotor : S.motorImages.mogeBersih;
-    } else {
-      img = m.kotor ? S.motorImages.bebekKotor : S.motorImages.bebekBersih;
-    }
-    if(img){
-      ctx.drawImage(img, px-mw/2, py-mh/2, mw, mh);
-    } else {
-      ctx.font = '48px serif';
-      ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillText(m.level===2?'🏍️':'🛵', px, py);
-    }
-    // efek kotor
-    if(m.kotor){
-      ctx.fillStyle='rgba(100,80,60,0.25)';
-      ctx.beginPath();ctx.arc(px,py,mw*0.3,0,Math.PI*2);ctx.fill();
-    }
-    // emoji marah
-    if(m.state==='parkir'){
-      const el = (Date.now()-m.waktuMasuk)/1000;
-      if(el>5 && el<=8){
-        ctx.font='24px serif';ctx.textAlign='center';
-        ctx.fillText('💢', px+mw*0.3, py-mh*0.3);
-      }
-    }
-    // ikon moge
-    if(m.isMoge && !m.sudahNontonIklan && m.kotor){
-      ctx.font='22px serif';ctx.textAlign='center';
-      ctx.fillText('🎬', px, py-mh*0.5-8);
-    }
-    // kilau emas moge
-    if(m.level===2){
-      const t = Date.now()/1000;
-      ctx.save();
-      ctx.translate(px,py);
-      ctx.rotate(t*1.5);
-      const grad = ctx.createConicGradient ? ctx.createConicGradient(t,0,0) : null;
-      if(grad){
-        grad.addColorStop(0,'rgba(245,158,11,0.5)');
-        grad.addColorStop(0.5,'rgba(255,215,0,0.1)');
-        grad.addColorStop(1,'rgba(245,158,11,0.5)');
-        ctx.fillStyle=grad;
-        ctx.beginPath();ctx.arc(0,0,mw*0.55,0,Math.PI*2);ctx.fill();
-      }
-      ctx.restore();
-    }
-  });
-  // partikel air
-  S.partikel = S.partikel.filter(p=>{
-    p.life -= 0.03;
-    if(p.life<=0) return false;
-    ctx.globalAlpha = p.life;
-    ctx.fillStyle = '#7dd3fc';
-    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
-    ctx.globalAlpha = 1;
-    p.x += p.vx; p.y += p.vy; p.vy += 0.1;
-    return true;
-  });
-  // float text
-  S.floatTexts = S.floatTexts.filter(f=>{
-    f.life -= 0.02;
-    if(f.life<=0) return false;
-    ctx.globalAlpha = f.life;
-    ctx.fillStyle = f.color || '#F59E0B';
-    ctx.font = 'bold 16px Poppins,sans-serif';
-    ctx.textAlign='center';
-    ctx.fillText(f.text, f.x, f.y);
-    ctx.globalAlpha = 1;
-    f.y -= 0.8;
-    return true;
-  });
+  var src = imageCache[imgKey];
+  ctx.save();
+  ctx.translate(px, py);
+  ctx.rotate(m.rotasi || 0);
+  if (src) {
+    var img = new Image();
+    img.src = src;
+    ctx.drawImage(img, -size.w/2, -size.h/2, size.w, size.h);
+  } else {
+    // fallback emoji
+    ctx.font = '40px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(m.level === 2 ? '🏍️' : '🛵', 0, 0);
+  }
   ctx.restore();
-}
 
-/* ========== CUACA ========== */
-function updateCuaca(dt){
-  S.cuacaTimer -= dt;
-  if(S.cuacaTimer <= 0){
-    S.cuaca = S.cuaca==='panas' ? 'hujan' : 'panas';
-    S.cuacaTimer = 60 + Math.random()*120; // 1-3 menit
-    toast(S.cuaca==='panas'?'☀️ Cuaca panas!':'🌧️ Cuaca hujan!','info');
+  // Emoji kabur
+  if (m.showAngry) {
+    ctx.font = '16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('💢', px, py - 40);
   }
-  // cuaca canvas
-  const ctx = S.cuacaCanvasCtx;
-  const W = ctx.canvas.width/devicePixelRatio;
-  const H = ctx.canvas.height/devicePixelRatio;
-  ctx.clearRect(0,0,W,H);
-  if(S.cuaca==='hujan'){
-    ctx.strokeStyle='rgba(150,180,220,0.35)';
-    ctx.lineWidth=1.5;
-    for(let i=0;i<40;i++){
-      const x = (Math.random()*W);
-      const y = (Date.now()/10 + i*37) % H;
-      ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-2,y+10);ctx.stroke();
-    }
-    ctx.fillStyle='rgba(100,140,200,0.06)';
-    ctx.fillRect(0,H*0.8,W,H*0.2);
+  // Sparkle Moge
+  if (m.sparkle && m.isMoge) {
+    ctx.font = '14px sans-serif';
+    ctx.fillStyle = '#F59E0B';
+    ctx.fillText('✨', px + 25, py - 30);
+  }
+  // Ikon iklan Moge
+  if (m.isMoge && !m.sudahNontonIklan && m.state === 'parkir') {
+    ctx.font = '18px sans-serif';
+    ctx.fillText('🎬', px, py - 55);
   }
 }
 
-/* ========== SPAWN ========== */
-function updateSpawn(dt){
-  S.spawnTimer -= dt;
-  if(S.spawnTimer <= 0){
-    const interval = S.cuaca==='hujan' ? 6 : 2;
-    S.spawnTimer = interval;
-    createMotor();
+function renderParticles() {
+  for (var i = state.particles.length - 1; i >= 0; i--) {
+    var p = state.particles[i];
+    p.life -= 0.016;
+    if (p.life <= 0) { state.particles.splice(i, 1); continue; }
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.1;
+  }
+  ctx.globalAlpha = 1;
+}
+
+function renderKoinTerbang() {
+  for (var i = state.koinTerbang.length - 1; i >= 0; i--) {
+    var k = state.koinTerbang[i];
+    k.t += 0.02;
+    if (k.t >= 1) { state.koinTerbang.splice(i, 1); continue; }
+    var x = k.x0 + (k.x1 - k.x0) * k.t;
+    var y = k.y0 + (k.y1 - k.y0) * k.t - Math.sin(k.t * Math.PI) * 60;
+    ctx.font = '20px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🪙', x, y);
   }
 }
 
-/* ========== GAME LOOP ========== */
-let lastTime = Date.now();
-function gameLoop(){
-  const now = Date.now();
-  const dt = Math.min((now-lastTime)/1000, 0.1);
-  lastTime = now;
-  updateMotors(dt);
-  updateCuaca(dt);
-  updateSpawn(dt);
-  render();
-  requestAnimationFrame(gameLoop);
-}
-
-/* ========== TAP HANDLER ========== */
-function handleTap(e){
-  const rect = $('gameCanvas').getBoundingClientRect();
-  let clientX, clientY;
-  if(e.touches){clientX=e.touches[0].clientX;clientY=e.touches[0].clientY;}
-  else {clientX=e.clientX;clientY=e.clientY;}
-  const x = ((clientX-rect.left)/rect.width)*100;
-  const y = ((clientY-rect.top)/rect.height)*100;
-  // cek motor parkir
-  for(const m of S.motors){
-    if(m.state!=='parkir') continue;
-    const dx = Math.abs(x - m.x);
-    const dy = Math.abs(y - m.y);
-    if(dx < 8 && dy < 8){
-      if(m.isMoge && !m.sudahNontonIklan){
-        tampilkanModalIklan(m);
-        return;
-      }
+// ==================== CANVAS TAP ====================
+function onCanvasTap(e) {
+  e.preventDefault();
+  var rect = canvas.getBoundingClientRect();
+  var tapX = (e.clientX - rect.left);
+  var tapY = (e.clientY - rect.top);
+  // Cari motor yang di-tap
+  for (var i = state.motorList.length - 1; i >= 0; i--) {
+    var m = state.motorList[i];
+    if (m.state !== 'parkir') continue;
+    var px = m.x * canvasW;
+    var py = m.y * canvasH;
+    if (Math.abs(tapX - px) < 50 && Math.abs(tapY - py) < 65) {
       tapMotor(m);
       return;
     }
   }
 }
 
-function tapMotor(m){
-  if(!m.kotor) return;
+function tapMotor(m) {
+  if (m.level === 2 && !m.sudahNontonIklan) {
+    // Moge wajib iklan
+    showMogeIklanModal(m);
+    return;
+  }
+  if (!m.kotor) return;
   m.tapCount++;
-  S.tapCount++;
+  state.totalTap++;
+  // Efek air
+  spawnAirEffect(m.x * canvasW, m.y * canvasH);
   playSound('tap');
-  // partikel air
-  for(let i=0;i<6;i++){
-    S.partikel.push({
-      x: (m.x/100)*window.innerWidth + (Math.random()-0.5)*60,
-      y: (m.y/100)*window.innerHeight + (Math.random()-0.5)*40,
-      vx:(Math.random()-0.5)*4, vy:-Math.random()*3-1,
-      r:5+Math.random()*5, life:1
-    });
-  }
-  const maxTap = m.isMoge?5:1;
-  if(m.tapCount >= maxTap){
+  if (m.tapCount >= (m.level === 2 ? 5 : 1)) {
+    // Selesai dicuci
     m.kotor = false;
-    // bayar
-    const bayar = m.isMoge?500:1;
-    S.saldo.koin += bayar;
-    S.totalKoinPernah += bayar;
-    S.syncDelta += bayar;
-    if(m.isMoge){S.mogeDicuci++;} else {S.motorDicuci++;}
-    // float text
-    S.floatTexts.push({x:(m.x/100)*window.innerWidth, y:(m.y/100)*window.innerHeight-30, text:'+'+bayar+' 🪙', life:1, color:'#F59E0B'});
-    playSound('koin');
-    updateHeader();
-    // update quest
-    updateQuestProgress(m.isMoge?'moge':'motor');
-    // motor pergi setelah 1 detik
-    setTimeout(()=>{
-      m.state='pergi';
-      if(m.slotTarget>=0) S.slotParkir[m.slotTarget]=null;
-    },800);
-    // cek cerita
+    m.state = 'dicuci';
+    m.animProgress = 0;
+    if (m.level === 2) { state.mogeDicuci++; }
+    else { state.motorDicuci++; }
+    // Bayar
+    var bayar = m.level === 2 ? 500 : 1;
+    state.saldo.koin += bayar;
+    state._deltaKoin = (state._deltaKoin || 0) + bayar;
+    state.exp += m.level === 2 ? 25 : 5;
+    // Koin terbang
+    state.koinTerbang.push({
+      x0: m.x * canvasW, y0: m.y * canvasH,
+      x1: 60, y1: 40, t: 0
+    });
+    playSound('coin');
+    updateHeaderSaldo();
+    updateLevel();
+    if (m.slotTarget) { m.slotTarget.occupied = false; m.slotTarget.motorId = null; }
+    m.arah = m.x < 0.5 ? 1 : -1;
+    syncProgress(false);
+    cekQuestProgress('cuci');
     cekStoryUnlock();
+    // hapus langsung? Tidak, animasi pergi dulu
+    // Tapi bug: motor yang sudah bayar harus dihapus dari array setelah animasi
   }
 }
 
-/* ========== MODAL IKLAN MOGE ========== */
-function tampilkanModalIklan(m){
-  S.iklanMotor = m;
-  S.iklanTimer = 30;
-  const ov = $('modalOverlay');
-  ov.innerHTML = `
-    <div class="modal-box">
-      <div class="modal-title">🎬 Moge VIP</div>
-      <div class="modal-text">Tonton iklan untuk melayani Moge VIP ini. Setelah menonton, kamu bisa mencucinya!</div>
-      <button class="modal-btn gold" id="btnTonton">▶️ Tonton Iklan</button>
-      <button class="modal-btn ghost" id="btnBatal">Batal</button>
-      <div id="iklanTimer" style="text-align:center;font-size:13px;font-weight:700;color:#C8102E;margin-top:8px;"></div>
-    </div>
-  `;
-  ov.classList.add('show');
-  $('btnTonton').onclick = ()=>{
-    window.open('https://www.profitableratecpmnetwork.com/q9qnyhdf9c?key=56f60182ff2837aef7d8e65616a77746','_blank');
-    setTimeout(()=>{window.open('https://omg10.com/4/11785165','_blank');},2000);
-    $('btnTonton').disabled = true;
-    $('btnTonton').textContent = '⏳ Menonton...';
-    const t = setInterval(()=>{
-      S.iklanTimer--;
-      const el = $('iklanTimer');
-      if(el) el.textContent = `Sisa: ${S.iklanTimer} detik`;
-      if(S.iklanTimer <= 0){
-        clearInterval(t);
-        if($('btnTonton')){
-          $('btnTonton').disabled = false;
-          $('btnTonton').textContent = '✅ Klaim';
-          $('btnTonton').onclick = ()=>{
-            m.sudahNontonIklan = true;
-            ov.classList.remove('show');
-            toast('Iklan selesai! Silakan cuci Moge.','success');
-          };
-        }
+function spawnAirEffect(x, y) {
+  for (var i = 0; i < 6; i++) {
+    state.particles.push({
+      x: x, y: y,
+      vx: (Math.random() - 0.5) * 4,
+      vy: -Math.random() * 4 - 1,
+      size: Math.random() * 5 + 3,
+      color: 'rgba(100,180,255,' + (Math.random() * 0.5 + 0.3) + ')',
+      life: 1
+    });
+  }
+}
+
+function updateLevel() {
+  while (state.exp >= state.expNext) {
+    state.exp -= state.expNext;
+    state.level++;
+    state.expNext = Math.floor(state.expNext * 1.5);
+    playSound('levelup');
+    showToast('🎉 Level ' + state.level + '!', 'gold');
+  }
+  renderHeader();
+}
+
+// ==================== MOGE IKLAN MODAL ====================
+function showMogeIklanModal(m) {
+  var modal = document.getElementById('modalOverlay');
+  modal.innerHTML = '<div class="modal-card">' +
+    '<h3>🎬 Tonton Iklan</h3>' +
+    '<p>Tonton iklan untuk melayani Moge VIP. Setelah menonton, kamu bisa mencuci Moge ini.</p>' +
+    '<div class="modal-actions">' +
+      '<button class="btn-buy" id="btnTontonIklan">Tonton</button>' +
+      '<button class="btn-ghost" id="btnTutupIklan">Tutup</button>' +
+    '</div>' +
+  '</div>';
+  modal.classList.add('show');
+  document.getElementById('btnTontonIklan').onclick = function() {
+    window.open(IKLAN_URL, '_blank');
+    setTimeout(function() { window.open(IKLAN_BACKUP, '_blank'); }, 500);
+    modal.classList.remove('show');
+    showToast('⏳ Tunggu 30 detik...', 'gold');
+    state.mogeIklanTarget = m;
+    if (state.mogeIklanTimer) clearTimeout(state.mogeIklanTimer);
+    state.mogeIklanTimer = setTimeout(function() {
+      m.sudahNontonIklan = true;
+      showToast('✅ Iklan selesai! Silakan cuci Moge.', 'success');
+    }, 30000);
+    // Jika 10 detik tidak nonton, moge kabur
+    setTimeout(function() {
+      if (!m.sudahNontonIklan) {
+        showToast('Moge VIP kabur!', 'error');
+        if (m.slotTarget) { m.slotTarget.occupied = false; m.slotTarget.motorId = null; }
+        m.state = 'keluar';
+        m.startX = m.x; m.startY = m.y;
+        m.targetX = m.arah === 1 ? 1.2 : -0.2;
+        m.targetY = 0.04;
+        m.animProgress = 0;
       }
-    },1000);
-    // kabur kalau tidak nonton 10 detik
-    setTimeout(()=>{
-      if(!m.sudahNontonIklan && ov.classList.contains('show')){
-        ov.classList.remove('show');
-        m.state='pergi';
-        if(m.slotTarget>=0) S.slotParkir[m.slotTarget]=null;
-        toast('Moge kabur karena tidak ditonton!','error');
-      }
-    },10000);
+    }, 10000);
   };
-  $('btnBatal').onclick = ()=>{
-    ov.classList.remove('show');
-  };
-}
-
-/* ========== HEADER ========== */
-function updateHeader(){
-  const h = $('appHeader');
-  const koinStr = fmtNum(S.saldo.koin);
-  const rpStr = fmtNum(S.saldo.rupiah);
-  const krStr = fmtNum(S.saldo.kristal);
-  const expMax = S.level * 1000;
-  const expPct = Math.min((S.exp/expMax)*100,100);
-  h.innerHTML = `
-    <div class="header-row">
-      <div class="header-left">
-        <div class="logo-mp">MP</div>
-        <div class="player-info">
-          <div class="player-name">${S.user.nama||'Pemain'}</div>
-          <div class="player-phone">${sensorHP(S.user.nomor)}</div>
-        </div>
-      </div>
-      <div class="header-right">
-        <span class="cuaca-icon">${S.cuaca==='panas'?'☀️':'🌧️'}</span>
-        <button class="icon-btn" id="btnMusik">${S.musikOn?'🎵':'🔇'}</button>
-        <button class="icon-btn" id="btnMenu">☰</button>
-        <button class="icon-btn" id="btnKeluar">🚪</button>
-      </div>
-    </div>
-    <div class="saldo-row">
-      <div class="saldo-item">
-        ${S.koinImg?`<img src="${S.koinImg}">`:'<span class="emoji-fb">🪙</span>'}
-        <span>${koinStr}</span>
-      </div>
-      <div class="saldo-item">
-        ${S.rupiahImg?`<img src="${S.rupiahImg}">`:'<span class="emoji-fb">💵</span>'}
-        <span>${rpStr}</span>
-      </div>
-      <div class="saldo-item">
-        ${S.kristalImg?`<img src="${S.kristalImg}">`:'<span class="emoji-fb">💎</span>'}
-        <span>${krStr}</span>
-      </div>
-      <div class="level-wrap">
-        <div class="level-text">Lv.${S.level}</div>
-        <div class="level-bar"><div class="level-bar-fill" style="width:${expPct}%"></div></div>
-      </div>
-    </div>
-  `;
-  $('btnMusik').onclick = toggleMusik;
-  $('btnMenu').onclick = ()=>toast('Menu dalam pengembangan','info');
-  $('btnKeluar').onclick = logout;
-}
-
-/* ========== MUSIK ========== */
-function toggleMusik(){
-  S.musikOn = !S.musikOn;
-  localStorage.setItem('smp7k_music', S.musikOn?'on':'off');
-  const audio = $('bgMusic');
-  if(audio){audio.muted = !S.musikOn;}
-  updateHeader();
-  toast(S.musikOn?'🎵 Musik ON':'🔇 Musik OFF','info');
-}
-
-/* ========== LOGOUT ========== */
-function logout(){
-  localStorage.removeItem('smp7k_session');
-  localStorage.removeItem('smp7k_user');
-  localStorage.removeItem('smp7k_admin');
-  location.href='index.html';
-}
-
-/* ========== BOTTOM NAV ========== */
-const NAV_ITEMS = [
-  {id:'game',emoji:'🎮',label:'Game'},
-  {id:'manajer',emoji:'👔',label:'Manajer'},
-  {id:'cabang',emoji:'🏪',label:'Cabang'},
-  {id:'toko',emoji:'🛒',label:'Toko'},
-  {id:'convert',emoji:'🔄',label:'Convert'},
-  {id:'topup',emoji:'💰',label:'Topup'},
-  {id:'voucher',emoji:'🎫',label:'Voucher'},
-  {id:'cerita',emoji:'📖',label:'Cerita'},
-  {id:'quest',emoji:'📜',label:'Quest'},
-  {id:'profil',emoji:'👤',label:'Profil'},
-];
-
-function buildNav(){
-  const nav = $('bottomNav');
-  nav.innerHTML = NAV_ITEMS.map(item=>`
-    <button class="nav-item" data-tab="${item.id}">
-      <span class="nav-emoji">${item.emoji}</span>
-      <span>${item.label}</span>
-      ${item.id==='quest'?'<span class="nav-badge" id="questBadge" style="display:none">!</span>':''}
-    </button>
-  `).join('');
-  nav.querySelectorAll('.nav-item').forEach(btn=>{
-    btn.onclick = ()=>bukaPanel(btn.dataset.tab);
-  });
-}
-
-/* ========== PANEL SLIDE ========== */
-function bukaPanel(tab){
-  S.panelAktif = tab;
-  const p = $('panelSlide');
-  const item = NAV_ITEMS.find(i=>i.id===tab);
-  p.innerHTML = `
-    <div class="panel-handle"></div>
-    <div class="panel-header">
-      <div class="panel-title">${item.emoji} ${item.label}</div>
-      <button class="panel-close" id="panelClose">✕</button>
-    </div>
-    <div class="panel-body" id="panelBody"></div>
-  `;
-  p.classList.add('open');
-  $('panelClose').onclick = tutupPanel;
-  // isi konten
-  const body = $('panelBody');
-  switch(tab){
-    case 'game': renderPanelGame(body); break;
-    case 'manajer': renderPanelManajer(body); break;
-    case 'cabang': renderPanelCabang(body); break;
-    case 'toko': renderPanelToko(body); break;
-    case 'convert': renderPanelConvert(body); break;
-    case 'topup': renderPanelTopup(body); break;
-    case 'voucher': renderPanelVoucher(body); break;
-    case 'cerita': renderPanelCerita(body); break;
-    case 'quest': renderPanelQuest(body); break;
-    case 'profil': renderPanelProfil(body); break;
-  }
-  // update nav active
-  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
-}
-
-function tutupPanel(){
-  $('panelSlide').classList.remove('open');
-  S.panelAktif = null;
-  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
-}
-
-/* ========== PANEL GAME (UPGRADE) ========== */
-const UPGRADE_DEFS = [
-  {id:'semprot',nama:'Tukang Semprot',baseHarga:100,baseProduksi:1,emoji:'💦'},
-  {id:'sabun',nama:'Tukang Sabun',baseHarga:1000,baseProduksi:5,emoji:'🧼'},
-  {id:'bilas',nama:'Tukang Bilas',baseHarga:10000,baseProduksi:25,emoji:'🚿'},
-  {id:'kering',nama:'Tukang Kering',baseHarga:100000,baseProduksi:100,emoji:'💨'},
-  {id:'poles',nama:'Tukang Poles',baseHarga:1000000,baseProduksi:500,emoji:'✨'},
-  {id:'kompresor',nama:'Kompresor',baseHarga:10000000,baseProduksi:2500,emoji:'🔧'},
-];
-
-function getUpgradeHarga(def){
-  const lv = S.upgradeLevels[def.id]||0;
-  return Math.floor(def.baseHarga * Math.pow(2.5,lv));
-}
-function getUpgradeProduksi(def){
-  const lv = S.upgradeLevels[def.id]||0;
-  if(lv===0) return 0;
-  return def.baseProduksi * Math.pow(2,lv-1);
-}
-
-function renderPanelGame(body){
-  body.innerHTML = `
-    <div class="section-title">⚡ Upgrade Produksi</div>
-    <div id="upgradeList"></div>
-    <div class="card" style="margin-top:12px;background:linear-gradient(135deg,#fff8e1,#fff);">
-      <div class="card-row">
-        <div><div class="card-title">📊 Produksi Saat Ini</div>
-        <div class="card-sub">${fmtNum(S.produksiPerDetik)} koin/detik</div></div>
-        <div style="font-size:24px;">🏭</div>
-      </div>
-    </div>
-  `;
-  const list = $('upgradeList');
-  UPGRADE_DEFS.forEach(def=>{
-    const lv = S.upgradeLevels[def.id]||0;
-    const harga = getUpgradeHarga(def);
-    const prod = getUpgradeProduksi(def);
-    const bisa = S.saldo.koin >= harga;
-    const el = document.createElement('div');
-    el.className = 'card';
-    el.innerHTML = `
-      <div class="card-row">
-        <div style="display:flex;align-items:center;gap:10px;flex:1;">
-          <span style="font-size:28px;">${def.emoji}</span>
-          <div>
-            <div class="card-title">${def.nama} <span class="chip gold">Lv.${lv}</span></div>
-            <div class="card-sub">Produksi: ${prod}/dtk</div>
-            <div class="card-sub">Harga: ${fmtNum(harga)} 🪙</div>
-          </div>
-        </div>
-        <button class="btn-sm ${bisa?'primary':'ghost'}" ${bisa?'':'disabled'}>${lv===0?'Beli':'Upgrade'}</button>
-      </div>
-    `;
-    el.querySelector('button').onclick = ()=>{
-      if(S.saldo.koin < harga){toast('Koin tidak cukup!','error');playSound('error');return;}
-      S.saldo.koin -= harga;
-      S.upgradeLevels[def.id] = lv+1;
-      localStorage.setItem('smp7k_upgrade',JSON.stringify(S.upgradeLevels));
-      S.syncDelta += harga; // sync
-      playSound('level');
-      toast(`${def.nama} → Lv.${lv+1}!`,'success');
-      updateHeader();
-      renderPanelGame(body);
-      syncProgress();
-    };
-    list.appendChild(el);
-  });
-}
-
-/* ========== PANEL MANAJER ========== */
-const MANAJER_DEFS = [
-  {id:'budi',nama:'Pak Budi Semprot',harga:500,produksi:1,emoji:'👨‍🔧'},
-  {id:'siti',nama:'Bu Siti Sabun',harga:5000,produksi:5,emoji:'👩‍🔧'},
-  {id:'andi',nama:'Pak Andi Bilas',harga:50000,produksi:25,emoji:'👨‍🔧'},
-  {id:'rina',nama:'Bu Rina Kering',harga:500000,produksi:100,emoji:'👩‍🔧'},
-  {id:'joko',nama:'Pak Joko Poles',harga:5000000,produksi:500,emoji:'👨‍🔧'},
-  {id:'umar',nama:'Teknisi Umar Kompresor',harga:50000000,produksi:2500,emoji:'👨‍🔧'},
-];
-
-function renderPanelManajer(body){
-  body.innerHTML = `<div class="section-title">👔 Sewa Manajer</div><div id="manajerList"></div>`;
-  const list = $('manajerList');
-  MANAJER_DEFS.forEach(def=>{
-    const dimiliki = S.manajerDimiliki.includes(def.id);
-    const bisa = S.saldo.koin >= def.harga && !dimiliki;
-    const el = document.createElement('div');
-    el.className = 'card';
-    el.innerHTML = `
-      <div class="card-row">
-        <div style="display:flex;align-items:center;gap:10px;flex:1;">
-          <span style="font-size:28px;">${def.emoji}</span>
-          <div>
-            <div class="card-title">${def.nama}</div>
-            <div class="card-sub">Produksi: ${def.produksi}/dtk</div>
-            <div class="card-sub">Harga: ${fmtNum(def.harga)} 🪙</div>
-          </div>
-        </div>
-        <button class="btn-sm ${dimiliki?'ghost':bisa?'primary':'ghost'}" ${dimiliki||!bisa?'disabled':''}>
-          ${dimiliki?'✅ Dimiliki':'Sewa'}
-        </button>
-      </div>
-    `;
-    if(!dimiliki){
-      el.querySelector('button').onclick = ()=>{
-        if(S.saldo.koin < def.harga){toast('Koin tidak cukup!','error');playSound('error');return;}
-        S.saldo.koin -= def.harga;
-        S.manajerDimiliki.push(def.id);
-        S.manajerDisewa++;
-        localStorage.setItem('smp7k_manajer',JSON.stringify(S.manajerDimiliki));
-        S.syncDelta += def.harga;
-        playSound('level');
-        toast(`${def.nama} disewa!`,'success');
-        updateHeader();
-        renderPanelManajer(body);
-        updateQuestProgress('manajer');
-        cekStoryUnlock();
-        syncProgress();
-      };
-    }
-    list.appendChild(el);
-  });
-}
-
-/* ========== PANEL CABANG ========== */
-const CABANG_DEFS = [
-  {id:2,harga:1000000,nama:'Cabang 2'},
-  {id:3,harga:50000000,nama:'Cabang 3'},
-  {id:4,harga:2500000000,nama:'Cabang 4'},
-  {id:5,harga:100000000000,nama:'Cabang 5'},
-];
-
-function renderPanelCabang(body){
-  body.innerHTML = `
-    <div class="section-title">🏪 Cabang Saat Ini: Cabang ${S.cabang}</div>
-    <div id="cabangList"></div>
-  `;
-  const list = $('cabangList');
-  CABANG_DEFS.forEach(def=>{
-    const dimiliki = S.cabang >= def.id;
-    const bisa = S.saldo.koin >= def.harga && !dimiliki;
-    const el = document.createElement('div');
-    el.className = 'card';
-    el.innerHTML = `
-      <div class="card-row">
-        <div style="display:flex;align-items:center;gap:10px;flex:1;">
-          <span style="font-size:28px;">🏪</span>
-          <div>
-            <div class="card-title">${def.nama}</div>
-            <div class="card-sub">Harga: ${fmtNum(def.harga)} 🪙</div>
-          </div>
-        </div>
-        <button class="btn-sm ${dimiliki?'ghost':bisa?'primary':'ghost'}" ${dimiliki||!bisa?'disabled':''}>
-          ${dimiliki?'✅ Dimiliki':'Buka'}
-        </button>
-      </div>
-    `;
-    if(!dimiliki){
-      el.querySelector('button').onclick = ()=>{
-        if(S.saldo.koin < def.harga){toast('Koin tidak cukup!','error');playSound('error');return;}
-        S.saldo.koin -= def.harga;
-        S.cabang = def.id;
-        S.syncDelta += def.harga;
-        playSound('level');
-        toast(`Cabang ${def.id} dibuka!`,'success');
-        updateHeader();
-        renderPanelCabang(body);
-        updateQuestProgress('cabang');
-        cekStoryUnlock();
-        syncProgress();
-      };
-    }
-    list.appendChild(el);
-  });
-}
-
-/* ========== PANEL TOKO ========== */
-const TOKO_ITEMS = [
-  {nama:'Skin Merah Metalik',koin:50000,rupiah:4000,kristal:0,emoji:'🔴'},
-  {nama:'Tema Steam Mewah',koin:100000,rupiah:8000,kristal:0,emoji:'🎨'},
-  {nama:'Badge Juara',koin:20000,rupiah:1500,kristal:0,emoji:'🏆'},
-  {nama:'Boost Produksi 1 Jam',koin:200000,rupiah:15000,kristal:0,emoji:'⚡'},
-  {nama:'Unlock Manajer Cepat',koin:500000,rupiah:40000,kristal:0,emoji:'👔'},
-  {nama:'Voucher Cuci Motor',koin:70000,rupiah:7000,kristal:0,emoji:'🎫'},
-  {nama:'Manajer Legendaris',koin:0,rupiah:0,kristal:50,emoji:'🌟'},
-  {nama:'Skin Emas Premium',koin:0,rupiah:0,kristal:30,emoji:'✨'},
-];
-
-function renderPanelToko(body){
-  body.innerHTML = `<div class="section-title">🛒 Toko Item</div><div id="tokoList"></div>`;
-  const list = $('tokoList');
-  TOKO_ITEMS.forEach(item=>{
-    const el = document.createElement('div');
-    el.className = 'card';
-    const bisaKoin = item.koin>0 && S.saldo.koin >= item.koin;
-    const bisaKristal = item.kristal>0 && S.saldo.kristal >= item.kristal;
-    el.innerHTML = `
-      <div class="card-row">
-        <div style="display:flex;align-items:center;gap:10px;flex:1;">
-          <span style="font-size:28px;">${item.emoji}</span>
-          <div>
-            <div class="card-title">${item.nama}</div>
-            <div class="card-sub">${item.koin>0?`${fmtNum(item.koin)} 🪙`:''} ${item.kristal>0?`${item.kristal} 💎`:''} ${item.rupiah>0?`/ ${fmtRp(item.rupiah)}`:''}</div>
-          </div>
-        </div>
-        <button class="btn-sm ${bisaKoin||bisaKristal?'primary':'ghost'}" ${bisaKoin||bisaKristal?'':'disabled'}>Beli</button>
-      </div>
-    `;
-    if(bisaKoin||bisaKristal){
-      el.querySelector('button').onclick = ()=>{
-        if(item.koin>0){S.saldo.koin -= item.koin; S.syncDelta += item.koin;}
-        if(item.kristal>0){S.saldo.kristal -= item.kristal;}
-        playSound('koin');
-        toast(`${item.nama} dibeli!`,'success');
-        updateHeader();
-        syncProgress();
-      };
-    }
-    list.appendChild(el);
-  });
-}
-
-/* ========== PANEL CONVERT ========== */
-function renderPanelConvert(body){
-  body.innerHTML = `
-    <div class="section-title">🔄 Convert Koin → Rupiah</div>
-    <div class="card">
-      <div class="card-sub">1000 koin = Rp 100</div>
-      <input type="number" id="convertInput" class="input-field" placeholder="Minimal 10.000 koin" style="margin-top:8px;" min="10000">
-      <div id="convertPreview" style="margin-top:8px;font-size:12px;font-weight:700;color:#C8102E;"></div>
-      <div style="margin-top:10px;display:flex;gap:8px;">
-        <button class="btn-sm primary" id="btnConvert10" style="flex:1;">Potong 10%</button>
-        <button class="btn-sm gold" id="btnConvertIklan" style="flex:1;">🎬 Nonton Iklan (Penuh)</button>
-      </div>
-    </div>
-  `;
-  const input = $('convertInput');
-  const preview = $('convertPreview');
-  function updatePreview(){
-    const v = Number(input.value)||0;
-    if(v>=10000){
-      const rp = Math.floor(v/1000)*100;
-      preview.textContent = `Dapat: ${fmtRp(rp)}`;
-    } else preview.textContent = '';
-  }
-  input.oninput = updatePreview;
-  $('btnConvert10').onclick = ()=>{
-    const v = Number(input.value)||0;
-    if(v<10000){toast('Minimal 10.000 koin!','error');return;}
-    if(S.saldo.koin < v){toast('Koin tidak cukup!','error');return;}
-    S.saldo.koin -= v;
-    const rp = Math.floor((v/1000)*100*0.9);
-    S.saldo.rupiah += rp;
-    S.syncDelta += v;
-    playSound('koin');
-    toast(`Convert berhasil! +${fmtRp(rp)}`,'success');
-    updateHeader();
-    updateQuestProgress('convert');
-    syncProgress();
-  };
-  $('btnConvertIklan').onclick = ()=>{
-    const v = Number(input.value)||0;
-    if(v<10000){toast('Minimal 10.000 koin!','error');return;}
-    if(S.saldo.koin < v){toast('Koin tidak cukup!','error');return;}
-    window.open('https://www.profitableratecpmnetwork.com/q9qnyhdf9c?key=56f60182ff2837aef7d8e65616a77746','_blank');
-    setTimeout(()=>{window.open('https://omg10.com/4/11785165','_blank');},2000);
-    setTimeout(()=>{
-      S.saldo.koin -= v;
-      const rp = Math.floor((v/1000)*100);
-      S.saldo.rupiah += rp;
-      S.syncDelta += v;
-      playSound('koin');
-      toast(`Convert penuh! +${fmtRp(rp)}`,'success');
-      updateHeader();
-      updateQuestProgress('convert');
-      syncProgress();
-    },2000);
-  };
-}
-
-/* ========== PANEL TOPUP ========== */
-const TOPUP_KOIN = [{rp:5000,koin:100000},{rp:10000,koin:250000},{rp:25000,koin:700000},{rp:50000,koin:1500000},{rp:100000,koin:3500000}];
-const TOPUP_RUPIAH = [{rp:5000,hasil:5500},{rp:10000,hasil:12000},{rp:25000,hasil:32500},{rp:50000,hasil:70000},{rp:100000,hasil:150000}];
-const TOPUP_KRISTAL = [{rp:5000,kristal:10},{rp:10000,kristal:25},{rp:25000,kristal:70},{rp:50000,kristal:160},{rp:100000,kristal:350}];
-
-function renderPanelTopup(body){
-  body.innerHTML = `
-    <div class="section-title">💰 Topup Koin</div>
-    <div class="grid-3" id="topupKoin"></div>
-    <div class="section-title">💵 Topup Rupiah</div>
-    <div class="grid-3" id="topupRupiah"></div>
-    <div class="section-title">💎 Topup Kristal</div>
-    <div class="grid-3" id="topupKristal"></div>
-    <div style="margin-top:16px;text-align:center;">
-      <img src="assets/qris.png" style="max-width:200px;border-radius:12px;" onerror="this.style.display='none'">
-      <div class="card-sub" style="margin-top:6px;">Scan QRIS untuk pembayaran</div>
-    </div>
-  `;
-  function buatTombol(container, items, labelFn, onPilih){
-    const c = $(container);
-    items.forEach(it=>{
-      const btn = document.createElement('button');
-      btn.className = 'btn-sm ghost';
-      btn.style.padding = '12px 6px';
-      btn.textContent = labelFn(it);
-      btn.onclick = ()=>onPilih(it);
-      c.appendChild(btn);
-    });
-  }
-  buatTombol('topupKoin',TOPUP_KOIN,it=>`${fmtNum(it.koin)} 🪙\nRp ${it.rp/1000}rb`,it=>{
-    S.saldo.koin += it.koin; S.syncDelta += it.koin;
-    toast(`Topup ${fmtNum(it.koin)} koin!`,'success'); updateHeader(); updateQuestProgress('topup'); syncProgress();
-  });
-  buatTombol('topupRupiah',TOPUP_RUPIAH,it=>`Rp ${fmtNum(it.hasil)}\nRp ${it.rp/1000}rb`,it=>{
-    S.saldo.rupiah += it.hasil;
-    toast(`Topup ${fmtRp(it.hasil)}!`,'success'); updateHeader(); updateQuestProgress('topup'); syncProgress();
-  });
-  buatTombol('topupKristal',TOPUP_KRISTAL,it=>`${it.kristal} 💎\nRp ${it.rp/1000}rb`,it=>{
-    S.saldo.kristal += it.kristal;
-    toast(`Topup ${it.kristal} kristal!`,'success'); updateHeader(); updateQuestProgress('topup'); syncProgress();
-  });
-}
-
-/* ========== PANEL VOUCHER ========== */
-function renderPanelVoucher(body){
-  body.innerHTML = `
-    <div class="section-title">🎫 Tukar Voucher Cuci Motor</div>
-    <div class="card">
-      <div class="card-sub">Tukar 70.000 koin atau Rp 7.000. Max 1 per minggu.</div>
-      <input type="text" id="voucherHP" class="input-field" placeholder="Masukkan nomor HP" style="margin-top:8px;">
-      <button class="btn-sm gold" id="btnVoucher" style="width:100%;margin-top:10px;">Tukar Voucher</button>
-    </div>
-  `;
-  $('btnVoucher').onclick = ()=>{
-    const hp = $('voucherHP').value.trim();
-    if(!hp){toast('Masukkan nomor HP!','error');return;}
-    if(hp !== S.user.nomor){toast('Nomor HP tidak sesuai!','error');playSound('error');return;}
-    if(S.saldo.koin >= 70000){S.saldo.koin -= 70000; S.syncDelta += 70000;}
-    else if(S.saldo.rupiah >= 7000){S.saldo.rupiah -= 7000;}
-    else {toast('Saldo tidak cukup!','error');return;}
-    const kode = 'MP7K-' + Math.random().toString(36).substring(2,8).toUpperCase();
-    api('tulis',{sheet:'Vouchers',data:{nomor:hp,kode:kode,status:'aktif',tanggal:new Date().toISOString()}});
-    toast(`Voucher: ${kode}`,'success');
-    updateHeader();
-    syncProgress();
-  };
-}
-
-/* ========== PANEL CERITA ========== */
-function renderPanelCerita(body){
-  body.innerHTML = `<div class="section-title">📖 Cerita</div><div id="ceritaList"></div>`;
-  const list = $('ceritaList');
-  const babList = [
-    {bab:1,judul:'Awal Mula',syarat:null},
-    {bab:2,judul:'Pelanggan Setia',syarat:'total motor dicuci >= 5'},
-    {bab:3,judul:'Koin Pertama',syarat:'total koin pernah >= 10000'},
-    {bab:4,judul:'Manajer Pertama',syarat:'manajer disewa >= 1'},
-    {bab:5,judul:'Jutawan',syarat:'total koin pernah >= 1000000'},
-    {bab:6,judul:'Tim Solid',syarat:'manajer disewa >= 3'},
-    {bab:7,judul:'Miliarder',syarat:'total koin pernah >= 1000000000'},
-  ];
-  babList.forEach(b=>{
-    const unlocked = S.storyUnlocked >= b.bab;
-    const el = document.createElement('div');
-    el.className = 'card' + (unlocked?'':' locked');
-    el.innerHTML = `
-      <div class="card-row">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-size:24px;">${unlocked?'📖':'🔒'}</span>
-          <div>
-            <div class="card-title">Bab ${b.bab}: ${b.judul}</div>
-            <div class="card-sub">${b.syarat?`Syarat: ${b.syarat}`:'Tersedia'}</div>
-          </div>
-        </div>
-        <button class="btn-sm ${unlocked?'primary':'ghost'}" ${unlocked?'':'disabled'}>${unlocked?'Baca':'🔒'}</button>
-      </div>
-    `;
-    if(unlocked){
-      el.querySelector('button').onclick = ()=>tampilkanCerita(b.bab);
-    }
-    list.appendChild(el);
-  });
-}
-
-/* ========== MODAL CERITA ========== */
-const STORY_CONTENT = {
-  1:{judul:'Awal Mula',dialog:'Hai! Aku Pak Aldi. Selamat datang di Steam MP 7000!\n\nIni adalah tempat cuci motor legendaris. Bisnis ini sudah turun-temurun, tapi sekarang giliranmu untuk menjalankannya.\n\nCuci motor, kumpulkan koin, dan kembangkan bisnis ini menjadi kerajaan cuci motor terbesar di Indonesia!\n\nAyo mulai!'},
-  2:{judul:'Pelanggan Setia',dialog:'Kerja bagus! Pelanggan mulai berdatangan.\n\nMereka suka pelayananmu yang cepat dan bersih. Teruslah bekerja keras!'},
-  3:{judul:'Koin Pertama',dialog:'Kamu sudah mengumpulkan 10.000 koin!\n\nIni baru permulaan. Investasikan koinmu untuk upgrade dan manajer agar bisnis semakin cepat berkembang.'},
-  4:{judul:'Manajer Pertama',dialog:'Kamu menyewa manajer pertama!\n\nDengan manajer, produksi koin akan berjalan otomatis. Pilih manajer dengan bijak!'},
-  5:{judul:'Jutawan',dialog:'Satu juta koin! Kamu sekarang jutawan!\n\nTapi jangan berhenti di sini. Masih ada cabang-cabang baru yang menanti untuk dibuka.'},
-  6:{judul:'Tim Solid',dialog:'Tiga manajer sudah bergabung!\n\nTim kamu semakin kuat. Mereka akan membantu menghasilkan koin lebih banyak lagi.'},
-  7:{judul:'Miliarder',dialog:'Satu miliar koin! Kamu luar biasa!\n\nKamu telah membangun kerajaan cuci motor terbesar. Steam MP 7000 sekarang terkenal di seluruh negeri.\n\nTerima kasih sudah bermain!'},
-};
-
-function tampilkanCerita(bab){
-  const c = STORY_CONTENT[bab] || {judul:'Bab '+bab,dialog:'...'};
-  const ov = $('modalCerita');
-  ov.innerHTML = `
-    <div class="cerita-overlay"></div>
-    <div class="cerita-box">
-      ${S.pakAldiImg?`<img src="assets/pak-aldi.png" class="cerita-img" onerror="this.style.display='none'">`:'<span class="cerita-img-fb">👨‍🍳</span>'}
-      <div class="cerita-bab">Bab ${bab}</div>
-      <div class="cerita-judul">${c.judul}</div>
-      <div class="cerita-dialog">${c.dialog.replace(/\n/g,'<br>')}</div>
-      <button class="modal-btn gold" id="btnLanjut">${bab<7?'Lanjut ➡️':'Selesai ✅'}</button>
-    </div>
-  `;
-  ov.classList.add('show');
-  $('btnLanjut').onclick = ()=>{
-    ov.classList.remove('show');
-    if(bab > S.storyUnlocked){
-      S.storyUnlocked = bab;
-      api('update',{sheet:'Users',row:S.user._row,data:{story_unlocked:bab}});
+  document.getElementById('btnTutupIklan').onclick = function() {
+    modal.classList.remove('show');
+    // Moge kabur jika tidak nonton
+    if (!m.sudahNontonIklan) {
+      showToast('Moge VIP kabur!', 'error');
+      if (m.slotTarget) { m.slotTarget.occupied = false; m.slotTarget.motorId = null; }
+      m.state = 'keluar';
+      m.startX = m.x; m.startY = m.y;
+      m.targetX = m.arah === 1 ? 1.2 : -0.2;
+      m.targetY = 0.04;
+      m.animProgress = 0;
     }
   };
 }
 
-function cekStoryUnlock(){
-  const syarat = [
-    {bab:2,cek:S.motorDicuci>=5},
-    {bab:3,cek:S.totalKoinPernah>=10000},
-    {bab:4,cek:S.manajerDisewa>=1},
-    {bab:5,cek:S.totalKoinPernah>=1000000},
-    {bab:6,cek:S.manajerDisewa>=3},
-    {bab:7,cek:S.totalKoinPernah>=1000000000},
-  ];
-  syarat.forEach(s=>{
-    if(s.cek && S.storyUnlocked < s.bab){
-      S.storyUnlocked = s.bab;
-      api('update',{sheet:'Users',row:S.user._row,data:{story_unlocked:s.bab}});
-      setTimeout(()=>tampilkanCerita(s.bab),500);
+// ==================== CUACA ====================
+function initCuaca() {
+  gantiCuaca();
+  state.cuacaInterval = setInterval(function() {
+    gantiCuaca();
+  }, (60 + Math.random() * 120) * 1000);
+}
+
+function gantiCuaca() {
+  state.cuaca = state.cuaca === 'panas' ? 'hujan' : 'panas';
+  updateHeaderSaldo();
+  // Reset spawn interval
+  if (state.spawnInterval) clearInterval(state.spawnInterval);
+  var interval = state.cuaca === 'panas' ? 2000 : 6000;
+  state.spawnInterval = setInterval(spawnMotor, interval);
+  // Efek visual
+  if (state.cuaca === 'hujan') {
+    initHujan();
+  }
+}
+
+function initHujan() {
+  state.hujanDrops = [];
+  for (var i = 0; i < 100; i++) {
+    state.hujanDrops.push({
+      x: Math.random() * canvasW,
+      y: Math.random() * canvasH,
+      speed: 5 + Math.random() * 8,
+      len: 8 + Math.random() * 12
+    });
+  }
+}
+
+function renderCuaca() {
+  cuacaCtx.clearRect(0, 0, canvasW, canvasH);
+  if (state.cuaca === 'hujan') {
+    cuacaCtx.strokeStyle = 'rgba(180,210,255,0.5)';
+    cuacaCtx.lineWidth = 1.5;
+    state.hujanDrops.forEach(function(d) {
+      cuacaCtx.beginPath();
+      cuacaCtx.moveTo(d.x, d.y);
+      cuacaCtx.lineTo(d.x - 1, d.y + d.len);
+      cuacaCtx.stroke();
+      d.y += d.speed;
+      if (d.y > canvasH) { d.y = -20; d.x = Math.random() * canvasW; }
+    });
+    // Ripple effect
+    state.ripples.forEach(function(r) {
+      cuacaCtx.strokeStyle = 'rgba(180,210,255,' + r.life + ')';
+      cuacaCtx.beginPath();
+      cuacaCtx.ellipse(r.x, r.y, r.radius, r.radius * 0.3, 0, 0, Math.PI * 2);
+      cuacaCtx.stroke();
+      r.radius += 0.5;
+      r.life -= 0.02;
+    });
+    state.ripples = state.ripples.filter(function(r) { return r.life > 0; });
+    if (Math.random() < 0.05) {
+      state.ripples.push({ x: Math.random() * canvasW, y: 0.04 * canvasH + Math.random() * 0.2 * canvasH, radius: 2, life: 1 });
     }
-  });
-}
-
-/* ========== PANEL QUEST ========== */
-const QUEST_DEFS = [
-  {id:'h1',tipe:'harian',judul:'Cuci 10 Motor',target:10,reward:5000},
-  {id:'h2',tipe:'harian',judul:'Tap 100 Kali',target:100,reward:3000},
-  {id:'h3',tipe:'harian',judul:'Convert 50.000 Koin',target:50000,reward:10000},
-  {id:'h4',tipe:'harian',judul:'Sewa 1 Manajer',target:1,reward:2000},
-  {id:'h5',tipe:'harian',judul:'Buka 1 Cabang',target:1,reward:25000},
-  {id:'m1',tipe:'mingguan',judul:'Cuci 100 Motor',target:100,reward:50000},
-  {id:'m2',tipe:'mingguan',judul:'Cuci 5 Moge',target:5,reward:100000},
-  {id:'m3',tipe:'mingguan',judul:'Convert 500.000 Koin',target:500000,reward:75000},
-  {id:'s1',tipe:'spesial',judul:'Pertama Cuci',target:1,reward:1000},
-  {id:'s2',tipe:'spesial',judul:'Pertama Convert',target:1,reward:5000},
-  {id:'s3',tipe:'spesial',judul:'Pertama Sewa Manajer',target:1,reward:3000},
-  {id:'s4',tipe:'spesial',judul:'Pertama Buka Cabang',target:1,reward:10000},
-  {id:'s5',tipe:'spesial',judul:'Pertama Topup',target:1,reward:5000},
-];
-
-function getQuestProgress(id){
-  const saved = localStorage.getItem('smp7k_quest_'+id);
-  if(saved) return JSON.parse(saved);
-  return {progress:0,diklaim:false};
-}
-function setQuestProgress(id,data){
-  localStorage.setItem('smp7k_quest_'+id,JSON.stringify(data));
-}
-
-function updateQuestProgress(tipe){
-  QUEST_DEFS.forEach(q=>{
-    const p = getQuestProgress(q.id);
-    if(p.diklaim) return;
-    let tambah = false;
-    if(q.id==='h1' && tipe==='motor') {p.progress++;tambah=true;}
-    if(q.id==='h2' && tipe==='tap') {p.progress++;tambah=true;}
-    if(q.id==='h3' && tipe==='convert') {p.progress+=50000;tambah=true;}
-    if(q.id==='h4' && tipe==='manajer') {p.progress++;tambah=true;}
-    if(q.id==='h5' && tipe==='cabang') {p.progress++;tambah=true;}
-    if(q.id==='m1' && tipe==='motor') {p.progress++;tambah=true;}
-    if(q.id==='m2' && tipe==='moge') {p.progress++;tambah=true;}
-    if(q.id==='m3' && tipe==='convert') {p.progress+=50000;tambah=true;}
-    if(q.id==='s1' && tipe==='motor') {p.progress++;tambah=true;}
-    if(q.id==='s2' && tipe==='convert') {p.progress++;tambah=true;}
-    if(q.id==='s3' && tipe==='manajer') {p.progress++;tambah=true;}
-    if(q.id==='s4' && tipe==='cabang') {p.progress++;tambah=true;}
-    if(q.id==='s5' && tipe==='topup') {p.progress++;tambah=true;}
-    if(tambah) setQuestProgress(q.id,p);
-  });
-  updateQuestBadge();
-}
-
-function updateQuestBadge(){
-  const adaKlaim = QUEST_DEFS.some(q=>{
-    const p = getQuestProgress(q.id);
-    return p.progress >= q.target && !p.diklaim;
-  });
-  const badge = $('questBadge');
-  if(badge) badge.style.display = adaKlaim?'block':'none';
-}
-
-function renderPanelQuest(body){
-  const sections = [
-    {tipe:'harian',label:'📅 Harian'},
-    {tipe:'mingguan',label:'📆 Mingguan'},
-    {tipe:'spesial',label:'⭐ Spesial'},
-  ];
-  body.innerHTML = sections.map(s=>`
-    <div class="section-title">${s.label}</div>
-    <div id="quest-${s.tipe}"></div>
-  `).join('');
-  sections.forEach(s=>{
-    const container = $(`quest-${s.tipe}`);
-    QUEST_DEFS.filter(q=>q.tipe===s.tipe).forEach(q=>{
-      const p = getQuestProgress(q.id);
-      const selesai = p.progress >= q.target;
-      const el = document.createElement('div');
-      el.className = 'card';
-      el.innerHTML = `
-        <div class="card-row">
-          <div style="flex:1;">
-            <div class="card-title">${q.judul}</div>
-            <div class="card-sub">${Math.min(p.progress,q.target)}/${q.target}</div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${Math.min((p.progress/q.target)*100,100)}%"></div></div>
-          </div>
-          <div style="text-align:right;">
-            <div class="card-sub" style="color:#F59E0B;font-weight:700;">${fmtNum(q.reward)} 🪙</div>
-            <button class="btn-sm ${selesai&&!p.diklaim?'gold':'ghost'}" ${selesai&&!p.diklaim?'':'disabled'} style="margin-top:4px;">
-              ${p.diklaim?'✅':selesai?'Klaim':'⏳'}
-            </button>
-          </div>
-        </div>
-      `;
-      if(selesai && !p.diklaim){
-        el.querySelector('button').onclick = ()=>{
-          p.diklaim = true;
-          setQuestProgress(q.id,p);
-          S.saldo.koin += q.reward;
-          S.syncDelta += q.reward;
-          playSound('koin');
-          toast(`Quest selesai! +${fmtNum(q.reward)} 🪙`,'success');
-          updateHeader();
-          renderPanelQuest(body);
-          syncProgress();
-        };
-      }
-      container.appendChild(el);
-    });
-  });
-  updateQuestBadge();
-}
-
-/* ========== PANEL PROFIL ========== */
-function renderPanelProfil(body){
-  body.innerHTML = `
-    <div class="section-title">👤 Profil</div>
-    <div class="card">
-      <div class="card-row"><div class="card-title">Nama</div><div>${S.user.nama||'-'}</div></div>
-      <div class="card-row"><div class="card-title">Nomor HP</div><div>${sensorHP(S.user.nomor)}</div></div>
-      <div class="card-row"><div class="card-title">Level</div><div>Lv.${S.level}</div></div>
-      <div class="card-row"><div class="card-title">Koin</div><div>${fmtNum(S.saldo.koin)} 🪙</div></div>
-      <div class="card-row"><div class="card-title">Rupiah</div><div>${fmtRp(S.saldo.rupiah)}</div></div>
-      <div class="card-row"><div class="card-title">Kristal</div><div>${S.saldo.kristal} 💎</div></div>
-      <div class="card-row"><div class="card-title">Total Koin</div><div>${fmtNum(S.totalKoinPernah)}</div></div>
-      <div class="card-row"><div class="card-title">Terdaftar</div><div>${S.user.tanggal_daftar||'-'}</div></div>
-    </div>
-    <button class="modal-btn primary" id="btnLogout" style="margin-top:12px;">🚪 Logout</button>
-  `;
-  $('btnLogout').onclick = logout;
-}
-
-/* ========== ADMIN PANEL ========== */
-function initAdmin(){
-  if(!IS_ADMIN) return;
-  const p = $('panelAdmin');
-  p.classList.add('show');
-  p.innerHTML = `
-    <div class="admin-header">
-      <h2>⚙️ Panel Admin</h2>
-      <button class="icon-btn" id="btnKeluarAdmin" style="background:rgba(255,255,255,0.2);">✕</button>
-    </div>
-    <div class="admin-tabs" id="adminTabs"></div>
-    <div class="admin-body" id="adminBody"></div>
-  `;
-  $('btnKeluarAdmin').onclick = ()=>{
-    localStorage.removeItem('smp7k_admin');
-    location.href='index.html';
-  };
-  const tabs = [
-    {id:'dashboard',label:'📊 Dashboard'},
-    {id:'pemain',label:'👥 Pemain'},
-    {id:'topup',label:'💰 Topup'},
-    {id:'voucher',label:'🎫 Voucher'},
-    {id:'toko',label:'🛒 Toko'},
-    {id:'manajer',label:'👔 Manajer'},
-    {id:'cabang',label:'🏪 Cabang'},
-    {id:'cerita',label:'📖 Cerita'},
-    {id:'quest',label:'📜 Quest'},
-    {id:'config',label:'⚙️ Config'},
-    {id:'log',label:'📋 Log'},
-  ];
-  $('adminTabs').innerHTML = tabs.map(t=>`<button class="admin-tab${t.id==='dashboard'?' active':''}" data-tab="${t.id}">${t.label}</button>`).join('');
-  $('adminTabs').querySelectorAll('.admin-tab').forEach(btn=>{
-    btn.onclick = ()=>{
-      S.adminTab = btn.dataset.tab;
-      $('adminTabs').querySelectorAll('.admin-tab').forEach(b=>b.classList.toggle('active',b===btn));
-      renderAdminTab();
-    };
-  });
-  renderAdminTab();
-}
-
-async function renderAdminTab(){
-  const body = $('adminBody');
-  body.innerHTML = '<div class="empty-msg">Memuat data...</div>';
-  switch(S.adminTab){
-    case 'dashboard': await renderAdminDashboard(body); break;
-    case 'pemain': await renderAdminPemain(body); break;
-    case 'topup': await renderAdminTopup(body); break;
-    case 'voucher': await renderAdminVoucher(body); break;
-    case 'toko': await renderAdminToko(body); break;
-    case 'manajer': await renderAdminManajer(body); break;
-    case 'cabang': await renderAdminCabang(body); break;
-    case 'cerita': await renderAdminCerita(body); break;
-    case 'quest': await renderAdminQuest(body); break;
-    case 'config': await renderAdminConfig(body); break;
-    case 'log': await renderAdminLog(body); break;
+  } else {
+    // Panas: overlay kuning tipis
+    cuacaCtx.fillStyle = 'rgba(255,220,100,0.08)';
+    cuacaCtx.fillRect(0, 0, canvasW, canvasH);
   }
 }
 
-async function renderAdminDashboard(body){
-  const r = await api('baca',{sheet:'Users'});
-  const users = r.ok ? (r.data||[]) : [];
-  const totalKoin = users.reduce((a,u)=>a+(Number(u.koin)||0),0);
-  const rt = await api('baca',{sheet:'Topups'});
-  const topups = rt.ok ? (rt.data||[]) : [];
-  const pending = topups.filter(t=>t.status==='pending').length;
-  const rv = await api('baca',{sheet:'Vouchers'});
-  const vouchers = rv.ok ? (rv.data||[]) : [];
-  const aktif = vouchers.filter(v=>v.status==='aktif').length;
-  body.innerHTML = `
-    <div class="stat-grid">
-      <div class="stat-box"><div class="stat-val">${users.length}</div><div class="stat-lbl">Total Pemain</div></div>
-      <div class="stat-box"><div class="stat-val">${fmtNum(totalKoin)}</div><div class="stat-lbl">Koin Beredar</div></div>
-      <div class="stat-box"><div class="stat-val">${pending}</div><div class="stat-lbl">Topup Pending</div></div>
-      <div class="stat-box"><div class="stat-val">${aktif}</div><div class="stat-lbl">Voucher Aktif</div></div>
-    </div>
-  `;
-}
-
-async function renderAdminPemain(body){
-  const r = await api('baca',{sheet:'Users'});
-  const users = r.ok ? (r.data||[]) : [];
-  body.innerHTML = `
-    <input type="text" id="adminCariPemain" class="input-field" placeholder="Cari nama / nomor..." style="margin-bottom:10px;">
-    <div id="adminPemainList"></div>
-  `;
-  const list = $('adminPemainList');
-  function renderList(filter=''){
-    list.innerHTML = '';
-    users.filter(u=>!filter || (u.nama||'').toLowerCase().includes(filter.toLowerCase()) || (u.nomor||'').includes(filter)).forEach(u=>{
-      const el = document.createElement('div');
-      el.className = 'admin-card';
-      el.innerHTML = `
-        <div class="card-row">
-          <div><div class="card-title">${u.nama||'-'}</div><div class="card-sub">${u.nomor||'-'} • Lv.${u.level||1}</div></div>
-          <div style="text-align:right;"><div class="card-sub">${fmtNum(u.koin||0)} 🪙</div><div class="card-sub">${fmtNum(u.rupiah||0)} Rp</div></div>
-        </div>
-      `;
-      el.onclick = ()=>renderAdminDetailPemain(u);
-      list.appendChild(el);
-    });
-  }
-  renderList();
-  $('adminCariPemain').oninput = e=>renderList(e.target.value);
-}
-
-async function renderAdminDetailPemain(u){
-  const body = $('adminBody');
-  body.innerHTML = `
-    <button class="btn-sm ghost" id="btnKembaliPemain" style="margin-bottom:10px;">← Kembali</button>
-    <div class="admin-card">
-      <div class="card-title">${u.nama}</div>
-      <div class="card-sub">${u.nomor} • Row ${u._row}</div>
-    </div>
-    <div class="admin-card">
-      <div class="section-title">Edit Saldo</div>
-      <input class="input-field" id="admKoin" value="${u.koin||0}" placeholder="Koin">
-      <input class="input-field" id="admRupiah" value="${u.rupiah||0}" placeholder="Rupiah" style="margin-top:6px;">
-      <input class="input-field" id="admKristal" value="${u.kristal||0}" placeholder="Kristal" style="margin-top:6px;">
-      <input class="input-field" id="admLevel" value="${u.level||1}" placeholder="Level" style="margin-top:6px;">
-      <button class="btn-sm primary" id="btnSimpanSaldo" style="width:100%;margin-top:8px;">Simpan</button>
-    </div>
-    <div class="admin-card">
-      <div class="section-title">Aksi</div>
-      <button class="btn-sm gold" id="btnKasihItem" style="width:100%;margin-bottom:6px;">🎁 Kasih Item</button>
-      <button class="btn-sm gold" id="btnKasihManajer" style="width:100%;margin-bottom:6px;">👔 Kasih Manajer</button>
-      <button class="btn-sm gold" id="btnKasihVoucher" style="width:100%;margin-bottom:6px;">🎫 Kasih Voucher</button>
-      <button class="btn-sm ghost" id="btnResetPemain" style="width:100%;">🔄 Reset Pemain</button>
-    </div>
-  `;
-  $('btnKembaliPemain').onclick = ()=>renderAdminPemain(body);
-  $('btnSimpanSaldo').onclick = async ()=>{
-    await api('update',{sheet:'Users',row:u._row,data:{
-      koin:Number($('admKoin').value)||0,
-      rupiah:Number($('admRupiah').value)||0,
-      kristal:Number($('admKristal').value)||0,
-      level:Number($('admLevel').value)||1,
-    }});
-    toast('Saldo disimpan','success');
-  };
-  $('btnKasihItem').onclick = ()=>toast('Fitur dalam pengembangan','info');
-  $('btnKasihManajer').onclick = ()=>toast('Fitur dalam pengembangan','info');
-  $('btnKasihVoucher').onclick = ()=>toast('Fitur dalam pengembangan','info');
-  $('btnResetPemain').onclick = async ()=>{
-    if(!confirm('Reset pemain ini?')) return;
-    await api('update',{sheet:'Users',row:u._row,data:{koin:0,rupiah:0,kristal:0,level:1,story_unlocked:0,motor_dicuci:0,moge_dicuci:0,manajer_disewa:0,cabang:1}});
-    toast('Pemain direset','success');
-  };
-}
-
-async function renderAdminTopup(body){
-  const r = await api('baca',{sheet:'Topups'});
-  const data = r.ok ? (r.data||[]) : [];
-  body.innerHTML = `<div class="section-title">Daftar Topup</div><div id="admTopupList"></div>`;
-  const list = $('admTopupList');
-  data.forEach(t=>{
-    const el = document.createElement('div');
-    el.className = 'admin-card';
-    el.innerHTML = `
-      <div class="card-row">
-        <div><div class="card-title">${t.nomor||'-'}</div><div class="card-sub">${t.tipe||'-'} • ${t.jumlah||'-'}</div></div>
-        <span class="chip ${t.status==='pending'?'gold':t.status==='approved'?'green':'red'}">${t.status||'pending'}</span>
-      </div>
-      ${t.bukti?`<img src="${t.bukti}" style="max-width:100%;max-height:120px;margin-top:6px;border-radius:8px;">`:''}
-      ${t.status==='pending'?`<div style="display:flex;gap:6px;margin-top:8px;">
-        <button class="btn-sm green" data-approve="${t._row}" style="flex:1;">✅ Approve</button>
-        <button class="btn-sm" data-reject="${t._row}" style="flex:1;background:#fee2e2;color:#991b1b;">❌ Reject</button>
-      </div>`:''}
-    `;
-    el.querySelectorAll('[data-approve]').forEach(b=>b.onclick=async()=>{
-      await api('update',{sheet:'Topups',row:t._row,data:{status:'approved'}});
-      toast('Topup approved','success');renderAdminTopup(body);
-    });
-    el.querySelectorAll('[data-reject]').forEach(b=>b.onclick=async()=>{
-      await api('update',{sheet:'Topups',row:t._row,data:{status:'rejected'}});
-      toast('Topup rejected','error');renderAdminTopup(body);
-    });
-    list.appendChild(el);
-  });
-}
-
-async function renderAdminVoucher(body){
-  const r = await api('baca',{sheet:'Vouchers'});
-  const data = r.ok ? (r.data||[]) : [];
-  body.innerHTML = `<div class="section-title">Daftar Voucher</div><div id="admVoucherList"></div>`;
-  const list = $('admVoucherList');
-  data.forEach(v=>{
-    const el = document.createElement('div');
-    el.className = 'admin-card';
-    el.innerHTML = `
-      <div class="card-row">
-        <div><div class="card-title">${v.kode||'-'}</div><div class="card-sub">${v.nomor||'-'}</div></div>
-        <span class="chip ${v.status==='aktif'?'green':'gold'}">${v.status||'-'}</span>
-      </div>
-      ${v.status==='aktif'?`<button class="btn-sm ghost" data-pakai="${v._row}" style="width:100%;margin-top:6px;">Tandai Terpakai</button>`:''}
-    `;
-    el.querySelectorAll('[data-pakai]').forEach(b=>b.onclick=async()=>{
-      await api('update',{sheet:'Vouchers',row:v._row,data:{status:'terpakai'}});
-      toast('Voucher ditandai terpakai','success');renderAdminVoucher(body);
-    });
-    list.appendChild(el);
-  });
-}
-
-async function renderAdminToko(body){ body.innerHTML = '<div class="admin-card"><div class="section-title">🛒 Manajemen Toko</div><div class="card-sub">Fitur CRUD dalam pengembangan.</div></div>'; }
-async function renderAdminManajer(body){ body.innerHTML = '<div class="admin-card"><div class="section-title">👔 Manajemen Manajer</div><div class="card-sub">Fitur CRUD dalam pengembangan.</div></div>'; }
-async function renderAdminCabang(body){ body.innerHTML = '<div class="admin-card"><div class="section-title">🏪 Manajemen Cabang</div><div class="card-sub">Fitur CRUD dalam pengembangan.</div></div>'; }
-async function renderAdminCerita(body){ body.innerHTML = '<div class="admin-card"><div class="section-title">📖 Manajemen Cerita</div><div class="card-sub">Fitur CRUD dalam pengembangan.</div></div>'; }
-async function renderAdminQuest(body){ body.innerHTML = '<div class="admin-card"><div class="section-title">📜 Manajemen Quest</div><div class="card-sub">Fitur CRUD dalam pengembangan.</div></div>'; }
-async function renderAdminConfig(body){ body.innerHTML = '<div class="admin-card"><div class="section-title">⚙️ Config</div><div class="card-sub">Fitur CRUD dalam pengembangan.</div></div>'; }
-async function renderAdminLog(body){
-  const r = await api('baca',{sheet:'Log'});
-  const data = r.ok ? (r.data||[]) : [];
-  body.innerHTML = `<div class="section-title">📋 Log</div><div id="admLogList"></div>`;
-  const list = $('admLogList');
-  data.slice(-50).reverse().forEach(l=>{
-    const el = document.createElement('div');
-    el.className = 'admin-card';
-    el.innerHTML = `<div class="card-sub">${l.waktu||''}</div><div style="font-size:12px;">${l.pesan||'-'}</div>`;
-    list.appendChild(el);
-  });
-}
-
-/* ========== BACA DATA AWAL ========== */
-async function loadInitialData(){
-  // baca cerita
-  const rs = await api('baca',{sheet:'Story'});
-  if(rs.ok) S.storyData = rs.data||[];
-  // baca quest
-  const rq = await api('baca',{sheet:'Quests'});
-  if(rq.ok) S.questData = rq.data||[];
-  // baca toko
-  const rt = await api('baca',{sheet:'Toko'});
-  if(rt.ok) S.tokoData = rt.data||[];
-}
-
-/* ========== CEK STORY AWAL ========== */
-function cekStoryAwal(){
-  if(S.storyUnlocked === 0){
-    setTimeout(()=>tampilkanCerita(1),800);
-  }
-}
-
-/* ========== BEFORE UNLOAD ========== */
-window.addEventListener('beforeunload',()=>{
-  // kirim sync terakhir
-  if(S.syncDelta > 0){
-    if(S.syncDelta > 1000000) S.syncDelta = 1000000;
-    const data = JSON.stringify({
-      action:'update', token:TOKEN,
-      sheet:'Users', row:S.user._row,
-      data:{koin:S.saldo.koin,total_koin:S.totalKoinPernah}
-    });
-    navigator.sendBeacon(BACKEND_URL, data);
-  }
-});
-
-/* ========== TAP EVENTS ========== */
-document.addEventListener('click',e=>{
-  if(e.target.closest('#gameCanvas')) handleTap(e);
-});
-document.addEventListener('touchstart',e=>{
-  if(e.target.closest('#gameCanvas') && !e.target.closest('#bottomNav') && !e.target.closest('#panelSlide')){
-    handleTap(e);
-  }
-},{passive:true});
-
-// tutup panel saat tap area luar
-document.addEventListener('click',e=>{
-  if(S.panelAktif && !e.target.closest('#panelSlide') && !e.target.closest('#bottomNav') && !e.target.closest('#appHeader')){
-    tutupPanel();
-  }
-});
-
-/* ========== INIT ========== */
-async function init(){
-  if(!cekSesi()) return;
-  initCanvas();
-  await loadAssets();
-  await loadUserFromServer();
-  buildNav();
-  updateHeader();
-  await loadInitialData();
-  startProduksiLoop();
-  // musik
-  if(S.musikOn){
-    const audio = document.createElement('audio');
-    audio.id = 'bgMusic';
-    audio.src = 'assets/musik-latar.mp3';
-    audio.loop = true;
-    audio.volume = 0.3;
-    audio.play().catch(()=>{});
-    document.body.appendChild(audio);
-  }
-  // sync tiap 10 detik
-  setInterval(()=>{syncProgress();},10000);
-  // game loop
+// ==================== GAME LOOP ====================
+var lastTime = 0;
+function gameLoop(timestamp) {
+  if (!lastTime) lastTime = timestamp;
+  var dt = Math.min((timestamp - lastTime) / 1000, 0.1);
+  lastTime = timestamp;
+  updateMotors(dt);
+  renderGame();
+  renderCuaca();
   requestAnimationFrame(gameLoop);
-  // cek story awal
-  cekStoryAwal();
-  // admin
-  initAdmin();
-  // quest badge
-  updateQuestBadge();
 }
 
-init();
-
-/* ========== SERVICE WORKER (offline) ========== */
-if('serviceWorker' in navigator){
-  // optional
+// ==================== PRODUKSI LOOP (HANYA SATU) ====================
+function startProduksiLoop() {
+  if (window.__produksiLoop) return;
+  window.__produksiLoop = setInterval(function() {
+    var total = getTotalProduksi();
+    if (total > 0) {
+      var prod = Math.min(total, MAX_KOIN_PER_DETIK);
+      state.saldo.koin += prod;
+      state._deltaKoin = (state._deltaKoin || 0) + prod;
+      updateHeaderSaldo();
+    }
+  }, 1000);
 }
 
+// ==================== BEFORE UNLOAD ====================
+window.addEventListener('beforeunload', function() {
+  syncProgress(true);
+});
+
+// ==================== INIT ====================
+async function init() {
+  if (!cekSesi()) return;
+  initAudio();
+  initMusik();
+  await loadUserData();
+  loadAllImages(function() {
+    initCanvas();
+    renderHeader();
+    renderNav();
+    initCuaca();
+    startProduksiLoop();
+    // Cek cerita wajib
+    if (state.storyUnlocked < 1) {
+      setTimeout(function() {
+        tampilkanCerita(1, 'Halo! Saya Pak Aldi. Selamat datang di Steam MP 7000! Ayo cuci motor pertamamu!');
+      }, 800);
+    }
+    // Mulai spawn
+    if (state.spawnInterval) clearInterval(state.spawnInterval);
+    state.spawnInterval = setInterval(spawnMotor, state.cuaca === 'panas' ? 2000 : 6000);
+    // Game loop
+    requestAnimationFrame(gameLoop);
+    // Auto sync
+    state.syncInterval = setInterval(function() { syncProgress(false); }, 10000);
+    // Quest badge
+    renderTabQuestBadge();
+    // Admin
+    if (state.isAdmin) {
+      var adminDiv = document.createElement('div');
+      adminDiv.id = 'panelAdmin';
+      document.getElementById('app').appendChild(adminDiv);
+      initAdminPanel();
+    }
+  });
+}
+
+async function renderTabQuestBadge() {
+  var res = await baca('Quests');
+  if (res && res.ok && res.data) state.questsData = res.data;
+  var klaimable = 0;
+  state.questsData.forEach(function(q) {
+    var prog = getQuestProgress(q);
+    if (prog >= q.target && !state.questProgress[q.id + '_claimed']) klaimable++;
+  });
+  state._questKlaimable = klaimable;
+  renderNav();
+}
+
+// ==================== ADMIN PANEL ====================
+function initAdminPanel() {
+  var panel = document.getElementById('panelAdmin');
+  panel.classList.add('show');
+  panel.innerHTML = '<div class="admin-header"><h2>🔧 Admin Panel</h2>' +
+    '<button class="header-btn" id="adminClose" style="background:rgba(255,255,255,0.2);">✕</button></div>' +
+    '<div class="admin-tabs" id="adminTabs"></div>' +
+    '<div class="admin-body" id="adminBody">Pilih tab</div>';
+  var tabs = ['Dashboard','Pemain','Detail Pemain','Topup','Voucher','Toko','Manajer','Cabang','Cerita','Quest','Config','Log'];
+  var tabHtml = '';
+  tabs.forEach(function(t, i) {
+    tabHtml += '<button class="admin-tab' + (i===0?' active':'') + '" data-atab="' + t + '">' + t + '</button>';
+  });
+  document.getElementById('adminTabs').innerHTML = tabHtml;
+  document.getElementById('adminTabs').querySelectorAll('.admin-tab').forEach(function(btn) {
+    btn.onclick = function() {
+      document.querySelectorAll('.admin-tab').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      loadAdminTab(this.dataset.atab);
+    };
+  });
+  document.getElementById('adminClose').onclick = function() {
+    panel.classList.remove('show');
+    localStorage.removeItem('smp7k_admin');
+    window.location.search = '';
+  };
+  loadAdminTab('Dashboard');
+}
+
+async function loadAdminTab(tab) {
+  var body = document.getElementById('adminBody');
+  body.innerHTML = '<div class="empty-state">Memuat...</div>';
+  if (tab === 'Dashboard') {
+    body.innerHTML = '<div class="row"><h3>📊 Dashboard</h3>' +
+      '<p>Total Pemain: -</p><p>Total Topup: -</p><p>Total Voucher: -</p></div>';
+  } else if (tab === 'Pemain') {
+    var res = await baca('Users');
+    if (res && res.ok && res.data) {
+      var html = '<table><tr><th>Nama</th><th>HP</th><th>Koin</th><th>Level</th></tr>';
+      res.data.forEach(function(u) {
+        html += '<tr><td>' + (u.nama||'-') + '</td><td>' + (u.hp||'-') + '</td><td>' + formatKoin(u.koin||0) + '</td><td>' + (u.level||1) + '</td></tr>';
+      });
+      html += '</table>';
+      body.innerHTML = html;
+    } else { body.innerHTML = '<div class="empty-state">Gagal memuat</div>'; }
+  } else {
+    body.innerHTML = '<div class="empty-state">Fitur ' + tab + ' segera</div>';
+  }
+}
+
+// ==================== START ====================
+window.addEventListener('load', function() {
+  init();
+  // Fallback jika loadAllImages terlalu lama
+  setTimeout(function() {
+    if (!canvas) {
+      initCanvas();
+      renderHeader();
+      renderNav();
+      requestAnimationFrame(gameLoop);
+    }
+  }, 3000);
+});
+
+})();
 </script>
 </body>
 </html>
